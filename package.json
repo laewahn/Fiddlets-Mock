@@ -1,0 +1,12 @@
+{
+    "title": "Fiddlets Mock Study",
+    "name": "fiddletsMockStudy",
+    "description": "Mockup for the first fiddlets study",
+    "version": "0.0.1",
+    "keywords":["brackets", "fiddlets", "study"],
+    "author": "Dennis Lewandowski",
+    
+    "engines": {
+        "brackets": ">=0.41.0"
+    }
+}
