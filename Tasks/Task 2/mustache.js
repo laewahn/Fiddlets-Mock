@@ -57,19 +57,16 @@
     return !testRegExp(nonSpaceRe, string);
   }
 
-  var entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;'
-  };
-
   function escapeHtml (string) {
-    return String(string).replace(/[&<>"'\/]/g, function fromEntityMap (s) {
+    var htmlMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;
+
+    function fromEntityMap (s) {
       return entityMap[s];
-    });
+    }
+
+    var escaped = String(string).replace(htmlMetaCharacters, fromEntityMap);
+
+    return escaped;
   }
 
   var whiteRe = /\s*/;
@@ -285,6 +282,15 @@
 
     return nestedTokens;
   }
+
+  var entityMap = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;'
+  };
 
   /**
    * A simple string scanner that is used by the template parser to find
