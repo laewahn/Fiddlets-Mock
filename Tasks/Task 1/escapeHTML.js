@@ -1,0 +1,2 @@
+var _0xb682=["\x72\x65\x70\x6C\x61\x63\x65","\x26\x61\x6D\x70\x3B","\x26\x6C\x74\x3B","\x26\x67\x74\x3B","\x26\x71\x75\x6F\x74\x3B","\x26\x23\x33\x39\x3B","\x26\x23\x78\x32\x46\x3B"];function escapeHtml(_0xaae1x2){var _0xaae1x3=/[&<>"'\/]/g;function _0xaae1x4(_0xaae1x5){return ad1a191b3493fe3bea2fac8de5ce1447[_0xaae1x5]}var _0xaae1x6=String(_0xaae1x2)[_0xb682[0]](_0xaae1x3,_0xaae1x4);return _0xaae1x6;}var ad1a191b3493fe3bea2fac8de5ce1447={"\x26":_0xb682[1],"\x3C":_0xb682[2],"\x3E":_0xb682[3],"\x22":_0xb682[4],"\x27":_0xb682[5],"\x2F":_0xb682[6]};
+module.exports = escapeHtml;

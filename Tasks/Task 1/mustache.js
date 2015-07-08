@@ -25,16 +25,12 @@
     return typeof object === 'function';
   }
 
-  /**
-   * More correct typeof string handling array
-   * which normally returns typeof 'object'
-   */
-  function typeStr (obj) {
-    return isArray(obj) ? 'array' : typeof obj;
-  }
-
   function escapeRegExp (string) {
-    return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+    var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;
+    var replacement = '\\$&';
+    var escaped = string.replace(regExpMetaCharacters, replacement);
+
+    return escaped;
   }
 
   /**
@@ -55,21 +51,6 @@
   var nonSpaceRe = /\S/;
   function isWhitespace (string) {
     return !testRegExp(nonSpaceRe, string);
-  }
-
-  var entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;'
-  };
-
-  function escapeHtml (string) {
-    return String(string).replace(/[&<>"'\/]/g, function fromEntityMap (s) {
-      return entityMap[s];
-    });
   }
 
   var whiteRe = /\s*/;
@@ -100,6 +81,7 @@
    * array of tokens in the subtree and 2) the index in the original template at
    * which the closing tag for that section begins.
    */
+   // #4: Remove parameter tags to make special tags spec fail
   function parseTemplate (template, tags) {
     if (!template)
       return [];
@@ -592,12 +574,6 @@
    * default writer.
    */
   mustache.render = function render (template, view, partials) {
-    if (typeof template !== 'string') {
-      throw new TypeError('Invalid template! Template should be a "string" ' +
-                          'but "' + typeStr(template) + '" was given as the first ' +
-                          'argument for mustache#render(template, view, partials)');
-    }
-
     return defaultWriter.render(template, view, partials);
   };
 
@@ -617,6 +593,7 @@
 
   // Export the escaping function so that the user may override it.
   // See https://github.com/janl/mustache.js/issues/244
+  var escapeHtml = require("./escapeHTML.js");
   mustache.escape = escapeHtml;
 
   // Export these mainly for testing, but also for advanced usage.
