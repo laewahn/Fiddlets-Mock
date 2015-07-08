@@ -25,6 +25,15 @@
     return typeof object === 'function';
   }
 
+  /**
+   * More correct typeof string handling array
+   * which normally returns typeof 'object'
+   */
+  
+  function typeStr (obj) {
+    return isArray(obj) ? 'array' : typeof obj;
+  }
+
   function escapeRegExp (string) {
     var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;
     var replacement = '\\$&';
@@ -81,7 +90,6 @@
    * array of tokens in the subtree and 2) the index in the original template at
    * which the closing tag for that section begins.
    */
-   // #4: Remove parameter tags to make special tags spec fail
   function parseTemplate (template, tags) {
     if (!template)
       return [];
@@ -574,6 +582,12 @@
    * default writer.
    */
   mustache.render = function render (template, view, partials) {
+    if (typeof template !== 'string') {
+      throw new TypeError('Invalid template! Template should be a "string" ' +
+                          'but "' + typeStr(template) + '" was given as the first ' +
+                          'argument for mustache#render(template, view, partials)');
+    }
+
     return defaultWriter.render(template, view, partials);
   };
 
