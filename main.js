@@ -5,9 +5,19 @@ define(function (require, exports, module) {
     "use strict";
     
     var AppInit = brackets.getModule('utils/AppInit');
+	var Menus = brackets.getModule("command/Menus");
+	var CommandManager  = brackets.getModule("command/CommandManager");
 
     AppInit.appReady(function () {
+    	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
+    	var debugMenu = Menus.getMenu("debug-menu");
+    	debugMenu.addMenuDivider();
+    	debugMenu.addMenuItem("Fiddlets.Study.start");
     });
+
+    function startStudy() {
+
+    }
     
 });
