@@ -17,7 +17,9 @@ define(function (require, exports, module) {
     });
 
     function startStudy() {
-
+    	// get the participants ID
+    	// open the survey
+    	// open the first task
     }
     
 });
