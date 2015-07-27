@@ -1,12 +1,21 @@
 <div id="widget-container">
 	<h3>Unknown variables</h3>
 	<div id="unknown-variables">
-		foo <br/>
-		bar <br/>
+		string = <select>
+			<option>{{</option>
+			<option>}}</option>
+		</select><br/>
 	</div>
 
 	<h3>Context</h3>
-	<div id="context-editor">
+	<div id="context-editor" class="study-editor"></div><br/>
+	<div id="current-line-editor" class="study-editor"></div>
+
+	<h3>Result</h3>
+	<div id="result">
+		regexpMetaCharacters = ... <br/>
+		replacement = ... <br/>
+		escaped = ... <br/>
 	</div>
 
 </div>

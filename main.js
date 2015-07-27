@@ -74,6 +74,7 @@ define(function (require, exports, module) {
     StudyEditor.prototype.parentClass = InlineWidget.prototype;
 
     StudyEditor.prototype.contextEditor = undefined;
+    StudyEditor.prototype.currentLineEditor = undefined;
 
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
@@ -81,9 +82,17 @@ define(function (require, exports, module) {
 
         var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
         this.contextEditor = new CodeMirror(contextEditorContainer, {
-            value: "//Context goes here",
+            value:  "var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;\n" +
+                    "var replacement = '\\$&';",
             mode: "javascript",
             lineNumbers: true
+        });
+
+        var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
+        this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
+            value: "var escaped = string.replace(regExpMetaCharacters, replacement);",
+            mode: "javascript",
+            lineNumbers: false
         });
     };
 
