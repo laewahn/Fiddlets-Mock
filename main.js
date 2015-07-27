@@ -11,17 +11,6 @@ define(function (require, exports, module) {
 	var Dialogs = brackets.getModule("widgets/Dialogs");
   	var DefaultDialogs = brackets.getModule("widgets/DefaultDialogs");
     
-    var EditorManager = brackets.getModule("editor/EditorManager");
-    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
-
-    EditorManager.registerInlineEditProvider(editorProvider, 2);
-
-    function editorProvider(hostEditor, position) {
-        var inlineEditor = new StudyEditor();
-        inlineEditor.load(hostEditor);
-        return new $.Deferred().resolve(inlineEditor);
-    }
-
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
@@ -30,21 +19,6 @@ define(function (require, exports, module) {
     	debugMenu.addMenuItem("Fiddlets.Study.start");
     	console.log("FiddletsStudy", "App ready...");
     });
-
-    function StudyEditor() {
-        InlineWidget.call(this);
-
-        this.$htmlContent.append($("<h1>Hello world!</h1>"));
-    }
-
-    StudyEditor.prototype = Object.create(InlineWidget.prototype);
-    StudyEditor.prototype.constructor = StudyEditor;
-    StudyEditor.prototype.parentClass = InlineWidget.prototype;
-
-    StudyEditor.prototype.onAdded = function() {
-        StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
-        this.hostEditor.setInlineWidgetHeight(this, 500);
-    };
 
     function startStudy() {
     	console.log("FiddletsStudy", "Starting fiddlets study...");
@@ -71,4 +45,35 @@ define(function (require, exports, module) {
     	// open the first task
     }
     
+
+
+    var EditorManager = brackets.getModule("editor/EditorManager");
+    var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
+
+    EditorManager.registerInlineEditProvider(editorProvider, 2);
+
+    function editorProvider(hostEditor, position) {
+        var inlineEditor = new StudyEditor();
+        inlineEditor.load(hostEditor);
+        return new $.Deferred().resolve(inlineEditor);
+    }
+
+    var widgetContainer = require("text!inline-widget-template.html")
+    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
+
+    function StudyEditor() {
+        InlineWidget.call(this);
+        this.$htmlContent.append($(widgetContainer));
+    }
+
+    StudyEditor.prototype = Object.create(InlineWidget.prototype);
+    StudyEditor.prototype.constructor = StudyEditor;
+    StudyEditor.prototype.parentClass = InlineWidget.prototype;
+
+    StudyEditor.prototype.onAdded = function() {
+        StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
+        this.hostEditor.setInlineWidgetHeight(this, 500);
+    };
+
 });
