@@ -8,16 +8,39 @@ define(function (require, exports, module) {
 	var Menus = brackets.getModule("command/Menus");
 	var CommandManager  = brackets.getModule("command/CommandManager");
 
+	var Dialogs = brackets.getModule("widgets/Dialogs");
+  	var DefaultDialogs = brackets.getModule("widgets/DefaultDialogs");
+    
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
     	var debugMenu = Menus.getMenu("debug-menu");
     	debugMenu.addMenuDivider();
     	debugMenu.addMenuItem("Fiddlets.Study.start");
+    	console.log("FiddletsStudy", "App ready...");
     });
 
     function startStudy() {
+    	console.log("FiddletsStudy", "Starting fiddlets study...");
+
     	// get the participants ID
+    	var $dialogContent = $(require('text!./dialog-participantId.html'));
+
+    	var dialog = Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, 
+    										 "Enter participant ID",
+    										 $dialogContent.html(),
+    										 [{
+    										 	id: 'continue',
+    										 	text: 'Continue',
+    										 	className: Dialogs.DIALOG_BTN_OK
+    										 }],
+    										 true
+		);
+
+        dialog.done(function(e) {
+            console.log("Dialog promise done!");
+        });
+
     	// open the survey
     	// open the first task
     }
