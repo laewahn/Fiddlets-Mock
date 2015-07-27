@@ -62,6 +62,8 @@ define(function (require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
 
+    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
+
     function StudyEditor() {
         InlineWidget.call(this);
         this.$htmlContent.append($(widgetContainer));
@@ -71,9 +73,18 @@ define(function (require, exports, module) {
     StudyEditor.prototype.constructor = StudyEditor;
     StudyEditor.prototype.parentClass = InlineWidget.prototype;
 
+    StudyEditor.prototype.contextEditor = undefined;
+
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
+
+        var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
+        this.contextEditor = new CodeMirror(contextEditorContainer, {
+            value: "//Context goes here",
+            mode: "javascript",
+            lineNumbers: true
+        });
     };
 
 });
