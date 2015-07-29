@@ -11,6 +11,9 @@ define(function (require, exports, module) {
 	var Dialogs = brackets.getModule("widgets/Dialogs");
   	var DefaultDialogs = brackets.getModule("widgets/DefaultDialogs");
     
+    var FileViewController = brackets.getModule('project/FileViewController');
+    var ProjectManager = brackets.getModule('project/ProjectManager');
+
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
@@ -18,6 +21,13 @@ define(function (require, exports, module) {
     	debugMenu.addMenuDivider();
     	debugMenu.addMenuItem("Fiddlets.Study.start");
     	console.log("FiddletsStudy", "App ready...");
+
+        ProjectManager.on("projectOpen", function() {
+            var projectRoot = ProjectManager.getProjectRoot();
+            console.log("Opened project root: " + projectRoot.fullPath);
+
+            FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
+        });
     });
 
     function startStudy() {
