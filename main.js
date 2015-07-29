@@ -13,7 +13,9 @@ define(function (require, exports, module) {
     
     var FileViewController = brackets.getModule("project/FileViewController");
     var ProjectManager = brackets.getModule("project/ProjectManager");
+    var FileUtils = brackets.getModule("file/FileUtils");
 
+    var config;
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
@@ -22,21 +24,22 @@ define(function (require, exports, module) {
     	debugMenu.addMenuItem("Fiddlets.Study.start");
     	console.log("FiddletsStudy", "App ready...");
 
-        var projectRoot = ProjectManager.getProjectRoot();
         var configText = require("text!tasksConfig.json");
-        var config = JSON.parse(configText);
+        config = JSON.parse(configText);
         console.log(JSON.stringify(config));
-
-        ProjectManager.on("projectOpen", function() {
-            
-            console.log("Opened project root: " + projectRoot.fullPath);
-
-            FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
-        });
     });
+
+    var currentTask = undefined;
 
     function startStudy() {
     	console.log("FiddletsStudy", "Starting fiddlets study...");
+
+        var projectRoot = ProjectManager.getProjectRoot();
+        console.log("Opened project root: " + projectRoot.fullPath);
+        currentTask = FileUtils.getBaseName(projectRoot.fullPath);
+        console.log("Tasks name is: " + currentTask);
+
+        FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
 
     	// get the participants ID
     	var $dialogContent = $(require("text!./dialog-participantId.html"));
@@ -95,17 +98,21 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
+        if(currentTask === undefined) return;
+
         var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
         this.contextEditor = new CodeMirror(contextEditorContainer, {
-            value:  "var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;\n" +
-                    "var replacement = '\\$&';",
+            // value:  "var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;\n" +
+                    // "var replacement = '\\$&';",
+            value: config[currentTask].context,
             mode: "javascript",
             lineNumbers: true
         });
 
         var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
         this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
-            value: "string.replace(regExpMetaCharacters, replacement);",
+            // value: "string.replace(regExpMetaCharacters, replacement);",
+            value: config[currentTask].currentLine,
             mode: "javascript",
             lineNumbers: false
         });

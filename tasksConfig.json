@@ -1,3 +1,11 @@
 {
-    "foo" : "bar"
+	"foo" : "bar",
+	"Task 1" : {
+		"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
+		"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
+	},
+
+	"Task 2" : {},
+	"Task 3" : {},
+	"Task 4" : {}
 }
