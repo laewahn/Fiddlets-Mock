@@ -58,7 +58,7 @@ define(function (require, exports, module) {
         return new $.Deferred().resolve(inlineEditor);
     }
 
-    var widgetContainer = require("text!inline-widget-template.html")
+    var widgetContainer = require("text!inline-widget-template.html");
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
 
@@ -90,7 +90,7 @@ define(function (require, exports, module) {
 
         var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
         this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
-            value: "var escaped = string.replace(regExpMetaCharacters, replacement);",
+            value: "string.replace(regExpMetaCharacters, replacement);",
             mode: "javascript",
             lineNumbers: false
         });
