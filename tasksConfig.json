@@ -1,11 +1,13 @@
 {
 	"foo" : "bar",
 	"Task 1" : {
-		"unknownVariables" : {
-			"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
-		},
-		"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
-		"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
+		"40" : {
+			"unknownVariables" : {
+				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+			},
+			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
+			"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
+		}		
 	},
 
 	"Task 2" : {},

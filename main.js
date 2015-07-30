@@ -76,7 +76,13 @@ define(function (require, exports, module) {
     EditorManager.registerInlineEditProvider(editorProvider, 2);
 
     function editorProvider(hostEditor, position) {
+
+        var configForLine = config[currentTask][position.line + 1];
+        if(configForLine === undefined) return "Wrong line.";
+
         var inlineEditor = new StudyEditor();
+
+        inlineEditor.config = configForLine;
         inlineEditor.load(hostEditor);
         return new $.Deferred().resolve(inlineEditor);
     }
@@ -98,6 +104,7 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype.contextEditor = undefined;
     StudyEditor.prototype.currentLineEditor = undefined;
+    StudyEditor.prototype.config = undefined;
 
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
@@ -107,25 +114,22 @@ define(function (require, exports, module) {
 
         var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
         this.contextEditor = new CodeMirror(contextEditorContainer, {
-            // value:  "var regExpMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;\n" +
-                    // "var replacement = '\\$&';",
-            value: config[currentTask].context,
+            value: this.config.context,
             mode: "javascript",
             lineNumbers: true
         });
 
         var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
         this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
-            // value: "string.replace(regExpMetaCharacters, replacement);",
-            value: config[currentTask].currentLine,
+            value: this.config.currentLine,
             mode: "javascript",
             lineNumbers: false
         });
 
         var $unknownVariables = this.$htmlContent.find("#unknown-variables");
-        Object.keys(config[currentTask].unknownVariables).forEach(function(unknownVar) {
+        Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
             $unknownVariables.append(unknownVar + " = ");
-            var traceValues = config[currentTask].unknownVariables[unknownVar];
+            var traceValues = this.config.unknownVariables[unknownVar];
             
             var selectField = $("<select></select>");
             traceValues.forEach(function(traceVal) {
@@ -133,7 +137,7 @@ define(function (require, exports, module) {
             });
 
             $unknownVariables.append(selectField).append("<br/>");
-        });
+        }, this);
     };
 
 });
