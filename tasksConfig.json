@@ -2,7 +2,7 @@
 	"foo" : "bar",
 	"Task 1" : {
 		"unknownVariables" : {
-			"string" : ["{{","}}"],
+			"string" : ["{{","}}"]
 		},
 		"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
 		"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
