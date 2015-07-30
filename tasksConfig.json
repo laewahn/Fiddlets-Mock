@@ -1,12 +1,25 @@
 {
 	"foo" : "bar",
 	"Task 1" : {
+		"38" : {
+			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;"
+		},
+		"39" : {
+			"currentLine" : "var replacement = '\\\\$&';"
+		},
 		"40" : {
 			"unknownVariables" : {
 				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
 			},
 			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
 			"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
+		},
+		"42" : {
+			"unknownVariables" : {
+				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+			},
+			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);",
+			"currentLine" : "return escaped;"	
 		}		
 	},
 

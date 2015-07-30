@@ -112,12 +112,14 @@ define(function (require, exports, module) {
 
         if(currentTask === undefined) return;
 
-        var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
-        this.contextEditor = new CodeMirror(contextEditorContainer, {
-            value: this.config.context,
-            mode: "javascript",
-            lineNumbers: true
-        });
+        if (this.config.context !== undefined) {
+            var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
+            this.contextEditor = new CodeMirror(contextEditorContainer, {
+                value: this.config.context,
+                mode: "javascript",
+                lineNumbers: true
+            });
+        }
 
         var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
         this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
@@ -126,18 +128,21 @@ define(function (require, exports, module) {
             lineNumbers: false
         });
 
-        var $unknownVariables = this.$htmlContent.find("#unknown-variables");
-        Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
-            $unknownVariables.append(unknownVar + " = ");
-            var traceValues = this.config.unknownVariables[unknownVar];
+        if (this.config.unknownVariables !== undefined) {
+            var $unknownVariables = this.$htmlContent.find("#unknown-variables");
+            Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
+                $unknownVariables.append(unknownVar + " = ");
+                var traceValues = this.config.unknownVariables[unknownVar];
             
-            var selectField = $("<select></select>");
-            traceValues.forEach(function(traceVal) {
-                $("<option>" + traceVal + "</option>").appendTo(selectField);
-            });
+                var selectField = $("<select></select>");
+                traceValues.forEach(function(traceVal) {
+                    $("<option>" + traceVal + "</option>").appendTo(selectField);
+                });
 
-            $unknownVariables.append(selectField).append("<br/>");
-        }, this);
+                $unknownVariables.append(selectField).append("<br/>");
+            }, this);
+        }
+        
     };
 
 });
