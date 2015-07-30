@@ -27,7 +27,6 @@ define(function (require, exports, module) {
 
         var configText = require("text!tasksConfig.json");
         config = JSON.parse(configText);
-        console.log(JSON.stringify(config));
 
         startStudy();
     });
@@ -36,7 +35,6 @@ define(function (require, exports, module) {
     	console.log("FiddletsStudy", "Starting fiddlets study...");
 
         var projectRoot = ProjectManager.getProjectRoot();
-        console.log("Opened project root: " + projectRoot.fullPath);
 
         FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
 
