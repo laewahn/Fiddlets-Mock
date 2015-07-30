@@ -3,19 +3,19 @@
 
 define(function (require, exports, module) {
     "use strict";
+    
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
-
-    var widgetContainer = require("text!inline-widget-template.html");
-    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
-    ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
-
-    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
 
     function StudyEditor(config) {
         InlineWidget.call(this);
         this.config = config;
         this.$htmlContent.append($(widgetContainer));
     }
+
+	var widgetContainer = require("text!inline-widget-template.html");
+    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
+    var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
 
     StudyEditor.prototype = Object.create(InlineWidget.prototype);
     StudyEditor.prototype.constructor = StudyEditor;
@@ -29,6 +29,21 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
+		if (this.config.unknownVariables !== undefined) {
+            var $unknownVariables = this.$htmlContent.find("#unknown-variables");
+            Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
+                $unknownVariables.append(unknownVar + " = ");
+                var traceValues = this.config.unknownVariables[unknownVar];
+            
+                var selectField = $("<select></select>");
+                traceValues.forEach(function(traceVal) {
+                    $("<option>" + traceVal + "</option>").appendTo(selectField);
+                });
+
+                $unknownVariables.append(selectField).append("<br/>");
+            }, this);
+        }
+        
         if (this.config.context !== undefined) {
             var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
             this.contextEditor = new CodeMirror(contextEditorContainer, {
@@ -44,21 +59,6 @@ define(function (require, exports, module) {
             mode: "javascript",
             lineNumbers: false
         });
-
-        if (this.config.unknownVariables !== undefined) {
-            var $unknownVariables = this.$htmlContent.find("#unknown-variables");
-            Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
-                $unknownVariables.append(unknownVar + " = ");
-                var traceValues = this.config.unknownVariables[unknownVar];
-            
-                var selectField = $("<select></select>");
-                traceValues.forEach(function(traceVal) {
-                    $("<option>" + traceVal + "</option>").appendTo(selectField);
-                });
-
-                $unknownVariables.append(selectField).append("<br/>");
-            }, this);
-        }
         
     };
 
