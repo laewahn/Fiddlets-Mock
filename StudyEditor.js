@@ -9,7 +9,13 @@ define(function (require, exports, module) {
     function StudyEditor(config) {
         InlineWidget.call(this);
         this.config = config;
-        this.$htmlContent.append($(widgetContainer));
+
+        this.$widgetContainer = $(widgetContainer);
+        this.$htmlContent.append(this.$widgetContainer);
+
+        this.$unknownVariables = this.$widgetContainer.find("#unknown-variables");
+        this.$contextEditorContainer = this.$widgetContainer.find("#context-editor");
+        this.$currentLineEditorContainer = this.$widgetContainer.find("#current-line-editor");
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
@@ -25,14 +31,19 @@ define(function (require, exports, module) {
     StudyEditor.prototype.currentLineEditor = undefined;
     StudyEditor.prototype.config = undefined;
 
+
+    StudyEditor.prototype.$widgetContainer = undefined;
+    StudyEditor.prototype.$unknownVariables = undefined;
+    StudyEditor.prototype.$contextEditorContainer = undefined;
+    StudyEditor.prototype.$currentLineEditor = undefined;
+
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
 		if (this.config.unknownVariables !== undefined) {
-            var $unknownVariables = this.$htmlContent.find("#unknown-variables");
             Object.keys(this.config.unknownVariables).forEach(function(unknownVar) {
-                $unknownVariables.append(unknownVar + " = ");
+                this.$unknownVariables.append(unknownVar + " = ");
                 var traceValues = this.config.unknownVariables[unknownVar];
             
                 var selectField = $("<select></select>");
@@ -40,21 +51,19 @@ define(function (require, exports, module) {
                     $("<option>" + traceVal + "</option>").appendTo(selectField);
                 });
 
-                $unknownVariables.append(selectField).append("<br/>");
+                this.$unknownVariables.append(selectField).append("<br/>");
             }, this);
         }
         
         if (this.config.context !== undefined) {
-            var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
-            this.contextEditor = new CodeMirror(contextEditorContainer, {
+            this.contextEditor = new CodeMirror(this.$contextEditorContainer.get(0), {
                 value: this.config.context,
                 mode: "javascript",
                 lineNumbers: true
             });
         }
 
-        var currentLineEditorContainer = this.$htmlContent.find("#current-line-editor").get(0);
-        this.currentLineEditor = new CodeMirror(currentLineEditorContainer, {
+        this.currentLineEditor = new CodeMirror(this.$currentLineEditorContainer.get(0), {
             value: this.config.currentLine,
             mode: "javascript",
             lineNumbers: false
