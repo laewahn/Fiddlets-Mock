@@ -27,6 +27,8 @@ define(function (require, exports, module) {
         var configText = require("text!tasksConfig.json");
         config = JSON.parse(configText);
         console.log(JSON.stringify(config));
+
+        startStudy();
     });
 
     var currentTask = undefined;
@@ -42,25 +44,28 @@ define(function (require, exports, module) {
         FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
 
     	// get the participants ID
-    	var $dialogContent = $(require("text!./dialog-participantId.html"));
+    	// getParticipantID();
+    	// open the survey
+    	// open the first task
+    }
 
-    	var dialog = Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, 
-    										 "Enter participant ID",
-    										 $dialogContent.html(),
-    										 [{
-    										 	id: "continue",
-    										 	text: "Continue",
-    										 	className: Dialogs.DIALOG_BTN_OK
-    										 }],
-    										 true
-		);
+    function getParticipantID() {
+        var $dialogContent = $(require("text!./dialog-participantId.html"));
+
+        var dialog = Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, 
+                                             "Enter participant ID",
+                                             $dialogContent.html(),
+                                             [{
+                                                id: "continue",
+                                                text: "Continue",
+                                                className: Dialogs.DIALOG_BTN_OK
+                                             }],
+                                             true
+        );
 
         dialog.done(function() {
             console.log("Dialog promise done!");
         });
-
-    	// open the survey
-    	// open the first task
     }
     
 
@@ -115,6 +120,19 @@ define(function (require, exports, module) {
             value: config[currentTask].currentLine,
             mode: "javascript",
             lineNumbers: false
+        });
+
+        var $unknownVariables = this.$htmlContent.find("#unknown-variables");
+        Object.keys(config[currentTask].unknownVariables).forEach(function(unknownVar) {
+            $unknownVariables.append(unknownVar + " = ");
+            var traceValues = config[currentTask].unknownVariables[unknownVar];
+            
+            var selectField = $("<select></select>");
+            traceValues.forEach(function(traceVal) {
+                $("<option>" + traceVal + "</option>").appendTo(selectField);
+            });
+
+            $unknownVariables.append(selectField).append("<br/>");
         });
     };
 
