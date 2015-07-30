@@ -78,7 +78,7 @@ define(function (require, exports, module) {
     function editorProvider(hostEditor, position) {
 
         var configForLine = config[currentTask][position.line + 1];
-        if(configForLine === undefined) return "Wrong line.";
+        if(configForLine === undefined) return "No information available for this line.";
 
         var inlineEditor = new StudyEditor();
 
