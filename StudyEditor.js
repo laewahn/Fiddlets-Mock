@@ -14,8 +14,8 @@ define(function (require, exports, module) {
         this.$htmlContent.append(this.$widgetContainer);
 
         this.$unknownVariables = this.$widgetContainer.find("#unknown-variables");
-        this.$contextEditorContainer = this.$widgetContainer.find("#context-editor");
-        this.$currentLineEditorContainer = this.$widgetContainer.find("#current-line-editor");
+        this.$contextEditor = this.$widgetContainer.find("#context-editor");
+        this.$currentLineEditor = this.$widgetContainer.find("#current-line-editor");
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
@@ -34,7 +34,7 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype.$widgetContainer = undefined;
     StudyEditor.prototype.$unknownVariables = undefined;
-    StudyEditor.prototype.$contextEditorContainer = undefined;
+    StudyEditor.prototype.$contextEditor = undefined;
     StudyEditor.prototype.$currentLineEditor = undefined;
 
     StudyEditor.prototype.onAdded = function() {
@@ -56,14 +56,14 @@ define(function (require, exports, module) {
         }
         
         if (this.config.context !== undefined) {
-            this.contextEditor = new CodeMirror(this.$contextEditorContainer.get(0), {
+            this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
                 value: this.config.context,
                 mode: "javascript",
                 lineNumbers: true
             });
         }
 
-        this.currentLineEditor = new CodeMirror(this.$currentLineEditorContainer.get(0), {
+        this.currentLineEditor = new CodeMirror(this.$currentLineEditor.get(0), {
             value: this.config.currentLine,
             mode: "javascript",
             lineNumbers: false
