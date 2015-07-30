@@ -16,6 +16,7 @@ define(function (require, exports, module) {
     var FileUtils = brackets.getModule("file/FileUtils");
 
     var config;
+
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
 
@@ -78,9 +79,7 @@ define(function (require, exports, module) {
         var configForLine = config[currentTask][position.line + 1];
         if(configForLine === undefined) return "No information available for this line.";
 
-        var inlineEditor = new StudyEditor();
-
-        inlineEditor.config = configForLine;
+        var inlineEditor = new StudyEditor(configForLine);
         inlineEditor.load(hostEditor);
         return new $.Deferred().resolve(inlineEditor);
     }
@@ -91,8 +90,9 @@ define(function (require, exports, module) {
 
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
 
-    function StudyEditor() {
+    function StudyEditor(config) {
         InlineWidget.call(this);
+        this.config = config;
         this.$htmlContent.append($(widgetContainer));
     }
 
