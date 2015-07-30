@@ -31,15 +31,11 @@ define(function (require, exports, module) {
         startStudy();
     });
 
-    var currentTask = undefined;
-
     function startStudy() {
     	console.log("FiddletsStudy", "Starting fiddlets study...");
 
         var projectRoot = ProjectManager.getProjectRoot();
         console.log("Opened project root: " + projectRoot.fullPath);
-        currentTask = FileUtils.getBaseName(projectRoot.fullPath);
-        console.log("Tasks name is: " + currentTask);
 
         FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
 
@@ -76,7 +72,9 @@ define(function (require, exports, module) {
     EditorManager.registerInlineEditProvider(editorProvider, 2);
 
     function editorProvider(hostEditor, position) {
+        var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
 
+        console.log("Tasks name is: " + currentTask);
         var configForLine = config[currentTask][position.line + 1];
         if(configForLine === undefined) return "No information available for this line.";
 
@@ -109,8 +107,6 @@ define(function (require, exports, module) {
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
-
-        if(currentTask === undefined) return;
 
         if (this.config.context !== undefined) {
             var contextEditorContainer = this.$htmlContent.find("#context-editor").get(0);
