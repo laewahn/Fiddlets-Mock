@@ -42,15 +42,17 @@ define(function (require, exports, module) {
         var toolbar = new StudyToolbar();
         $(".content").prepend(toolbar.$container);
 
-        ProjectManager.on("projectOpen", function(event, projectRootDirectory) {
-
+        function checkRootDirectoryAndPrepareIfTask(event, projectRootDirectory) {
             if(isTaskDirectory(projectRootDirectory)) {
                 prepareTask(projectRootDirectory);
                 toolbar.setStartStopEnabled(true);
             } else {
                 toolbar.setStartStopEnabled(false);
             }
-        });
+        }
+
+        ProjectManager.on("projectOpen", checkRootDirectoryAndPrepareIfTask);
+        checkRootDirectoryAndPrepareIfTask(null, ProjectManager.getProjectRoot());
 
         console.log("FiddletsStudy", "Watcher started");
     }
@@ -104,13 +106,39 @@ define(function (require, exports, module) {
         return new $.Deferred().resolve(inlineEditor);
     }
 
-   var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "toolbar.css");
 
-    function StudyToolbar() {
+    function StudyLog() {
+        this.taskRunning = false;
+    }
+
+    StudyLog.prototype.constructor = StudyLog;
+
+    StudyLog.prototype.taskRunning = undefined;
+    
+    StudyLog.prototype.startTask = function() {
+        this.taskRunning = true;
+    }
+
+    StudyLog.prototype.finishTask = function() {
+        this.taskRunning = false;
+    }
+
+    function StudyToolbar(studyLog) {
+        this.studyLog = studyLog;
+
         this.$container = $(require("text!toolbar.html"));
         this.$startStopTaskButton = this.$container.find("#task-start-stop-button");
 
+        function updateStartStopButton(button) {
+            button.html("Hand in task.");
+        }
+
+        this.$startStopTaskButton.on("click", function() {
+            console.log("Study toolbar button", "was clicked.");
+            updateStartStopButton($(this));
+        });
         this.setStartStopEnabled(false);
     }
 
@@ -118,6 +146,8 @@ define(function (require, exports, module) {
 
     StudyToolbar.prototype.$container = undefined;
     StudyToolbar.prototype.$startStopTaskButton = undefined;
+
+    StudyToolbar.prototype.studyLog = undefined;
 
     StudyToolbar.prototype.setStartStopEnabled = function (isEnabled) {
         this.$startStopTaskButton.prop("disabled", !isEnabled);

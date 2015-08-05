@@ -1,5 +1,4 @@
 {
-	"foo" : "bar",
 	"Task 1" : {
 		"38" : {
 			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;"
