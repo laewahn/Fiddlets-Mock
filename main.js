@@ -1,6 +1,14 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, regexp: true, bitwise: true */
 /*global define, brackets, $ */
 
+// TODO
+/*
+ * 1. Wait for project change
+ * 2. Check if project is task (root name starts with "Task", contains description.pdf)
+ * 3. If task, open description.pdf, open mustache.js, open terminal
+ * 4. Add menu bar with "start task" button
+ */
+
 define(function (require, exports, module) {
     "use strict";
     
@@ -18,30 +26,27 @@ define(function (require, exports, module) {
     var config;
 
     AppInit.appReady(function () {
-    	CommandManager.register("Start Fiddlets Study", "Fiddlets.Study.start", startStudy);
+    	CommandManager.register("Start Fiddlets Study Watcher", "Fiddlets.Study.startStudyWatcher", startStudy);
 
     	var debugMenu = Menus.getMenu("debug-menu");
     	debugMenu.addMenuDivider();
-    	debugMenu.addMenuItem("Fiddlets.Study.start");
+    	debugMenu.addMenuItem("Fiddlets.Study.startStudyWatcher");
     	console.log("FiddletsStudy", "App ready...");
-
-        var configText = require("text!tasksConfig.json");
-        config = JSON.parse(configText);
-
-        startStudy();
     });
 
     function startStudy() {
-    	console.log("FiddletsStudy", "Starting fiddlets study...");
+    	var configText = require("text!tasksConfig.json");
+        config = JSON.parse(configText);
 
+        ProjectManager.on("projectOpen", prepareTask);
+    }
+
+    function prepareTask() {
         var projectRoot = ProjectManager.getProjectRoot();
+        var taskName = FileUtils.getBaseName(projectRoot.fullPath));
+        console.log("FiddletsStudy", "Starting task " + taskName;
 
         FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
-
-    	// get the participants ID
-    	// getParticipantID();
-    	// open the survey
-    	// open the first task
     }
 
     function getParticipantID() {
