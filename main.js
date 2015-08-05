@@ -26,27 +26,40 @@ define(function (require, exports, module) {
     var config;
 
     AppInit.appReady(function () {
-    	CommandManager.register("Start Fiddlets Study Watcher", "Fiddlets.Study.startStudyWatcher", startStudy);
+    	CommandManager.register("Start Fiddlets Study Watcher", "Fiddlets.Study.startStudyWatcher", startStudyWatcher);
 
     	var debugMenu = Menus.getMenu("debug-menu");
     	debugMenu.addMenuDivider();
     	debugMenu.addMenuItem("Fiddlets.Study.startStudyWatcher");
     	console.log("FiddletsStudy", "App ready...");
+
+        startStudyWatcher();
     });
 
-    function startStudy() {
+    function startStudyWatcher() {
     	var configText = require("text!tasksConfig.json");
         config = JSON.parse(configText);
 
-        ProjectManager.on("projectOpen", prepareTask);
+        ProjectManager.on("projectOpen", function(event, projectRootDirectory) {
+            if(isTaskDirectory(projectRootDirectory)) {
+                prepareTask(projectRootDirectory)    
+            }
+        });
+
+        console.log("FiddletsStudy", "Watcher started");
     }
 
-    function prepareTask() {
-        var projectRoot = ProjectManager.getProjectRoot();
-        var taskName = FileUtils.getBaseName(projectRoot.fullPath));
-        console.log("FiddletsStudy", "Starting task " + taskName;
+    function isTaskDirectory(projectRootDirectory) {
+        var projectMatcher = /^Task\s[1-4]/g;
 
-        FileViewController.openFileAndAddToWorkingSet(projectRoot.fullPath + "/mustache.js");
+        return projectMatcher.test(FileUtils.getBaseName(projectRootDirectory.fullPath));
+    }
+
+    function prepareTask(projectRootDirectory) {
+        var taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
+        console.log("FiddletsStudy", "Preparing task " + taskName);
+
+        FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/mustache.js");
     }
 
     function getParticipantID() {
