@@ -37,12 +37,18 @@ define(function (require, exports, module) {
     });
 
     function startStudyWatcher() {
-    	var configText = require("text!tasksConfig.json");
-        config = JSON.parse(configText);
+        config = JSON.parse(require("text!tasksConfig.json"));
+        
+        var toolbar = new StudyToolbar();
+        $(".content").prepend(toolbar.$container);
 
         ProjectManager.on("projectOpen", function(event, projectRootDirectory) {
+
             if(isTaskDirectory(projectRootDirectory)) {
-                prepareTask(projectRootDirectory)    
+                prepareTask(projectRootDirectory);
+                toolbar.setStartStopEnabled(true);
+            } else {
+                toolbar.setStartStopEnabled(false);
             }
         });
 
@@ -98,6 +104,23 @@ define(function (require, exports, module) {
         return new $.Deferred().resolve(inlineEditor);
     }
 
-    
+   var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    ExtensionUtils.loadStyleSheet(module, "toolbar.css");
+
+    function StudyToolbar() {
+        this.$container = $(require("text!toolbar.html"));
+        this.$startStopTaskButton = this.$container.find("#task-start-stop-button");
+
+        this.setStartStopEnabled(false);
+    }
+
+    StudyToolbar.prototype.constructor = StudyToolbar;
+
+    StudyToolbar.prototype.$container = undefined;
+    StudyToolbar.prototype.$startStopTaskButton = undefined;
+
+    StudyToolbar.prototype.setStartStopEnabled = function (isEnabled) {
+        this.$startStopTaskButton.prop("disabled", !isEnabled);
+    } 
 
 });
