@@ -1,14 +1,15 @@
 #widget-container {
 	margin-top: 30px;
-	margin-left: 10px;
+	margin-left: 20px;
 }
 
 #context-editor {
 	margin-left: -20px;
+	margin-right: 30px;
 }
 
-#current-line-editor {
-	margin-left: 34px;
+#type-field {
+	margin-left: 20px;
 }
 
 .study-editor {

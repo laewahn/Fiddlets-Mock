@@ -1,24 +1,28 @@
 {
 	"Task 1" : {
 		"38" : {
-			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;"
+			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;",
+			"type" : "RegExp"
 		},
 		"39" : {
-			"currentLine" : "var replacement = '\\\\$&';"
+			"currentLine" : "var replacement = '\\\\$&';",
+			"type" : "String"
 		},
 		"40" : {
 			"unknownVariables" : {
 				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
 			},
 			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
-			"currentLine" : "string.replace(regExpMetaCharacters, replacement);"
+			"currentLine" : "string.replace(regExpMetaCharacters, replacement);",
+			"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])"
 		},
 		"42" : {
 			"unknownVariables" : {
 				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
 			},
 			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);",
-			"currentLine" : "return escaped;"	
+			"currentLine" : "return escaped;",
+			"type" : "String"
 		}		
 	},
 
