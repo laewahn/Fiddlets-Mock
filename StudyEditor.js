@@ -15,6 +15,7 @@ define(function (require, exports, module) {
 
         this.$contextEditor = this.$widgetContainer.find("#context-editor");
         this.$typeField = this.$widgetContainer.find("#type-field");
+        this.$output = this.$widgetContainer.find("#output-field");
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
@@ -32,6 +33,7 @@ define(function (require, exports, module) {
     StudyEditor.prototype.$widgetContainer = undefined;
     StudyEditor.prototype.$contextEditor = undefined;
     StudyEditor.prototype.$typeField = undefined;
+    StudyEditor.prototype.$output = undefined;
 
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
@@ -39,17 +41,40 @@ define(function (require, exports, module) {
 
         this.$typeField.text(this.config.type);
     
+        this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
+            mode: "javascript",
+            lineNumbers: true
+        });
+
         var contextElements = [];
         if (this.config.context) { contextElements.push(this.config.context); }
         if (this.config.currentLine) { contextElements.push(this.config.currentLine); }
 
-        this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
-            value: contextElements.join("\n\n"),
-            mode: "javascript",
-            lineNumbers: true
+        var contextSource = contextElements.join("\n\n").replace("<#undefined#>", function(){
+            return "\"" + this.config.unknownVariables.string[0] + "\"";
+        }.bind(this));
+    
+        console.log(contextSource);
+        this.contextEditor.setValue(contextSource);
+
+        var $gutter = $(this.contextEditor.getGutterElement());
+        console.log($gutter);
+        var gutterWidth = $gutter.children("div:first").width();
+
+        var charPositions = this.contextEditor.charCoords({line: 0, ch: 0}, "local");
+        var $selector = $("<div></div>").addClass("fd-selector");
+        $selector.css({
+            top: charPositions.top,
+            left: charPositions.left + gutterWidth
         });
-        
+        $selector.click(function(e) {
+            e.preventDefault();
+            console.log("Selector click");
+        });
+
+        this.$contextEditor.prepend($selector);
     };
+
 
     module.exports = StudyEditor;
 });
