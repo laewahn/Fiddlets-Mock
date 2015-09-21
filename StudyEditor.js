@@ -23,6 +23,8 @@ define(function (require, exports, module) {
     ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
 
+    var GUTTER_WIDTH;
+
     StudyEditor.prototype = Object.create(InlineWidget.prototype);
     StudyEditor.prototype.constructor = StudyEditor;
     StudyEditor.prototype.parentClass = InlineWidget.prototype;
@@ -47,7 +49,7 @@ define(function (require, exports, module) {
         });
 
         var $gutter = $(this.contextEditor.getGutterElement());
-        var gutterWidth = $gutter.children("div:first").width();
+        GUTTER_WIDTH = $gutter.children("div:first").width();
 
         this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
 
@@ -57,6 +59,7 @@ define(function (require, exports, module) {
             var tag = "<#undefined#>";
             if (lineText.indexOf(tag) !== -1) {
                 
+                // Find the tag
                 var tagStart = lineText.indexOf(tag);
                 var tagLength = tag.length;
 
@@ -67,25 +70,32 @@ define(function (require, exports, module) {
                     index: tagStart
                 };
 
+                // Create a new selector element
+                var $selector = new TraceSelector(this.contextEditor);
+                // var $selector = this._selectorElementForReplacement(replacement, GUTTER_WIDTH);
+                // this.$contextEditor.prepend($selector);
+                this.$contextEditor.prepend($selector.$element);
+
+                // Replace the unknown variable and update the selectors position
                 this.contextEditor.replaceRange(replacement.object, 
                                                 {line: replacement.line, ch: tagStart}, 
                                                 {line: replacement.line, ch: tagStart + tagLength});
-                var $selector = this._selectorElementForReplacement(replacement, gutterWidth);
-                this.$contextEditor.prepend($selector);
+
+                // var charPositions = this.contextEditor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");                
+                // $selector.css({
+                    // top: charPositions.top,
+                    // left: charPositions.left + GUTTER_WIDTH
+                // });
+                $selector.updatePosition(replacement);
             }
         }.bind(this));
     };
 
-    StudyEditor.prototype._selectorElementForReplacement = function(replacement, gutterWidth) {
-        var charPositions = this.contextEditor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");
-
+    StudyEditor.prototype._selectorElementForReplacement = function(replacement) {
         var $selector = $("<div></div>").addClass("fd-selector");
-        $selector.css({
-            top: charPositions.top,
-            left: charPositions.left + gutterWidth
-        });
         
-        $selector.editor = this.contextEditor;                
+        $selector.editor = this.contextEditor;
+
         $selector.click(function(e) {
             e.preventDefault();
         });
@@ -99,6 +109,37 @@ define(function (require, exports, module) {
         });
         
         return $selector;
+    };
+
+    function TraceSelector(editor) {
+        this.$element = $("<div></div>").addClass("fd-selector");
+
+        this.$element.click(function(e) {
+            e.preventDefault();
+        });
+
+        this.$element.hover(function() {
+            this.marker = this.editor.markText({line: this.replacement.line, ch: this.replacement.index}, 
+                                     {line: this.replacement.line, ch: this.replacement.index + this.replacement.object.length},
+                                     {className: "fd-selector-highlight"});
+        }.bind(this), function() {
+            this.marker.clear();
+        }.bind(this));
+
+        this.editor = editor;
+    }
+
+    TraceSelector.prototype.$element = undefined;
+    TraceSelector.prototype.editor = undefined;
+    TraceSelector.prototype.line = undefined;
+
+    TraceSelector.prototype.updatePosition = function(replacement) {
+        this.replacement = replacement;
+        var charPositions = this.editor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");                
+        this.$element.css({
+            top: charPositions.top,
+            left: charPositions.left + GUTTER_WIDTH
+        });
     };
 
     module.exports = StudyEditor;
