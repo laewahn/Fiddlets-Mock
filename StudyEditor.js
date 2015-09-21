@@ -52,51 +52,54 @@ define(function (require, exports, module) {
         this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
 
         this.contextEditor.eachLine(function(lineHandle) {
-            console.log(lineHandle);
-            var lineText = lineHandle.text;
-            if (lineText.indexOf("<#undefined") !== -1) {
 
-                var replacement = JSON.stringify(this.config.unknownVariables.string[2]);
-                var tag = "<#undefined#>";
+            var lineText = lineHandle.text;
+            var tag = "<#undefined#>";
+            if (lineText.indexOf(tag) !== -1) {
+                
                 var tagStart = lineText.indexOf(tag);
                 var tagLength = tag.length;
 
-                var lineNo = lineHandle.lineNo();
-                var start = {line: lineNo, ch: tagStart};
-                var end =  {line: lineNo, ch: tagStart + tagLength};
-                this.contextEditor.replaceRange(replacement, start, end);
+                var replacement = {
+                    lineText: lineText,
+                    object: JSON.stringify(this.config.unknownVariables.string[0]),
+                    line: lineHandle.lineNo(),
+                    index: tagStart
+                };
 
-                var charPositions = this.contextEditor.charCoords({line: 0, ch: lineText.length}, "local");
-                var $selector = $("<div></div>").addClass("fd-selector");
-                
-                var indexOfReplacement = lineText.indexOf(tag);
-                var replacementLength = replacement.length;
-                var marker;
-
-                var editor = this.contextEditor;
-                $selector.css({
-                    top: charPositions.top,
-                    left: charPositions.left + gutterWidth
-                });
-                
-                $selector.click(function(e) {
-                    e.preventDefault();
-                    console.log("Selector click");
-                });
-
-                $selector.hover(function() {
-                    marker = editor.markText({line: lineNo, ch: indexOfReplacement}, 
-                                             {line: lineNo, ch: indexOfReplacement + replacementLength},
-                                             {className: "fd-selector-highlight"});
-                }, function() {
-                    marker.clear();
-                });
-
-                this.$contextEditor.prepend($selector);        
+                this.contextEditor.replaceRange(replacement.object, 
+                                                {line: replacement.line, ch: tagStart}, 
+                                                {line: replacement.line, ch: tagStart + tagLength});
+                var $selector = this._selectorElementForReplacement(replacement, gutterWidth);
+                this.$contextEditor.prepend($selector);
             }
         }.bind(this));
     };
 
+    StudyEditor.prototype._selectorElementForReplacement = function(replacement, gutterWidth) {
+        var charPositions = this.contextEditor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");
+
+        var $selector = $("<div></div>").addClass("fd-selector");
+        $selector.css({
+            top: charPositions.top,
+            left: charPositions.left + gutterWidth
+        });
+        
+        $selector.editor = this.contextEditor;                
+        $selector.click(function(e) {
+            e.preventDefault();
+        });
+
+        $selector.hover(function() {
+            $selector.marker = $selector.editor.markText({line: replacement.line, ch: replacement.index}, 
+                                     {line: replacement.line, ch: replacement.index + replacement.object.length},
+                                     {className: "fd-selector-highlight"});
+        }, function() {
+            $selector.marker.clear();
+        });
+        
+        return $selector;
+    };
 
     module.exports = StudyEditor;
 });
