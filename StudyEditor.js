@@ -72,43 +72,16 @@ define(function (require, exports, module) {
 
                 // Create a new selector element
                 var $selector = new TraceSelector(this.contextEditor);
-                // var $selector = this._selectorElementForReplacement(replacement, GUTTER_WIDTH);
-                // this.$contextEditor.prepend($selector);
                 this.$contextEditor.prepend($selector.$element);
 
                 // Replace the unknown variable and update the selectors position
                 this.contextEditor.replaceRange(replacement.object, 
                                                 {line: replacement.line, ch: tagStart}, 
                                                 {line: replacement.line, ch: tagStart + tagLength});
-
-                // var charPositions = this.contextEditor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");                
-                // $selector.css({
-                    // top: charPositions.top,
-                    // left: charPositions.left + GUTTER_WIDTH
-                // });
+    
                 $selector.updatePosition(replacement);
             }
         }.bind(this));
-    };
-
-    StudyEditor.prototype._selectorElementForReplacement = function(replacement) {
-        var $selector = $("<div></div>").addClass("fd-selector");
-        
-        $selector.editor = this.contextEditor;
-
-        $selector.click(function(e) {
-            e.preventDefault();
-        });
-
-        $selector.hover(function() {
-            $selector.marker = $selector.editor.markText({line: replacement.line, ch: replacement.index}, 
-                                     {line: replacement.line, ch: replacement.index + replacement.object.length},
-                                     {className: "fd-selector-highlight"});
-        }, function() {
-            $selector.marker.clear();
-        });
-        
-        return $selector;
     };
 
     function TraceSelector(editor) {
