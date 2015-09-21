@@ -46,34 +46,55 @@ define(function (require, exports, module) {
             lineNumbers: true
         });
 
-        var contextElements = [];
-        if (this.config.context) { contextElements.push(this.config.context); }
-        if (this.config.currentLine) { contextElements.push(this.config.currentLine); }
-
-        var contextSource = contextElements.join("\n\n").replace("<#undefined#>", function(){
-            return "\"" + this.config.unknownVariables.string[0] + "\"";
-        }.bind(this));
-    
-        console.log(contextSource);
-        this.contextEditor.setValue(contextSource);
-
         var $gutter = $(this.contextEditor.getGutterElement());
-        console.log($gutter);
         var gutterWidth = $gutter.children("div:first").width();
 
-        var line = this.contextEditor.getLine(0);
-        var charPositions = this.contextEditor.charCoords({line: 0, ch: line.length}, "local");
-        var $selector = $("<div></div>").addClass("fd-selector");
-        $selector.css({
-            top: charPositions.top,
-            left: charPositions.left + gutterWidth
-        });
-        $selector.click(function(e) {
-            e.preventDefault();
-            console.log("Selector click");
-        });
+        this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
 
-        this.$contextEditor.prepend($selector);
+        this.contextEditor.eachLine(function(lineHandle) {
+            console.log(lineHandle);
+            var lineText = lineHandle.text;
+            if (lineText.indexOf("<#undefined") !== -1) {
+
+                var replacement = JSON.stringify(this.config.unknownVariables.string[2]);
+                var tag = "<#undefined#>";
+                var tagStart = lineText.indexOf(tag);
+                var tagLength = tag.length;
+
+                var lineNo = lineHandle.lineNo();
+                var start = {line: lineNo, ch: tagStart};
+                var end =  {line: lineNo, ch: tagStart + tagLength};
+                this.contextEditor.replaceRange(replacement, start, end);
+
+                var charPositions = this.contextEditor.charCoords({line: 0, ch: lineText.length}, "local");
+                var $selector = $("<div></div>").addClass("fd-selector");
+                
+                var indexOfReplacement = lineText.indexOf(tag);
+                var replacementLength = replacement.length;
+                var marker;
+
+                var editor = this.contextEditor;
+                $selector.css({
+                    top: charPositions.top,
+                    left: charPositions.left + gutterWidth
+                });
+                
+                $selector.click(function(e) {
+                    e.preventDefault();
+                    console.log("Selector click");
+                });
+
+                $selector.hover(function() {
+                    marker = editor.markText({line: lineNo, ch: indexOfReplacement}, 
+                                             {line: lineNo, ch: indexOfReplacement + replacementLength},
+                                             {className: "fd-selector-highlight"});
+                }, function() {
+                    marker.clear();
+                });
+
+                this.$contextEditor.prepend($selector);        
+            }
+        }.bind(this));
     };
 
 

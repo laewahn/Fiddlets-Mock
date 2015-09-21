@@ -36,3 +36,7 @@ select {
 	height: 15px;
 	z-index: 999;
 }
+
+.fd-selector-highlight {
+	background-color: #bfdaff;
+}
