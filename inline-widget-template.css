@@ -29,7 +29,8 @@ select {
 }
 
 .fd-selector {
-	background-color: #0000ff;
+	/*background-color: #90beff;*/
+	background: url(selector.png) 0 0 no-repeat;
 	position: absolute;
 	width: 15px;
 	height: 15px;

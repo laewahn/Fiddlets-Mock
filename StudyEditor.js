@@ -61,7 +61,8 @@ define(function (require, exports, module) {
         console.log($gutter);
         var gutterWidth = $gutter.children("div:first").width();
 
-        var charPositions = this.contextEditor.charCoords({line: 0, ch: 0}, "local");
+        var line = this.contextEditor.getLine(0);
+        var charPositions = this.contextEditor.charCoords({line: 0, ch: line.length}, "local");
         var $selector = $("<div></div>").addClass("fd-selector");
         $selector.css({
             top: charPositions.top,
