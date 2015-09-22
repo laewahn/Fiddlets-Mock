@@ -29,12 +29,22 @@ select {
 }
 
 .fd-selector {
-	/*background-color: #90beff;*/
-	background: url(selector.png) 0 0 no-repeat;
 	position: absolute;
-	width: 15px;
-	height: 15px;
 	z-index: 999;
+}
+
+.fd-selector button {
+	margin-top: -3px;
+	border: none;
+	width: 16px;
+	height: 15px;
+
+	background-color: #90beff;
+}
+
+.fd-selector .caret {
+	margin-top: 4px;
+	margin-left: -2px;
 }
 
 .fd-selector-highlight {
