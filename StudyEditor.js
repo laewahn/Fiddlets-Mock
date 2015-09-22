@@ -22,6 +22,7 @@ define(function (require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
+    var CodeHintList = brackets.getModule("editor/CodeHintList").CodeHintList;
 
     var GUTTER_WIDTH;
 
@@ -63,56 +64,69 @@ define(function (require, exports, module) {
                 var tagStart = lineText.indexOf(tag);
                 var tagLength = tag.length;
 
-                var replacement = {
-                    lineText: lineText,
-                    object: JSON.stringify(this.config.unknownVariables.string[0]),
-                    line: lineHandle.lineNo(),
-                    index: tagStart
-                };
-
                 // Create a new selector element
-                var $selector = new TraceSelector(this.contextEditor);
+                var $selector = new TraceSelector(this.contextEditor, lineHandle);
                 this.$contextEditor.prepend($selector.$element);
 
-                // Replace the unknown variable and update the selectors position
-                this.contextEditor.replaceRange(replacement.object, 
-                                                {line: replacement.line, ch: tagStart}, 
-                                                {line: replacement.line, ch: tagStart + tagLength});
-    
-                $selector.updatePosition(replacement);
+                var selectedTraceObject = JSON.stringify(this.config.unknownVariables.string[0]);
+                $selector.setSelectedTraceObject(selectedTraceObject, tagStart, tagLength);
             }
         }.bind(this));
     };
 
-    function TraceSelector(editor) {
+    function TraceSelector(editor, lineHandle) {
+        this.editor = editor;
+        this.lineHandle = lineHandle;
+        this.tagBegin = this.lineHandle.text.indexOf("<#undefined#>");
+
         this.$element = $("<div></div>").addClass("fd-selector");
 
         this.$element.click(function(e) {
             e.preventDefault();
         });
 
-        this.$element.hover(function() {
-            this.marker = this.editor.markText({line: this.replacement.line, ch: this.replacement.index}, 
-                                     {line: this.replacement.line, ch: this.replacement.index + this.replacement.object.length},
-                                     {className: "fd-selector-highlight"});
-        }.bind(this), function() {
-            this.marker.clear();
-        }.bind(this));
-
-        this.editor = editor;
+        this.$element.hover(this._onHoverEnter.bind(this), this._onHoverLeave.bind(this));
+        this.codeHintList = new CodeHintList(editor, true, 5);
+        var substitutionsProvider = {
+            hasHints: function() {return true;},
+            getHints: function() {return {hints : ["a", "b", "c"], match: null, selectInitial: true};},
+            insertHint: function() {}
+        }
     }
+
+    TraceSelector.prototype._onHoverEnter = function() {
+        var startPosition = {line: this.lineHandle.lineNo(), ch: this.tagBegin};
+        var endPosition = {line: this.lineHandle.lineNo(), ch: this.tagBegin + this.substitutionObject.length};
+        this.marker = this.editor.markText(startPosition, endPosition, {className: "fd-selector-highlight"});
+    };
+
+    TraceSelector.prototype._onHoverLeave = function() {
+        this.marker.clear();
+    };
 
     TraceSelector.prototype.$element = undefined;
     TraceSelector.prototype.editor = undefined;
-    TraceSelector.prototype.line = undefined;
+    TraceSelector.prototype.lineHandle = undefined;
+    TraceSelector.prototype.tagBegin = undefined;
+    TraceSelector.prototype.substitutionObject = undefined;
+    TraceSelector.prototype.codeHintList = undefined;
 
-    TraceSelector.prototype.updatePosition = function(replacement) {
-        this.replacement = replacement;
-        var charPositions = this.editor.charCoords({line: replacement.line, ch: replacement.lineText.length}, "local");                
+    TraceSelector.prototype.updatePosition = function() {
+        var charPositions = this.editor.charCoords({line: this.lineHandle.lineNo(), ch: this.lineHandle.text.length}, "local");                
         this.$element.css({
             top: charPositions.top,
             left: charPositions.left + GUTTER_WIDTH
         });
+    };
+
+    TraceSelector.prototype.setSelectedTraceObject = function(newTraceObject, tagStart, tagLength) {
+        this.substitutionObject = newTraceObject;
+        this.editor.replaceRange(newTraceObject, 
+                                          {line: this.lineHandle.lineNo(), ch: tagStart}, 
+                                          {line: this.lineHandle.lineNo(), ch: tagStart + tagLength});
+    
+
+        this.updatePosition();
     };
 
     module.exports = StudyEditor;
