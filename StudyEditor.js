@@ -80,7 +80,21 @@ define(function (require, exports, module) {
         console.log(this.contextEditor.getValue());
         VariableTraceDomain.exec("getTraceForCode", this.contextEditor.getValue())
         .done(function(trace) {
-            console.log(JSON.parse(trace));
+            var reviver = function(key, value) {
+            if (value.__type && value.__type === "RegExp") {
+                var flags = [];
+
+                if (value.global) flags.push("g");
+                if (value.multiline) flags.push("m");
+                if (value.ignoreCase) flags.push("i");
+
+                return new RegExp(value.source, flags);
+            }
+            
+            return value;
+        };
+
+            console.log(JSON.parse(trace, reviver));
         })
         .fail(function(error) {
             console.error(error);
