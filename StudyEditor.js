@@ -5,9 +5,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
-    var NodeDomain = brackets.getModule("utils/NodeDomain");
-    var VariableTraceDomain = new NodeDomain("VariableTraceDomain", ExtensionUtils.getModulePath(module, "node_modules/ContextCollector/VariableTraceDomain"));
-    
+    var VariableTraceProxy = require("./VariableTraceProxy");
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
 
     function StudyEditor(config) {
@@ -77,24 +75,9 @@ define(function (require, exports, module) {
             }
         }.bind(this));
 
-        console.log(this.contextEditor.getValue());
-        VariableTraceDomain.exec("getTraceForCode", this.contextEditor.getValue())
+        VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
-            var reviver = function(key, value) {
-            if (value.__type && value.__type === "RegExp") {
-                var flags = [];
-
-                if (value.global) flags.push("g");
-                if (value.multiline) flags.push("m");
-                if (value.ignoreCase) flags.push("i");
-
-                return new RegExp(value.source, flags);
-            }
-            
-            return value;
-        };
-
-            console.log(JSON.parse(trace, reviver));
+            console.log(trace);
         })
         .fail(function(error) {
             console.error(error);
