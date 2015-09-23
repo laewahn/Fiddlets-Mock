@@ -8,5 +8,8 @@
     
     "engines": {
         "brackets": ">=0.41.0"
+    },
+    "dependencies" :{
+    	"ContextCollector" : "git+ssh://oliver.informatik.rwth-aachen.de/Public/Research%20Projects/Live%20Coding/Source/Lewandowski_ContextCollector.git"
     }
 }

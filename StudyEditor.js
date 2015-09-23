@@ -3,6 +3,10 @@
 
 define(function (require, exports, module) {
     "use strict";
+
+    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    var NodeDomain = brackets.getModule("utils/NodeDomain");
+    var VariableTraceDomain = new NodeDomain("VariableTraceDomain", ExtensionUtils.getModulePath(module, "node_modules/ContextCollector/VariableTraceDomain"));
     
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
 
@@ -72,6 +76,11 @@ define(function (require, exports, module) {
                 $selector.setSelectedTraceObject(selectedTraceObject);
             }
         }.bind(this));
+
+        VariableTraceDomain.exec("getTraceForCode", this.contextEditor.getValue())
+            .done(function(trace) {
+                console.log(JSON.stringify(trace, null, 2));
+            })
     };
 
     function TraceSelector(editor, lineHandle, substitutions) {
