@@ -13,7 +13,7 @@
 				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
 			},
 			"context" : "var string = <#undefined#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
-			"currentLine" : "string.replace(regExpMetaCharacters, replacement);",
+			"currentLine" : "var escaped = string.replace(regExpMetaCharacters, replacement);",
 			"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])"
 		},
 		"42" : {

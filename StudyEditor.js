@@ -23,7 +23,7 @@ define(function (require, exports, module) {
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
-    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    
     ExtensionUtils.loadStyleSheet(module, "inline-widget-template.css");
     var CodeMirror = brackets.getModule("thirdparty/CodeMirror2/lib/codemirror");
 
@@ -77,10 +77,14 @@ define(function (require, exports, module) {
             }
         }.bind(this));
 
+        console.log(this.contextEditor.getValue());
         VariableTraceDomain.exec("getTraceForCode", this.contextEditor.getValue())
-            .done(function(trace) {
-                console.log(JSON.stringify(trace, null, 2));
-            })
+        .done(function(trace) {
+            console.log(JSON.parse(trace));
+        })
+        .fail(function(error) {
+            console.error(error);
+        });
     };
 
     function TraceSelector(editor, lineHandle, substitutions) {
