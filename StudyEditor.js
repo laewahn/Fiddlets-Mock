@@ -49,12 +49,16 @@ define(function (require, exports, module) {
             mode: "javascript",
             lineNumbers: true
         });
+        this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
 
         var $gutter = $(this.contextEditor.getGutterElement());
         GUTTER_WIDTH = $gutter.children("div:first").width();
 
-        this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
+        this._createTraceSelectors();
+        this._traceContextCode();
+    };
 
+    StudyEditor.prototype._createTraceSelectors = function() {
         this.contextEditor.eachLine(function(lineHandle) {
 
             var lineText = lineHandle.text;
@@ -74,7 +78,9 @@ define(function (require, exports, module) {
                 $selector.setSelectedTraceObject(selectedTraceObject);
             }
         }.bind(this));
+    };
 
+    StudyEditor.prototype._traceContextCode = function() {
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
             console.log(trace);
