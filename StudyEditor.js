@@ -70,8 +70,11 @@ define(function (require, exports, module) {
                     return JSON.stringify(v);
                 });
 
-                var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions);
-                $selector.substitutionObject = tag;
+                var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
+                $selector.substitutionChangedCallback = function() {
+                    this._traceContextCode();
+                }.bind(this);
+
                 this.$contextEditor.prepend($selector.$element);
 
                 var selectedTraceObject = JSON.stringify(this.config.unknownVariables.string[0]);
@@ -90,10 +93,12 @@ define(function (require, exports, module) {
         });
     };
 
-    function TraceSelector(editor, lineHandle, substitutions) {
+    function TraceSelector(editor, lineHandle, substitutions, tag) {
         this.editor = editor;
         this.lineHandle = lineHandle;
-        this.tagBegin = this.lineHandle.text.indexOf("<#undefined#>");
+        this.currentSubstitution = tag;
+
+        this.tagBegin = this.lineHandle.text.indexOf(tag);
 
         this.$element = $("<div>" +
                             "<button type=\"button\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"true\">" +
@@ -121,7 +126,7 @@ define(function (require, exports, module) {
         $dropdown.on("click", "li", function() {
             var selector = $(this).data("traceSelector");
             var substitution = $(this).data("substitution");
-            selector.setSelectedTraceObject(substitution, selector.tagBegin, selector.substitutionObject.length);
+            selector.setSelectedTraceObject(substitution, selector.tagBegin, selector.currentSubstitution.length);
             $button.blur();
         });
 
@@ -143,8 +148,9 @@ define(function (require, exports, module) {
     TraceSelector.prototype.editor = undefined;
     TraceSelector.prototype.lineHandle = undefined;
     TraceSelector.prototype.tagBegin = undefined;
-    TraceSelector.prototype.substitutionObject = undefined;
+    TraceSelector.prototype.currentSubstitution = undefined;
     TraceSelector.prototype.substitutions = undefined;
+    TraceSelector.prototype.substitutionChangedCallback = undefined;
 
     TraceSelector.prototype.updatePosition = function() {
         var charPositions = this.editor.charCoords({line: this.lineHandle.lineNo(), ch: this.lineHandle.text.length}, "local");                
@@ -157,10 +163,13 @@ define(function (require, exports, module) {
     TraceSelector.prototype.setSelectedTraceObject = function(newTraceObject) {
         this.editor.replaceRange(newTraceObject, 
                                           {line: this.lineHandle.lineNo(), ch: this.tagBegin}, 
-                                          {line: this.lineHandle.lineNo(), ch: this.tagBegin + this.substitutionObject.length});
+                                          {line: this.lineHandle.lineNo(), ch: this.tagBegin + this.currentSubstitution.length});
 
-        this.substitutionObject = newTraceObject;
+        this.currentSubstitution = newTraceObject;
         this.updatePosition();
+        if (this.substitutionChangedCallback !== undefined) {
+            this.substitutionChangedCallback();
+        }
     };
 
     module.exports = StudyEditor;
