@@ -17,7 +17,7 @@ define(function (require, exports, module) {
 
         this.$contextEditor = this.$widgetContainer.find("#context-editor");
         this.$typeField = this.$widgetContainer.find("#type-field");
-        this.$output = this.$widgetContainer.find("#output-field");
+        this.$visualization = this.$widgetContainer.find("#visualization-container");
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
@@ -37,7 +37,8 @@ define(function (require, exports, module) {
     StudyEditor.prototype.$widgetContainer = undefined;
     StudyEditor.prototype.$contextEditor = undefined;
     StudyEditor.prototype.$typeField = undefined;
-    StudyEditor.prototype.$output = undefined;
+    StudyEditor.prototype.$visualization = undefined;
+    StudyEditor.prototype.$currentVisualization = undefined;
 
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
@@ -76,18 +77,42 @@ define(function (require, exports, module) {
                 }.bind(this);
 
                 this.$contextEditor.prepend($selector.$element);
-
-                var selectedTraceObject = JSON.stringify(this.config.unknownVariables.string[0]);
-                $selector.setSelectedTraceObject(selectedTraceObject);
             }
         }.bind(this));
     };
 
     StudyEditor.prototype._traceContextCode = function() {
+        if (this.$currentVisualization !== undefined) {
+            this.$currentVisualization.remove();
+        }
+
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
-            console.log(trace);
-        })
+            
+            var re = trace.regExpMetaCharacters;
+            var string = trace.string;
+
+            var $regexpVisualization = $("<div></div");
+            $regexpVisualization.append($("<p></p>").text("Replaced " + re.toString() + " with " + trace.replacement));
+
+            var idx = 0;
+            var stylizedString = string.replace(re, function(match) {
+                var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+                return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
+            });
+
+            idx = 0;
+            var stylizedResult = string.replace(re, function(match) {
+                var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+                return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + trace.replacement + "</span>");
+            });
+
+            $regexpVisualization.append($("<p></p>").append($(stylizedString)));
+            $regexpVisualization.append($("<p></p>").append($(stylizedResult)));
+
+            this.$visualization.append($regexpVisualization);
+            this.$currentVisualization = $regexpVisualization;
+        }.bind(this))
         .fail(function(error) {
             console.error(error);
         });
@@ -114,7 +139,8 @@ define(function (require, exports, module) {
         this.$element.addClass("dropdown");
         var $dropdown = $("<ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\"></ul>");
 
-        substitutions.forEach(function(substitution) {
+        this.substitutions = substitutions;
+        this.substitutions.forEach(function(substitution) {
             var $listItem = $("<li><a href=\"#\"></a>");
             $listItem.find("a").html(substitution);
             $listItem.data("substitution", substitution); 
@@ -130,6 +156,7 @@ define(function (require, exports, module) {
             $button.blur();
         });
 
+        this.setSelectedTraceObject(this.substitutions[0]);
         this.$element.append($dropdown);
     }
     
