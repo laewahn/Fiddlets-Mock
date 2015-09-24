@@ -82,40 +82,60 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._traceContextCode = function() {
-        if (this.$currentVisualization !== undefined) {
-            this.$currentVisualization.remove();
+        if (this.currentVisualization !== undefined) {
+            this.currentVisualization.remove();
         }
 
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
+            // TODO: Das hier muss abhängig von der aktuellen Zeile ausgewählt werden. Die Infos dazu erst einmal in der
+            // taskConfig hinterlegen, später dann mit Node herausfinden...
+            var stringReplaceVisualization = new StringReplaceVisualization(trace.string, trace.regExpMetaCharacters, trace.replacement);
+            stringReplaceVisualization.addToContainer(this.$visualization);
+            this.currentVisualization = stringReplaceVisualization;
             
-            var re = trace.regExpMetaCharacters;
-            var string = trace.string;
-
-            var $regexpVisualization = $("<div></div");
-            $regexpVisualization.append($("<p></p>").text("Replaced " + re.toString() + " with " + trace.replacement));
-
-            var idx = 0;
-            var stylizedString = string.replace(re, function(match) {
-                var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-                return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
-            });
-
-            idx = 0;
-            var stylizedResult = string.replace(re, function(match) {
-                var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-                return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + trace.replacement + "</span>");
-            });
-
-            $regexpVisualization.append($("<p></p>").append($(stylizedString)));
-            $regexpVisualization.append($("<p></p>").append($(stylizedResult)));
-
-            this.$visualization.append($regexpVisualization);
-            this.$currentVisualization = $regexpVisualization;
         }.bind(this))
         .fail(function(error) {
             console.error(error);
         });
+    };
+
+    function StringReplaceVisualization(string, regexp, replacement) {
+        this.string = string;
+        this.regexp = regexp;
+        this.replacement = replacement;
+
+        this.$container = $("<div></div>");
+        this.$container.append($("<p></p>").text("Replaced " + this.regexp.toString() + " with " + this.replacement));
+
+        var idx = 0;
+        var stylizedString = string.replace(this.regexp, function(match) {
+            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
+        });
+
+        idx = 0;
+        var stylizedResult = string.replace(this.regexp, function(match) {
+            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + this.replacement + "</span>");
+        }.bind(this));
+
+        this.$container.append($("<p></p>").append($(stylizedString)));
+        this.$container.append($("<p></p>").append($(stylizedResult)));
+    }
+
+    StringReplaceVisualization.prototype.string = undefined;
+    StringReplaceVisualization.prototype.regexp = undefined;
+    StringReplaceVisualization.prototype.replacement = undefined;
+    StringReplaceVisualization.prototype.$container = undefined;
+
+    StringReplaceVisualization.prototype.addToContainer = function($container) {
+        $container.append(this.$container);
+    };
+
+    StringReplaceVisualization.prototype.remove = function() {
+        this.$container.remove();
+        this.$container = undefined;
     };
 
     function TraceSelector(editor, lineHandle, substitutions, tag) {
