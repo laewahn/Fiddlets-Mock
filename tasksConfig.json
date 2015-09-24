@@ -14,7 +14,11 @@
 			},
 			"context" : "var string = <#undefined#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
 			"currentLine" : "var escaped = string.replace(regExpMetaCharacters, replacement);",
-			"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])"
+			"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
+			"assignedTo" : "escaped",
+			"calleeMember" : "string",
+			"method" : "replace",
+			"params" : ["regExpMetaCharacters", "replacement"]
 		},
 		"42" : {
 			"unknownVariables" : {

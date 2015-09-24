@@ -6,10 +6,10 @@ define(function(require, exports, module) {
 
 	var stringReplaceVisualizationContainer = require("text!string-replace-visualization-template.html");
     
-    function StringReplaceVisualization(string, regexp, replacement) {
-        this.string = string;
-        this.regexp = regexp;
-        this.replacement = replacement;
+    function StringReplaceVisualization(object, params) {
+        this.string = object;
+        this.regexp = params[0];
+        this.replacement = params[1];
 
         this.$container = $(stringReplaceVisualizationContainer);
         this.$replacedView = this.$container.find("#replaced-view");

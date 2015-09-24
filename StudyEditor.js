@@ -53,12 +53,21 @@ define(function (require, exports, module) {
             mode: "javascript",
             lineNumbers: true
         });
+
+        var config = this.config;
+        this.contextEditor.on("renderLine", function(instance, lineHandle, element) {
+            if (lineHandle.lineNo() === instance.lineCount() - 1) {
+                $(element).children().find("span:contains(\"" + config.assignedTo + "\")").addClass("fd-current-line-assigned-to-highlight");
+                $(element).children().find("span:contains(\"" + config.calleeMember + "\")").addClass("fd-current-line-object-highlight");
+            }
+        });
+
         this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
-        
+
         this._createTraceSelectors();
         this._traceContextCode();
 
-        this.contextEditor.on("renderLine", function() {
+        this.contextEditor.on("change", function() {
             this._traceContextCode();
         }.bind(this));
     };
@@ -90,9 +99,15 @@ define(function (require, exports, module) {
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
             this.$errorView.text("");
-            // TODO: Das hier muss abhängig von der aktuellen Zeile ausgewählt werden. Die Infos dazu erst einmal in der
-            // taskConfig hinterlegen, später dann mit Node herausfinden...
-            var stringReplaceVisualization = new StringReplaceVisualization(trace.string, trace.regExpMetaCharacters, trace.replacement);
+            
+            var object = trace[this.config.calleeMember];
+            var params = [];
+            
+            this.config.params.forEach(function(param) {
+                params.push(trace[param]);
+            });
+
+            var stringReplaceVisualization = new StringReplaceVisualization(object, params);
             stringReplaceVisualization.addToContainer(this.$visualization);
             this.currentVisualization = stringReplaceVisualization;
             

@@ -54,3 +54,11 @@ select {
 .fd-selector-highlight {
 	background-color: #bfdaff;
 }
+
+.fd-current-line-object-highlight {
+	background-color: #CBC3D7;
+}
+
+.fd-current-line-assigned-to-highlight {
+	background-color: #BED9E2;
+}
