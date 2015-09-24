@@ -18,6 +18,7 @@ define(function (require, exports, module) {
         this.$contextEditor = this.$widgetContainer.find("#context-editor");
         this.$typeField = this.$widgetContainer.find("#type-field");
         this.$visualization = this.$widgetContainer.find("#visualization-container");
+        this.$errorView = this.$widgetContainer.find("#error-view");
     }
 
 	var widgetContainer = require("text!inline-widget-template.html");
@@ -39,6 +40,7 @@ define(function (require, exports, module) {
     StudyEditor.prototype.$typeField = undefined;
     StudyEditor.prototype.$visualization = undefined;
     StudyEditor.prototype.$currentVisualization = undefined;
+    StudyEditor.prototype.$errorView = undefined;
 
     StudyEditor.prototype.onAdded = function() {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
@@ -57,6 +59,10 @@ define(function (require, exports, module) {
 
         this._createTraceSelectors();
         this._traceContextCode();
+
+        this.contextEditor.on("renderLine", function(instance, lineHandle, element) {
+            this._traceContextCode();
+        }.bind(this));
     };
 
     StudyEditor.prototype._createTraceSelectors = function() {
@@ -73,7 +79,7 @@ define(function (require, exports, module) {
 
                 var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
                 $selector.substitutionChangedCallback = function() {
-                    this._traceContextCode();
+                    // this._traceContextCode();
                 }.bind(this);
 
                 this.$contextEditor.prepend($selector.$element);
@@ -84,10 +90,12 @@ define(function (require, exports, module) {
     StudyEditor.prototype._traceContextCode = function() {
         if (this.currentVisualization !== undefined) {
             this.currentVisualization.remove();
+            this.currentVisualization = undefined;
         }
 
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
+            this.$errorView.text("");
             // TODO: Das hier muss abhängig von der aktuellen Zeile ausgewählt werden. Die Infos dazu erst einmal in der
             // taskConfig hinterlegen, später dann mit Node herausfinden...
             var stringReplaceVisualization = new StringReplaceVisualization(trace.string, trace.regExpMetaCharacters, trace.replacement);
@@ -97,46 +105,60 @@ define(function (require, exports, module) {
         }.bind(this))
         .fail(function(error) {
             console.error(error);
-        });
+            this.$errorView.text(error);
+        }.bind(this));
     };
 
+    
+    var stringReplaceVisualizationContainer = require("text!visualization-string-replace-template.html");
+    
     function StringReplaceVisualization(string, regexp, replacement) {
         this.string = string;
         this.regexp = regexp;
         this.replacement = replacement;
 
-        this.$container = $("<div></div>");
-        this.$container.append($("<p></p>").text("Replaced " + this.regexp.toString() + " with " + this.replacement));
-
-        var idx = 0;
-        var stylizedString = string.replace(this.regexp, function(match) {
-            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
-        });
-
-        idx = 0;
-        var stylizedResult = string.replace(this.regexp, function(match) {
-            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + this.replacement + "</span>");
-        }.bind(this));
-
-        this.$container.append($("<p></p>").append($(stylizedString)));
-        this.$container.append($("<p></p>").append($(stylizedResult)));
+        this.$container = $(stringReplaceVisualizationContainer);
+        this.$replacedView = this.$container.find("#replaced-view");
+        this.$stringView = this.$container.find("#string-view");
+        this.$resultsView = this.$container.find("#results-view");
     }
 
     StringReplaceVisualization.prototype.string = undefined;
     StringReplaceVisualization.prototype.regexp = undefined;
     StringReplaceVisualization.prototype.replacement = undefined;
+    
     StringReplaceVisualization.prototype.$container = undefined;
+    StringReplaceVisualization.prototype.$replacedView = undefined;
+    StringReplaceVisualization.prototype.$stringView = undefined;
+    StringReplaceVisualization.prototype.$resultsView = undefined;
 
     StringReplaceVisualization.prototype.addToContainer = function($container) {
+        this._buildVisualization();
         $container.append(this.$container);
     };
 
     StringReplaceVisualization.prototype.remove = function() {
         this.$container.remove();
-        this.$container = undefined;
     };
+
+    StringReplaceVisualization.prototype._buildVisualization = function() {
+        this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + this.replacement);
+
+        var idx = 0;
+        var stylizedString = this.string.replace(this.regexp, function(match) {
+            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
+        });
+
+        idx = 0;
+        var stylizedResult = this.string.replace(this.regexp, function(match) {
+            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + this.replacement + "</span>");
+        }.bind(this));
+
+        this.$stringView.html(stylizedString);
+        this.$resultsView.html(stylizedResult);
+    }
 
     function TraceSelector(editor, lineHandle, substitutions, tag) {
         this.editor = editor;
