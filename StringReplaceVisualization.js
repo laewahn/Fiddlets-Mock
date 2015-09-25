@@ -44,13 +44,26 @@ define(function(require, exports, module) {
             return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
         });
 
+		var entityMap = {
+    		"&": "&amp;",
+    		"<": "&lt;",
+    		">": "&gt;",
+    		"\"": "&quot;",
+    		"'": "&#39;",
+    		"/": "&#x2F;"
+  		};
+
+  		function escapeHtml (string) {
+    		return String(string).replace(/[&<>"'\/]/g, function(s) {
+      			return entityMap[s];
+    		});
+  		}
+
         idx = 0;
         var stylizedResult = this.string.replace(this.regexp, function(match) {
             var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            console.log(typeof match);
             var replacement = (this.replacement instanceof Function) ? this.replacement(match) : this.replacement;
-            console.log(replacement);
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + replacement + "</span>");
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>");
         }.bind(this));
 
         this.$stringView.html(stylizedString);

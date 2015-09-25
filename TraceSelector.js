@@ -29,6 +29,11 @@ define(function(require, exports, module){
         this.$element.hover(this._onHoverEnter.bind(this), this._onHoverLeave.bind(this));
         this.$element.addClass("dropdown");
         var $dropdown = $("<ul class=\"dropdown-menu\" aria-labelledby=\"dropdownMenu1\"></ul>");
+        $dropdown.css({
+            "max-height" : "160px",
+            "overflow-y" : "auto",
+            "padding" : 0
+        });
 
         this.substitutions = substitutions;
         this.substitutions.forEach(function(substitution) {

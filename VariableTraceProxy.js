@@ -32,6 +32,11 @@ define(function(require, exports, module){
             return new RegExp(value.source, flags);
         }
 
+        if (value.__type && value.__type == "Function") {
+            /*jslint evil: true */
+            return new Function(value.params, value.body);
+        }
+
         return value;
     };
 });

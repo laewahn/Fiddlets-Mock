@@ -104,7 +104,6 @@ define(function (require, exports, module) {
             var params = [];
             
             this.config.params.forEach(function(param) {
-                console.log(trace[param]);
                 params.push(trace[param]);
             });
 
