@@ -47,7 +47,10 @@ define(function(require, exports, module) {
         idx = 0;
         var stylizedResult = this.string.replace(this.regexp, function(match) {
             var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + this.replacement + "</span>");
+            console.log(typeof match);
+            var replacement = (this.replacement instanceof Function) ? this.replacement(match) : this.replacement;
+            console.log(replacement);
+            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + replacement + "</span>");
         }.bind(this));
 
         this.$stringView.html(stylizedString);
