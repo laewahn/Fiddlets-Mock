@@ -38,37 +38,71 @@ define(function(require, exports, module) {
     StringReplaceVisualization.prototype._buildVisualization = function() {
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + this.replacement);
 
-        var idx = 0;
-        var stylizedString = this.string.replace(this.regexp, function(match) {
-            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + "$&" + "</span>");
-        });
+		var matches = [];
+        var match;
+        
+        while((match = this.regexp.exec(this.string)) !== null) {
+        	matches.push(match);
+        }
+		
+		var stylizedString = "";
+		var idx = 0;
+		var i = 0;
+        while(i < this.string.length) {
+        	if(matches && matches.length !== 0 && matches[0].index == i) {
+        		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
+        		stylizedString = stylizedString + "<span style=\"background-color: " + color + ";\">" + escapeHtml(matches[0][0]) + "</span>";
+        		i += matches[0][0].length;
+        		matches = matches.slice(1);
 
-		var entityMap = {
-    		"&": "&amp;",
-    		"<": "&lt;",
-    		">": "&gt;",
-    		"\"": "&quot;",
-    		"'": "&#39;",
-    		"/": "&#x2F;"
-  		};
+        	} else {
+        		var nonmatch = this.string.substr(i, 1);
+        		stylizedString += escapeHtml(nonmatch);
+        		i++;
+        	}
+        }
+		
+		matches = [];
+		while((match = this.regexp.exec(this.string)) !== null) {
+        	matches.push(match);
+        }
 
-  		function escapeHtml (string) {
-    		return String(string).replace(/[&<>"'\/]/g, function(s) {
-      			return entityMap[s];
-    		});
-  		}
-
+        var stylizedResult = "";
         idx = 0;
-        var stylizedResult = this.string.replace(this.regexp, function(match) {
-            var color = (idx++ % 2) ? "#ff0000" : "#00ffff";
-            var replacement = (this.replacement instanceof Function) ? this.replacement(match) : this.replacement;
-            return match.replace(/\S/, "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>");
-        }.bind(this));
+        i = 0;
+        while(i < this.string.length) {
+        	if(matches && matches.length !== 0 && matches[0].index == i) {
+        		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
+            	var replacement = (this.replacement instanceof Function) ? this.replacement(matches[0][0]) : this.replacement;
+        		stylizedResult = stylizedResult + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
+        		i += matches[0][0].length;
+        		matches = matches.slice(1);
+
+        	} else {
+        		var nonmatch = this.string.substr(i, 1);
+        		stylizedResult += escapeHtml(nonmatch);
+        		i++;
+        	}
+        }
 
         this.$stringView.html(stylizedString);
         this.$resultsView.html(stylizedResult);
     };
+
+    var entityMap = {
+		"&": "&amp;",
+		"<": "&lt;",
+		">": "&gt;",
+		"\"": "&quot;",
+		"'": "&#39;",
+		"/": "&#x2F;"
+	};
+
+	function escapeHtml (string) {
+		return String(string).replace(/[&<>"'\/]/g, function(s) {
+  			return entityMap[s];
+		});
+	}
 
     module.exports = StringReplaceVisualization;
 });

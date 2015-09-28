@@ -38,7 +38,7 @@ define(function(require, exports, module){
         this.substitutions = substitutions;
         this.substitutions.forEach(function(substitution) {
             var $listItem = $("<li><a href=\"#\"></a>");
-            $listItem.find("a").html(substitution);
+            $listItem.find("a").html(escapeHtml(substitution));
             $listItem.data("substitution", substitution); 
             $listItem.data("traceSelector", this);
             $dropdown.append($listItem);
@@ -56,6 +56,20 @@ define(function(require, exports, module){
         this.$element.append($dropdown);
     }
     
+    var entityMap = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;",
+        "/": "&#x2F;"
+    };
+
+    function escapeHtml (string) {
+        return String(string).replace(/[&<>"'\/]/g, function(s) {
+            return entityMap[s];
+        });
+    }
 
     TraceSelector.prototype._onHoverEnter = function() {
         var startPosition = {line: this.lineHandle.lineNo(), ch: this.tagBegin};
