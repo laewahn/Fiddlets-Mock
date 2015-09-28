@@ -37,61 +37,16 @@ define(function(require, exports, module) {
 
     StringReplaceVisualization.prototype._buildVisualization = function() {
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + this.replacement);
-
-		var matches = [];
-        var match;
-        
-        while((match = this.regexp.exec(this.string)) !== null) {
-        	matches.push(match);
-        }
 		
-		var stylizedString = "";
-		var idx = 0;
-		var i = 0;
-        while(i < this.string.length) {
-        	if(matches && matches.length !== 0 && matches[0].index == i) {
-        		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
-        		stylizedString = stylizedString + "<span style=\"background-color: " + color + ";\">" + escapeHtml(matches[0][0]) + "</span>";
-        		i += matches[0][0].length;
-        		matches = matches.slice(1);
+		var colors = ["#9AF6FF", "#81D0D7"];
+		var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e}, colors)
+        var styledResult = styleHtmlEscaped(this.string, this.regexp, this.replacement, colors);
 
-        	} else {
-        		var nonmatch = this.string.substr(i, 1);
-        		stylizedString += escapeHtml(nonmatch);
-        		i++;
-        	}
-        }
-		
-		// matches = [];
-		// while((match = this.regexp.exec(this.string)) !== null) {
-  //       	matches.push(match);
-  //       }
-
-        var stylizedResult = "";
-        // idx = 0;
-        // i = 0;
-        // while(i < this.string.length) {
-        // 	if(matches && matches.length !== 0 && matches[0].index == i) {
-        // 		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
-        //     	var replacement = (this.replacement instanceof Function) ? this.replacement(matches[0][0]) : this.replacement;
-        // 		stylizedResult = stylizedResult + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
-        // 		i += matches[0][0].length;
-        // 		matches = matches.slice(1);
-
-        // 	} else {
-        // 		var nonmatch = this.string.substr(i, 1);
-        // 		stylizedResult += escapeHtml(nonmatch);
-        // 		i++;
-        // 	}
-        // }
-
-        stylizedResult = stylizeHtmlEscaped(this.string, this.regexp, this.replacement, ["#9AF6FF", "#81D0D7"]);
-
-        this.$stringView.html(stylizedString);
-        this.$resultsView.html(stylizedResult);
+        this.$stringView.html(styledString);
+        this.$resultsView.html(styledResult);
     };
 
-    function stylizeHtmlEscaped(string, regexp, replacer, colors) {
+    function styleHtmlEscaped(string, regexp, replacer, colors) {
     	var match;
     	var matches = [];
     	
@@ -106,18 +61,18 @@ define(function(require, exports, module) {
 
     	while(i < string.length) {
     		if(matches.length !== 0) {
-    			if((currentMatch = matches[0]).index == i) {
-    				var color = colors[matchIdx % colors.length];
-    				var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : replacer;
-    				result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
-    				i += currentMatch[0].length;
-    				matches = matches.slice(1);
-    				matchIdx++;
-    			} else {
-    				result += escapeHtml(string.substr(i, 1));
-    				i++;
-    			}
-    		}  else {
+    			currentMatch = matches[0];
+    		}
+    		
+    		if(currentMatch !== undefined && currentMatch.index == i) {
+    			var color = colors[matchIdx % colors.length];
+
+    			var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : replacer;
+    			result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
+    			i += currentMatch[0].length;
+    			matches = matches.slice(1);
+    			matchIdx++;
+    		} else {
     			result += escapeHtml(string.substr(i, 1));
     			i++;
     		}
