@@ -62,32 +62,69 @@ define(function(require, exports, module) {
         	}
         }
 		
-		matches = [];
-		while((match = this.regexp.exec(this.string)) !== null) {
-        	matches.push(match);
-        }
+		// matches = [];
+		// while((match = this.regexp.exec(this.string)) !== null) {
+  //       	matches.push(match);
+  //       }
 
         var stylizedResult = "";
-        idx = 0;
-        i = 0;
-        while(i < this.string.length) {
-        	if(matches && matches.length !== 0 && matches[0].index == i) {
-        		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
-            	var replacement = (this.replacement instanceof Function) ? this.replacement(matches[0][0]) : this.replacement;
-        		stylizedResult = stylizedResult + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
-        		i += matches[0][0].length;
-        		matches = matches.slice(1);
+        // idx = 0;
+        // i = 0;
+        // while(i < this.string.length) {
+        // 	if(matches && matches.length !== 0 && matches[0].index == i) {
+        // 		var color = (idx++ % 2) ? "#81D0D7" : "#9AF6FF";
+        //     	var replacement = (this.replacement instanceof Function) ? this.replacement(matches[0][0]) : this.replacement;
+        // 		stylizedResult = stylizedResult + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
+        // 		i += matches[0][0].length;
+        // 		matches = matches.slice(1);
 
-        	} else {
-        		var nonmatch = this.string.substr(i, 1);
-        		stylizedResult += escapeHtml(nonmatch);
-        		i++;
-        	}
-        }
+        // 	} else {
+        // 		var nonmatch = this.string.substr(i, 1);
+        // 		stylizedResult += escapeHtml(nonmatch);
+        // 		i++;
+        // 	}
+        // }
+
+        stylizedResult = stylizeHtmlEscaped(this.string, this.regexp, this.replacement, ["#9AF6FF", "#81D0D7"]);
 
         this.$stringView.html(stylizedString);
         this.$resultsView.html(stylizedResult);
     };
+
+    function stylizeHtmlEscaped(string, regexp, replacer, colors) {
+    	var match;
+    	var matches = [];
+    	
+    	while((match = regexp.exec(string)) !== null) {
+    		matches.push(match);
+    	}
+
+    	var result = "";
+    	var currentMatch;
+    	var matchIdx = 0;
+    	var i = 0;
+
+    	while(i < string.length) {
+    		if(matches.length !== 0) {
+    			if((currentMatch = matches[0]).index == i) {
+    				var color = colors[matchIdx % colors.length];
+    				var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : replacer;
+    				result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
+    				i += currentMatch[0].length;
+    				matches = matches.slice(1);
+    				matchIdx++;
+    			} else {
+    				result += escapeHtml(string.substr(i, 1));
+    				i++;
+    			}
+    		}  else {
+    			result += escapeHtml(string.substr(i, 1));
+    			i++;
+    		}
+    	}
+
+    	return result;
+    }
 
     var entityMap = {
 		"&": "&amp;",
