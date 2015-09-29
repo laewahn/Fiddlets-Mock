@@ -63,6 +63,12 @@ describe('Mustache.parse', function () {
     })(template, expectations[template]);
   }
 
+  var specialTags = '‹›';
+  var specialTemplate = '‹special›'; 
+  it('knows how to parse ' + specialTemplate + ' when ' + specialTags + ' are passed in as tags', function() {
+    assert.deepEqual(Mustache.parse(specialTemplate, specialTags), [ [ 'name', 'special', 0, 9] ]);
+  });
+
   describe('when there is an unclosed tag', function () {
     it('throws an error', function () {
       assert.throws(function () {
