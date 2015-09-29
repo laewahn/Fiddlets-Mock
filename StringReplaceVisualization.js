@@ -36,7 +36,8 @@ define(function(require, exports, module) {
     };
 
     StringReplaceVisualization.prototype._buildVisualization = function() {
-        this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + this.replacement);
+    	var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
+        this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
 		
 		var colors = ["#9AF6FF", "#81D0D7"];
 		var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e}, colors)
