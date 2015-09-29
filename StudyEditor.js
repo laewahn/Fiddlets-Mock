@@ -76,14 +76,19 @@ define(function (require, exports, module) {
         this.contextEditor.eachLine(function(lineHandle) {
 
             var lineText = lineHandle.text;
+            var tagRe = /<#undefined:(\w*)#>/g
+            var tagMatch = tagRe.exec(lineText);
+            console.log(tagMatch);
+
             var tag = "<#undefined#>";
-            if (lineText.indexOf(tag) !== -1) {
+            if (tagMatch !== null && tagMatch[1] !== null) {
                 
                 // Create a new selector element
-                var substitutions = this.config.unknownVariables.string.map(function(v) {
+                var substitutions = this.config.unknownVariables[tagMatch[1]].map(function(v) {
                     return JSON.stringify(v);
                 });
 
+                lineHandle.text = lineText.replace(tagRe, tag);
                 var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
                 this.$contextEditor.prepend($selector.$element);
             }
