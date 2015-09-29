@@ -78,7 +78,6 @@ define(function (require, exports, module) {
             var lineText = lineHandle.text;
             var tagRe = /<#undefined:(\w*)#>/g
             var tagMatch = tagRe.exec(lineText);
-            console.log(tagMatch);
 
             var tag = "<#undefined#>";
             if (tagMatch !== null && tagMatch[1] !== null) {

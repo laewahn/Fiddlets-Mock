@@ -40,7 +40,7 @@ define(function(require, exports, module) {
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
 		
 		var colors = ["#9AF6FF", "#81D0D7"];
-		var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e}, colors)
+		var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e;}, colors);
         var styledResult = styleHtmlEscaped(this.string, this.regexp, this.replacement, colors);
 
         this.$stringView.html(styledString);
@@ -51,9 +51,14 @@ define(function(require, exports, module) {
     	var match;
     	var matches = [];
     	
-    	while((match = regexp.exec(string)) !== null) {
-    		matches.push(match);
-    	}
+        do {
+            match = regexp.exec(string);
+            if(match !== null) {
+                matches.push(match);    
+            }
+            
+        } while (match !== null && regexp.global === true && regexp.lastIndex !== string.length);
+        regexp.lastIndex = 0;
 
     	var result = "";
     	var currentMatch;
