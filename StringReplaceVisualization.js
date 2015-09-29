@@ -68,7 +68,7 @@ define(function(require, exports, module) {
     		if(currentMatch !== undefined && currentMatch.index == i) {
     			var color = colors[matchIdx % colors.length];
 
-    			var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : replacer;
+    			var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : currentMatch[0].replace(currentMatch[0], replacer);
     			result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
     			i += currentMatch[0].length;
     			matches = matches.slice(1);
