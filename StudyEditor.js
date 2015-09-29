@@ -91,13 +91,14 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._traceContextCode = function() {
-        if (this.currentVisualization !== undefined) {
-            this.currentVisualization.remove();
-            this.currentVisualization = undefined;
-        }
 
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
+            if (this.currentVisualization !== undefined) {
+                this.currentVisualization.remove();
+                this.currentVisualization = undefined;
+            }
+            
             this.$errorView.text("");
             
             var object = trace[this.config.calleeMember];
@@ -113,6 +114,11 @@ define(function (require, exports, module) {
             
         }.bind(this))
         .fail(function(error) {
+            if (this.currentVisualization !== undefined) {
+                this.currentVisualization.remove();
+                this.currentVisualization = undefined;
+            }
+
             console.error(error);
             this.$errorView.text(error);
         }.bind(this));
