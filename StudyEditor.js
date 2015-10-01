@@ -47,7 +47,7 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
-        this.$typeField.text(this.config.type);
+        this.$typeField.text(this.config.lineInfo.type);
     
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
@@ -95,7 +95,6 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._traceContextCode = function() {
-
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
             if (this.currentVisualization !== undefined) {
@@ -104,15 +103,8 @@ define(function (require, exports, module) {
             }
             
             this.$errorView.text("");
-            
-            var object = trace[this.config.calleeMember];
-            var params = [];
-            
-            this.config.params.forEach(function(param) {
-                params.push(trace[param]);
-            });
-
-            var stringReplaceVisualization = new StringReplaceVisualization(object, params);
+            var lineInfo = this.config.lineInfo;
+            var stringReplaceVisualization = new StringReplaceVisualization(lineInfo, trace);
             stringReplaceVisualization.addToContainer(this.$visualization);
             this.currentVisualization = stringReplaceVisualization;
             
