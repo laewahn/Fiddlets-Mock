@@ -73,13 +73,25 @@
 			"params" : ["spaceRe", 1]
 		},
 		"135" : {
-
+			"unknownVariables" : {
+				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+			},
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"currentLine" : "openingTagRe = new RegExp(escapeRegExp(tagsToCompile[0]) + '\\\\s*');"
 		},
 		"136" : {
-
+			"unknownVariables" : {
+				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+			},
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"currentLine" : "closingTagRe = new RegExp('\\\\s*' + escapeRegExp(tagsToCompile[1]));"
 		},
 		"137" : {
-
+			"unknownVariables" : {
+				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+			},
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"currentLine" : "closingCurlyRe = new RegExp('\\\\s*' + escapeRegExp('}' + tagsToCompile[1]));"
 		}
 	},
 
