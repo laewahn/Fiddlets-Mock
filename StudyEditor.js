@@ -10,6 +10,7 @@ define(function (require, exports, module) {
     
     var TraceSelector = require("./TraceSelector");
     var StringReplaceVisualization = require("./StringReplaceVisualization");
+    var StringSplitVisualization = require("./StringSplitVisualization");
 
     function StudyEditor(config) {
         InlineWidget.call(this);
@@ -76,7 +77,7 @@ define(function (require, exports, module) {
         this.contextEditor.eachLine(function(lineHandle) {
 
             var lineText = lineHandle.text;
-            var tagRe = /<#undefined:(\w*)#>/g
+            var tagRe = /<#undefined:(\w*)#>/g;
             var tagMatch = tagRe.exec(lineText);
 
             var tag = "<#undefined#>";
@@ -104,9 +105,14 @@ define(function (require, exports, module) {
             
             this.$errorView.text("");
             var lineInfo = this.config.lineInfo;
-            var stringReplaceVisualization = new StringReplaceVisualization(lineInfo, trace);
-            stringReplaceVisualization.addToContainer(this.$visualization);
-            this.currentVisualization = stringReplaceVisualization;
+            var visualization;
+            if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
+                 visualization = new StringReplaceVisualization(lineInfo, trace);
+            } else {
+                visualization = new StringSplitVisualization(lineInfo, trace);
+            }
+            visualization.addToContainer(this.$visualization);
+            this.currentVisualization = visualization;
             
         }.bind(this))
         .fail(function(error) {
