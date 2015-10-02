@@ -3,13 +3,29 @@
 		"38" : {
 			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;",
 			"lineInfo" : {
-				"type" : "RegExp"
+				"type" : "RegExp",
+				"lValue" : {
+					"range" : [4, 24]
+				},
+				"rValue" : {
+					"callee" : {
+						"range" : [47,52]
+					}
+				}
 			}
 		},
 		"39" : {
 			"currentLine" : "var replacement = '\\\\$&';",
 			"lineInfo" : {
-				"type" : "String"	
+				"type" : "String",
+				"lValue" : {
+					"range" : [4, 15]
+				},
+				"rValue" : {
+					"callee" : {
+						"range" : [18, 24]
+					}
+				}
 			}
 		},
 		"40" : {
@@ -19,6 +35,14 @@
 			"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';",
 			"currentLine" : "var escaped = string.replace(regExpMetaCharacters, replacement);",
 			"lineInfo" : {
+				"lValue" : {
+					"range" : [4, 11]
+				},
+				"rValue" : {
+					"callee" : {
+						"range" : [14, 20]
+					}
+				},
 				"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
 				"assignedTo" : "escaped",
 				"calleeMember" : "string",
@@ -31,10 +55,16 @@
 			"unknownVariables" : {
 				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
 			},
-			"context" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);",
+			"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);",
 			"currentLine" : "return escaped;",
 			"lineInfo" : {
-				"type" : "String"	
+				"type" : "String",
+				"lValue" : null,
+				"rValue" : {
+					"callee" : {
+						"range" : [7, 15]
+					}
+				}
 			}
 		}		
 	},

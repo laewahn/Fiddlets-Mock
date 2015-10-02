@@ -91,12 +91,15 @@ define(function (require, exports, module) {
     StudyEditor.prototype._updateCurrentLine = function() {
         var currentLineNr = this.contextEditor.lineCount() - 1;
 
-        var lValueRange = this.config.lineInfo.lValue.range;
-        this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
-                                    { line: currentLineNr, ch: lValueRange[1] }, 
-                                    { className: "fd-current-line-assigned-to-highlight" }
-                                    );
-
+        if(this.config.lineInfo.lValue !== null) {
+            var lValueRange = this.config.lineInfo.lValue.range;
+            this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
+                                        { line: currentLineNr, ch: lValueRange[1] }, 
+                                        { className: "fd-current-line-assigned-to-highlight" }
+                                        );
+    
+        }
+        
         var calleeRange = this.config.lineInfo.rValue.callee.range;
         this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
                                     { line: currentLineNr, ch: calleeRange[1] }, 
