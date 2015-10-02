@@ -54,18 +54,11 @@ define(function (require, exports, module) {
             mode: "javascript",
             lineNumbers: true
         });
-
-        var config = this.config;
-        this.contextEditor.on("renderLine", function(instance, lineHandle, element) {
-            if (lineHandle.lineNo() === instance.lineCount() - 1) {
-                $(element).children().find("span:contains(\"" + config.assignedTo + "\")").addClass("fd-current-line-assigned-to-highlight");
-                $(element).children().find("span:contains(\"" + config.calleeMember + "\")").addClass("fd-current-line-object-highlight");
-            }
-        });
-
+        
         this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
 
         this._createTraceSelectors();
+        this._updateCurrentLine();
         this._traceContextCode();
 
         this.contextEditor.on("change", function() {
@@ -93,6 +86,22 @@ define(function (require, exports, module) {
                 this.$contextEditor.prepend($selector.$element);
             }
         }.bind(this));
+    };
+
+    StudyEditor.prototype._updateCurrentLine = function() {
+        var currentLineNr = this.contextEditor.lineCount() - 1;
+
+        var lValueRange = this.config.lineInfo.lValue.range;
+        this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
+                                    { line: currentLineNr, ch: lValueRange[1] }, 
+                                    { className: "fd-current-line-assigned-to-highlight" }
+                                    );
+
+        var calleeRange = this.config.lineInfo.rValue.callee.range;
+        this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
+                                    { line: currentLineNr, ch: calleeRange[1] }, 
+                                    { className: "fd-current-line-object-highlight" }
+                                    );        
     };
 
     StudyEditor.prototype._traceContextCode = function() {
