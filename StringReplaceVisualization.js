@@ -57,11 +57,11 @@ define(function(require, exports, module) {
     	
         do {
             match = regexp.exec(string);
-            if(match !== null) {
+            if(match !== null && match[0] !== "") {
                 matches.push(match);    
             }
-            
-        } while (match !== null && regexp.global === true && regexp.lastIndex !== string.length);
+
+        } while (match !== null && regexp.global === true && regexp.lastIndex !== string.length && match[0] !== "");
         regexp.lastIndex = 0;
 
     	var result = "";
