@@ -86,7 +86,10 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._getCurrentLine = function() {
+        // Will get this from the editor
         this.currentLineCode = this.config.currentLine;
+
+        // Will call this on the line info domain
         this.lineInfo = this.config.lineInfo;
     };
 

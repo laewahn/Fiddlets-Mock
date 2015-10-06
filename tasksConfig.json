@@ -164,15 +164,23 @@
 			"currentLine" : "tagsToCompile = tagsToCompile.split(spaceRe, 1);",
 			"lineInfo" : {
 				"lValue" : {
+					"name" : "tagsToCompile",
 					"range" : [0, 13]
 				},
 				"rValue" : {
 					"callee" : {
 						"range" : [16, 29],
 						"name" : "tagsToCompile"
+					},
+					"params" : [{
+						"name" : "spaceRe"
+					},
+					{
+						"value" : 1
 					}
+					]
 				},
-				"type" : "String.prototype.split(...)",
+				"type" : "String.prototype.split([separator[, limit]])",
 				"method" : "split",
 				"params" : ["spaceRe", 1]	
 			}

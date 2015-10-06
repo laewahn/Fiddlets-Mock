@@ -26,19 +26,19 @@ define(function(require, exports, module) {
 
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
         this.string = contextTrace[lineInfo.rValue.callee.name];
-        console.log(this.string);
+        var splitRegExp = contextTrace[lineInfo.rValue.params[0].name];
+        var limit = lineInfo.rValue.params[1].value;
 
-        this._buildVisualization();
+        var explaination =  "Splits  " + JSON.stringify(this.string) + " at " + splitRegExp.toString() + " and limits the result to " + limit + " elements.";
+        this.$explainationView.text(explaination);
+        this.$inputView.html("Input");
+
+        var result = fullTrace[lineInfo.lValue.name];
+        this.$resultView.html(JSON.stringify(result));
     };
 
     StringSplitVisualization.prototype.remove = function() {
         this.$container.remove();
-    };
-
-    StringSplitVisualization.prototype._buildVisualization = function() {
-        this.$explainationView.html("Explaination");
-        this.$inputView.html("Input");
-        this.$resultView.html("Result");
     };
 
     module.exports = StringSplitVisualization;
