@@ -40,12 +40,11 @@
 				},
 				"rValue" : {
 					"callee" : {
-						"range" : [14, 20]
+						"range" : [14, 20],
+						"name" : "string"
 					}
 				},
 				"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
-				"assignedTo" : "escaped",
-				"calleeMember" : "string",
 				"method" : "replace",
 				"params" : ["regExpMetaCharacters", "replacement"]	
 			}
@@ -73,7 +72,15 @@
 		"61" : {
 			"currentLine" : "var htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;",
 			"lineInfo" : {
-				"type" : "RegExp"	
+				"type" : "RegExp",
+				"lValue" : {
+					"range" : [45, 50]
+				},
+				"rValue" : {
+					"callee" : {
+						"range" : [4, 22]
+					}
+				}
 			}
 		},
 		"64" : {
@@ -83,7 +90,12 @@
 			"context" : "var entityMap = {\n\t'&': '&amp;',\n\t'<': '&lt;',\n\t'>': '&gt;',\n\t'\"': '&quot;',\n\t\"'\": '&#39;',\n\t'/': '&#x2F;'\n};",
 			"currentLine" : "return entityMap[s];",
 			"lineInfo" : {
-
+				"lValue" : null,
+				"rValue" : {
+					"callee" : {
+						"range" : [7, 19]	
+					}
+				}
 			}
 		},
 		"67" : {
@@ -100,7 +112,8 @@
 				},
 				"rValue" : {
 					"callee" : {
-						"range" : [14, 20]
+						"range" : [14, 20],
+						"name" : "string"
 					},
 					"method" : {
 						"range" : [21,28]
@@ -109,14 +122,25 @@
 						"range" : [29,61]
 					}
 				},
-				"calleeMember" : "string",
 				"method" : "replace",
 				"params" : ["htmlMetaCharacters", "fromEntityMap"]
 			}
 			
 		},
 		"69" : {
-
+			"unknownVariables" : {
+				"string" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+			},
+			"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}\nvar escaped = string.replace(htmlMetaCharacters, fromEntityMap);",
+			"currentLine" : "return escaped;",
+			"lineInfo" : {
+				"lValue" : null,
+				"rValue" : {
+					"callee" : {
+						"range" : [7, 14]
+					}
+				}
+			}
 		}
 	},
 
@@ -128,9 +152,15 @@
 			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar spaceRe = /\\s+/;",
 			"currentLine" : "tagsToCompile = tagsToCompile.split(spaceRe, 1);",
 			"lineInfo" : {
+				"lValue" : {
+					"range" : [0, 13]
+				},
+				"rValue" : {
+					"callee" : {
+						"range" : [16, 29]
+					}
+				},
 				"type" : "String.prototype.split(...)",
-				"assignedTo" : "tagsToCompile",
-				"calleeMember" : "tagsToCompile",
 				"method" : "split",
 				"params" : ["spaceRe", 1]	
 			}
@@ -139,30 +169,42 @@
 			"unknownVariables" : {
 				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
 			"currentLine" : "openingTagRe = new RegExp(escapeRegExp(tagsToCompile[0]) + '\\\\s*');",
 			"lineInfo" : {
-
+				"lValue" : {
+					"range" : [0, 12]
+				},
+				"rValue" : null,
+				"type" : "foo"
 			}
 		},
 		"136" : {
 			"unknownVariables" : {
 				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
 			"currentLine" : "closingTagRe = new RegExp('\\\\s*' + escapeRegExp(tagsToCompile[1]));",
 			"lineInfo" : {
-				
+				"lValue" : {
+					"range" : [0, 12]
+				},
+				"rValue" : null,
+				"type" : "foo"
 			}
 		},
 		"137" : {
 			"unknownVariables" : {
 				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
+			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);",
 			"currentLine" : "closingCurlyRe = new RegExp('\\\\s*' + escapeRegExp('}' + tagsToCompile[1]));",
 			"lineInfo" : {
-				
+				"lValue" : {
+					"range" : [0, 14]
+				},
+				"rValue" : null,
+				"type" : "foo"
 			}
 		}
 	},

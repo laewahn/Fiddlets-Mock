@@ -100,11 +100,14 @@ define(function (require, exports, module) {
     
         }
         
-        var calleeRange = this.config.lineInfo.rValue.callee.range;
-        this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
-                                    { line: currentLineNr, ch: calleeRange[1] }, 
-                                    { className: "fd-current-line-object-highlight" }
-                                    );        
+        if(this.config.lineInfo.rValue !== null) {
+            var calleeRange = this.config.lineInfo.rValue.callee.range;
+            this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
+                                        { line: currentLineNr, ch: calleeRange[1] }, 
+                                        { className: "fd-current-line-object-highlight" }
+                                        );
+        }
+        
     };
 
     StudyEditor.prototype._traceContextCode = function() {
@@ -134,6 +137,7 @@ define(function (require, exports, module) {
             }
 
             console.error(error);
+
             this.$errorView.text(error);
         }.bind(this));
     };

@@ -9,7 +9,8 @@ define(function(require, exports, module) {
     function StringReplaceVisualization(lineInfo, trace) {
 
         var params = lineInfo.params;
-        var object = trace[lineInfo.calleeMember];
+        var calleeName = lineInfo.rValue.callee.name;
+        var object = trace[calleeName];
 
         this.string = object;
         this.regexp = trace[params[0]];
