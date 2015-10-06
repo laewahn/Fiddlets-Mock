@@ -157,13 +157,12 @@ define(function (require, exports, module) {
         }
         
         this.$errorView.text("");
-        var trace = null;
         var lineInfo = this.config.lineInfo;
         var visualization;
         if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
-             visualization = new StringReplaceVisualization(this.lineInfo, trace);
+             visualization = new StringReplaceVisualization();
         } else {
-            visualization = new StringSplitVisualization(this.lineInfo, trace);
+            visualization = new StringSplitVisualization();
         }
         visualization.addToContainer(this.$visualization);
         this.currentVisualization = visualization;

@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 
     var stringSplitVisualizationContainer = require("text!string-split-visualization-template.html");
 
-    function StringSplitVisualization(lineInfo, trace) {
+    function StringSplitVisualization() {
         this.$container = $(stringSplitVisualizationContainer);
         this.$explainationView = this.$container.find("#explanation-view");
         this.$inputView = this.$container.find("#input-view");
@@ -25,11 +25,11 @@ define(function(require, exports, module) {
     };
 
     StringSplitVisualization.prototype.updateVisualization = function() {
-        this.string = this.trace[lineInfo.rValue.callee.name];
+        this.string = this.trace[this.lineInfo.rValue.callee.name];
         console.log(this.string);
 
         this._buildVisualization();
-    }
+    };
 
     StringSplitVisualization.prototype.remove = function() {
         this.$container.remove();
@@ -39,7 +39,7 @@ define(function(require, exports, module) {
         this.$explainationView.html("Explaination");
         this.$inputView.html("Input");
         this.$resultView.html("Result");
-    }
+    };
 
     module.exports = StringSplitVisualization;
 });
