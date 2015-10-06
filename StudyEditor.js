@@ -178,10 +178,9 @@ define(function (require, exports, module) {
     StudyEditor.prototype._traceAll = function() {
         var traceContext = VariableTraceProxy.getTraceForCode(this.contextCode);
         var traceCode = VariableTraceProxy.getTraceForCode(this.contextEditor.getValue());
+
         $.when(traceContext, traceCode)
         .done(function(contextTrace, fullTrace) {
-            this.currentVisualization.trace = fullTrace;
-            this.currentVisualization.context = contextTrace;
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
         }.bind(this))
         .fail(function(error) {
