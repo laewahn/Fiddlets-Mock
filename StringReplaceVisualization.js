@@ -13,10 +13,6 @@ define(function(require, exports, module) {
         this.$resultsView = this.$container.find("#results-view");
     }
 
-    StringReplaceVisualization.prototype.lineInfo = undefined;
-    StringReplaceVisualization.prototype.contextTrace = undefined;
-    StringReplaceVisualization.prototype.trace = undefined;
-
     StringReplaceVisualization.prototype.string = undefined;
     StringReplaceVisualization.prototype.regexp = undefined;
     StringReplaceVisualization.prototype.replacement = undefined;
@@ -30,15 +26,15 @@ define(function(require, exports, module) {
         $container.append(this.$container);
     };
 
-    StringReplaceVisualization.prototype.updateVisualization = function() {
+    StringReplaceVisualization.prototype.updateVisualization = function(trace, lineInfo) {
 
-        var params = this.lineInfo.rValue.params;
-        var calleeName = this.lineInfo.rValue.callee.name;
-        var object = this.trace[calleeName];
+        var params = lineInfo.rValue.params;
+        var calleeName = lineInfo.rValue.callee.name;
+        var object = trace[calleeName];
 
         this.string = object;
-        this.regexp = this.trace[params[0].name];
-        this.replacement = this.trace[params[1].name];
+        this.regexp = trace[params[0].name];
+        this.replacement = trace[params[1].name];
 
         var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
