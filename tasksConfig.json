@@ -42,7 +42,14 @@
 					"callee" : {
 						"range" : [14, 20],
 						"name" : "string"
+					},
+					"params" : [{
+						"name" : "regExpMetaCharacters"
+					},
+					{
+						"name" : "replacement"
 					}
+					]
 				},
 				"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
 				"method" : "replace",
@@ -118,9 +125,13 @@
 					"method" : {
 						"range" : [21,28]
 					},
-					"params" : {
-						"range" : [29,61]
-					}
+					"params" : [{
+							"name" : "htmlMetaCharacters"
+						}, 
+						{
+							"name" : "fromEntityMap"
+						}
+					]
 				},
 				"method" : "replace",
 				"params" : ["htmlMetaCharacters", "fromEntityMap"]
@@ -157,7 +168,8 @@
 				},
 				"rValue" : {
 					"callee" : {
-						"range" : [16, 29]
+						"range" : [16, 29],
+						"name" : "tagsToCompile"
 					}
 				},
 				"type" : "String.prototype.split(...)",

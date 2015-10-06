@@ -8,19 +8,23 @@ define(function(require, exports, module) {
     
     function StringReplaceVisualization(lineInfo, trace) {
 
-        var params = lineInfo.params;
+        var params = lineInfo.rValue.params;
         var calleeName = lineInfo.rValue.callee.name;
         var object = trace[calleeName];
 
         this.string = object;
-        this.regexp = trace[params[0]];
-        this.replacement = trace[params[1]];
+        this.regexp = trace[params[0].name];
+        this.replacement = trace[params[1].name];
 
         this.$container = $(stringReplaceVisualizationContainer);
         this.$replacedView = this.$container.find("#replaced-view");
         this.$stringView = this.$container.find("#string-view");
         this.$resultsView = this.$container.find("#results-view");
     }
+
+    StringReplaceVisualization.prototype.lineInfo = undefined;
+    StringReplaceVisualization.prototype.contextTrace = undefined;
+    StringReplaceVisualization.prototype.trace = undefined;
 
     StringReplaceVisualization.prototype.string = undefined;
     StringReplaceVisualization.prototype.regexp = undefined;
@@ -32,24 +36,24 @@ define(function(require, exports, module) {
     StringReplaceVisualization.prototype.$resultsView = undefined;
 
     StringReplaceVisualization.prototype.addToContainer = function($container) {
-        this._buildVisualization();
+        this.updateVisualization();
         $container.append(this.$container);
     };
 
-    StringReplaceVisualization.prototype.remove = function() {
-        this.$container.remove();
-    };
-
-    StringReplaceVisualization.prototype._buildVisualization = function() {
-    	var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
+    StringReplaceVisualization.prototype.updateVisualization = function() {
+        var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
-		
-		var colors = ["#9AF6FF", "#81D0D7"];
-		var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e;}, colors);
+        
+        var colors = ["#9AF6FF", "#81D0D7"];
+        var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e;}, colors);
         var styledResult = styleHtmlEscaped(this.string, this.regexp, this.replacement, colors);
 
         this.$stringView.html(styledString);
         this.$resultsView.html(styledResult);
+    };
+
+    StringReplaceVisualization.prototype.remove = function() {
+        this.$container.remove();
     };
 
     function styleHtmlEscaped(string, regexp, replacer, colors) {
