@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
     
     var TraceSelector = require("./TraceSelector");
+    var DefaultVisualization = require("./DefaultVisualization");
     var StringReplaceVisualization = require("./StringReplaceVisualization");
     var StringSplitVisualization = require("./StringSplitVisualization");
 
@@ -164,11 +165,25 @@ define(function (require, exports, module) {
         this.$errorView.text("");
         var lineInfo = this.config.lineInfo;
         var visualization;
+
         if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
              visualization = new StringReplaceVisualization();
         } else {
             visualization = new StringSplitVisualization();
         }
+
+        switch(lineInfo.type) {
+            case "String.prototype.split([separator[, limit]])" :
+                visualization =  new StringSplitVisualization();
+                break;
+            case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
+                visualization = new StringReplaceVisualization();
+                break;
+            default:
+                visualization = new DefaultVisualization();
+        }
+
+        
         visualization.addToContainer(this.$visualization);
         this.currentVisualization = visualization;
     };
