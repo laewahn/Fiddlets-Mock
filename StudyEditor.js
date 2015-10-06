@@ -15,6 +15,7 @@ define(function (require, exports, module) {
     function StudyEditor(config) {
         InlineWidget.call(this);
         this.config = config;
+        this.traceSelectorsByLine = {};
 
         this.$widgetContainer = $(widgetContainer);
         this.$htmlContent.append(this.$widgetContainer);
@@ -37,7 +38,12 @@ define(function (require, exports, module) {
     StudyEditor.prototype.contextEditor = undefined;
     StudyEditor.prototype.config = undefined;
     StudyEditor.prototype.currentVisualization = undefined;
-    
+    StudyEditor.prototype.lineInfo = undefined;
+
+    StudyEditor.prototype.contextCode = undefined;
+    StudyEditor.prototype.currentLineCode = undefined;
+    StudyEditor.prototype.traceSelectorsByLine = undefined;
+
     StudyEditor.prototype.$widgetContainer = undefined;
     StudyEditor.prototype.$contextEditor = undefined;
     StudyEditor.prototype.$typeField = undefined;
@@ -55,15 +61,33 @@ define(function (require, exports, module) {
             lineNumbers: true
         });
         
-        this.contextEditor.setValue([this.config.context, this.config.currentLine].join("\n\n"));
+        this._getContext();
+        this._getCurrentLine();
+        
+        this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
 
         this._createTraceSelectors();
+        this._updateUnknownValuesInContextCode();
         this._updateCurrentLine();
-        this._traceContextCode();
+        this._updateVisualization();
+        this._updateLineInfo();
+        this._traceCode();
+        this._traceContext();
 
         this.contextEditor.on("change", function() {
-            this._traceContextCode();
+            this._traceCode();
         }.bind(this));
+    };
+
+    StudyEditor.prototype._getContext = function() {
+        // Call the context domain
+        // well, fake it by loading from the config...
+        this.contextCode = this.config.context || "";
+    };
+
+    StudyEditor.prototype._getCurrentLine = function() {
+        this.currentLineCode = this.config.currentLine;
+        this.lineInfo = this.config.lineInfo;
     };
 
     StudyEditor.prototype._createTraceSelectors = function() {
@@ -84,8 +108,25 @@ define(function (require, exports, module) {
                 lineHandle.text = lineText.replace(tagRe, tag);
                 var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
                 this.$contextEditor.prepend($selector.$element);
+                this.traceSelectorsByLine[lineHandle.lineNo()] = $selector;
             }
         }.bind(this));
+    };
+
+    StudyEditor.prototype._updateUnknownValuesInContextCode = function() {
+        var updatedContextCode = this.contextCode.split("\n").map(function(line, idx) {
+            var traceSelector = this.traceSelectorsByLine[idx];
+            if (traceSelector === undefined) {
+                return line;
+            }
+
+            var updatedLine = traceSelector.lineHandle.text;
+            return updatedLine; 
+        }.bind(this));
+
+        this.contextCode = updatedContextCode.join("\n");
+        console.log(updatedContextCode);
+        this._traceContext();
     };
 
     StudyEditor.prototype._updateCurrentLine = function() {
@@ -107,39 +148,57 @@ define(function (require, exports, module) {
                                         { className: "fd-current-line-object-highlight" }
                                         );
         }
-        
     };
 
-    StudyEditor.prototype._traceContextCode = function() {
+    StudyEditor.prototype._updateVisualization = function() {
+        if (this.currentVisualization !== undefined) {
+            this.currentVisualization.remove();
+            this.currentVisualization = undefined;
+        }
+        
+        this.$errorView.text("");
+        var trace = null;
+        var lineInfo = this.config.lineInfo;
+        var visualization;
+        if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
+             visualization = new StringReplaceVisualization(this.lineInfo, trace);
+        } else {
+            visualization = new StringSplitVisualization(this.lineInfo, trace);
+        }
+        visualization.addToContainer(this.$visualization);
+        this.currentVisualization = visualization;
+    };
+
+    StudyEditor.prototype._updateLineInfo = function() {
+        var lineInfo = this.config.lineInfo;
+        this.currentVisualization.lineInfo = lineInfo;
+    };
+
+    StudyEditor.prototype._traceCode = function() {
         VariableTraceProxy.getTraceForCode(this.contextEditor.getValue())
         .done(function(trace) {
-            if (this.currentVisualization !== undefined) {
-                this.currentVisualization.remove();
-                this.currentVisualization = undefined;
-            }
-            
-            this.$errorView.text("");
-            var lineInfo = this.config.lineInfo;
-            var visualization;
-            if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
-                 visualization = new StringReplaceVisualization(lineInfo, trace);
-            } else {
-                visualization = new StringSplitVisualization(lineInfo, trace);
-            }
-            visualization.addToContainer(this.$visualization);
-            this.currentVisualization = visualization;
-            
+            this.currentVisualization.trace = trace;
+            this.currentVisualization.updateVisualization();
         }.bind(this))
         .fail(function(error) {
-            if (this.currentVisualization !== undefined) {
-                this.currentVisualization.remove();
-                this.currentVisualization = undefined;
-            }
-
             console.error(error);
 
             this.$errorView.text(error);
         }.bind(this));
+    };
+
+    StudyEditor.prototype._traceContext = function() {
+        var lines = this.contextEditor.getValue().split("\n");
+        var theContextCode = lines.slice(0, lines.length).join("");
+        theContextCode = this.contextCode;
+        VariableTraceProxy.getTraceForCode(theContextCode)
+        .done(function(contextTrace) {
+            console.log(contextTrace);
+        })
+        .fail(function(error) {
+            console.error(theContextCode);
+            console.error(error);
+        });
     };
 
     module.exports = StudyEditor;

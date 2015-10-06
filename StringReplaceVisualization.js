@@ -7,15 +7,6 @@ define(function(require, exports, module) {
 	var stringReplaceVisualizationContainer = require("text!string-replace-visualization-template.html");
     
     function StringReplaceVisualization(lineInfo, trace) {
-
-        var params = lineInfo.rValue.params;
-        var calleeName = lineInfo.rValue.callee.name;
-        var object = trace[calleeName];
-
-        this.string = object;
-        this.regexp = trace[params[0].name];
-        this.replacement = trace[params[1].name];
-
         this.$container = $(stringReplaceVisualizationContainer);
         this.$replacedView = this.$container.find("#replaced-view");
         this.$stringView = this.$container.find("#string-view");
@@ -36,11 +27,19 @@ define(function(require, exports, module) {
     StringReplaceVisualization.prototype.$resultsView = undefined;
 
     StringReplaceVisualization.prototype.addToContainer = function($container) {
-        this.updateVisualization();
         $container.append(this.$container);
     };
 
     StringReplaceVisualization.prototype.updateVisualization = function() {
+
+        var params = this.lineInfo.rValue.params;
+        var calleeName = this.lineInfo.rValue.callee.name;
+        var object = this.trace[calleeName];
+
+        this.string = object;
+        this.regexp = this.trace[params[0].name];
+        this.replacement = this.trace[params[1].name];
+
         var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
         

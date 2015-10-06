@@ -18,17 +18,24 @@ define(function(require, exports, module) {
     StringSplitVisualization.prototype.$inputView = undefined;
     StringSplitVisualization.prototype.$resultView = undefined;
 
+    StringSplitVisualization.prototype.string = undefined;
+
     StringSplitVisualization.prototype.addToContainer = function($container) {
-        this._buildVisualization();
         $container.append(this.$container);
     };
+
+    StringSplitVisualization.prototype.updateVisualization = function() {
+        this.string = this.trace[lineInfo.rValue.callee.name];
+        console.log(this.string);
+
+        this._buildVisualization();
+    }
 
     StringSplitVisualization.prototype.remove = function() {
         this.$container.remove();
     };
 
     StringSplitVisualization.prototype._buildVisualization = function() {
-        console.log(this);
         this.$explainationView.html("Explaination");
         this.$inputView.html("Input");
         this.$resultView.html("Result");
