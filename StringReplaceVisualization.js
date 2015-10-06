@@ -26,15 +26,15 @@ define(function(require, exports, module) {
         $container.append(this.$container);
     };
 
-    StringReplaceVisualization.prototype.updateVisualization = function(trace, lineInfo) {
+    StringReplaceVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
 
         var params = lineInfo.rValue.params;
         var calleeName = lineInfo.rValue.callee.name;
-        var object = trace[calleeName];
+        var object = contextTrace[calleeName];
 
         this.string = object;
-        this.regexp = trace[params[0].name];
-        this.replacement = trace[params[1].name];
+        this.regexp = contextTrace[params[0].name];
+        this.replacement = contextTrace[params[1].name];
 
         var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);

@@ -24,8 +24,8 @@ define(function(require, exports, module) {
         $container.append(this.$container);
     };
 
-    StringSplitVisualization.prototype.updateVisualization = function(trace, lineInfo) {
-        this.string = trace[lineInfo.rValue.callee.name];
+    StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
+        this.string = contextTrace[lineInfo.rValue.callee.name];
         console.log(this.string);
 
         this._buildVisualization();

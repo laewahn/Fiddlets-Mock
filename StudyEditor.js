@@ -129,7 +129,6 @@ define(function (require, exports, module) {
         }.bind(this));
 
         this.contextCode = updatedContextCode.join("\n");
-        console.log(updatedContextCode);
     };
 
     StudyEditor.prototype._updateCurrentLine = function() {
@@ -179,13 +178,11 @@ define(function (require, exports, module) {
     StudyEditor.prototype._traceAll = function() {
         var traceContext = VariableTraceProxy.getTraceForCode(this.contextCode);
         var traceCode = VariableTraceProxy.getTraceForCode(this.contextEditor.getValue());
-        $.when(traceCode, traceContext)
+        $.when(traceContext, traceCode)
         .done(function(contextTrace, fullTrace) {
             this.currentVisualization.trace = fullTrace;
             this.currentVisualization.context = contextTrace;
-            this.currentVisualization.updateVisualization(fullTrace, this.lineInfo);
-            console.log(contextTrace);
-            console.log(fullTrace);
+            this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
         }.bind(this))
         .fail(function(error) {
             console.error(error);
