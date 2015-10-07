@@ -102,7 +102,10 @@ define(function (require, exports, module) {
         if(configForLine === undefined) return "No information available for this line.";
 
         var inlineEditor = new StudyEditor(configForLine);
-        inlineEditor.load(hostEditor);
+        
+        inlineEditor.load(hostEditor);        
+        inlineEditor.currentLineCode = hostEditor.document.getLine(position.line).trim();
+
         return new $.Deferred().resolve(inlineEditor);
     }
 

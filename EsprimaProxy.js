@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 
 	exports.parse = function(code, options) {
 		var deferred = $.Deferred();
-		console.log("Esprima proxy", code);
+
 		EsprimaDomain.exec("parse", code, options || {})
 		.done(function(result) {
 			deferred.resolve(result);

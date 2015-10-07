@@ -88,9 +88,6 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._getCurrentLine = function() {
-        // Will get this from the editor
-        this.currentLineCode = this.config.currentLine;
-
         // Will call this on the line info domain
         this.lineInfo = this.config.lineInfo;
     };
@@ -202,7 +199,7 @@ define(function (require, exports, module) {
         $.when(traceContext, traceCode, getAST)
         .done(function(contextTrace, fullTrace, ast) {
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
-            console.log(JSON.stringify(ast, null, 2));
+            console.log(ast);
         }.bind(this))
         .fail(function(error) {
             console.error(error);
