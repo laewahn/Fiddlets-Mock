@@ -56,7 +56,7 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
-        this.$typeField.text(this.config.lineInfo.info);
+        this.$typeField.text(this.config.info);
     
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
@@ -161,16 +161,10 @@ define(function (require, exports, module) {
         }
         
         this.$errorView.text("");
-        var lineInfo = this.config.lineInfo;
+        var info = this.config.info;
         var visualization;
 
-        if (lineInfo.info === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
-             visualization = new StringReplaceVisualization();
-        } else {
-            visualization = new StringSplitVisualization();
-        }
-
-        switch(lineInfo.info) {
+        switch(info) {
             case "String.prototype.split([separator[, limit]])" :
                 visualization =  new StringSplitVisualization();
                 break;
