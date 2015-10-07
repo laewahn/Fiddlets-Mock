@@ -55,7 +55,7 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
-        this.$typeField.text(this.config.lineInfo.type);
+        this.$typeField.text(this.config.lineInfo.info);
     
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
@@ -118,8 +118,8 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._updateUnknownValuesInContextCode = function() {
-        var lines = this.contextEditor.getValue().split("\n");
-        this.contextCode = lines.slice(0, lines.length - 1).join("\n");
+        this.contextCode = this.contextEditor.getRange({line: this.contextEditor.firstLine(), ch: 0},
+                                                       {line: this.contextEditor.lastLine() - 1, ch: 0});
 
         var updatedContextCode = this.contextCode.split("\n").map(function(line, idx) {
             var traceSelector = this.traceSelectorsByLine[idx];
@@ -136,7 +136,7 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._updateCurrentLine = function() {
-        var currentLineNr = this.contextEditor.lineCount() - 1;
+        var currentLineNr = this.contextEditor.lastLine();
 
         if(this.config.lineInfo.lValue !== null) {
             var lValueRange = this.config.lineInfo.lValue.range;
@@ -166,13 +166,13 @@ define(function (require, exports, module) {
         var lineInfo = this.config.lineInfo;
         var visualization;
 
-        if (lineInfo.type === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
+        if (lineInfo.info === "String.prototype.replace(regexp|substr, newSubStr|function[, flags])") {
              visualization = new StringReplaceVisualization();
         } else {
             visualization = new StringSplitVisualization();
         }
 
-        switch(lineInfo.type) {
+        switch(lineInfo.info) {
             case "String.prototype.split([separator[, limit]])" :
                 visualization =  new StringSplitVisualization();
                 break;

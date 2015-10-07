@@ -3,7 +3,7 @@
 		"38" : {
 			"currentLine" : "var regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;",
 			"lineInfo" : {
-				"type" : "RegExp",
+				"info" : "RegExp",
 				"lValue" : {
 					"range" : [4, 24]
 				},
@@ -17,7 +17,7 @@
 		"39" : {
 			"currentLine" : "var replacement = '\\\\$&';",
 			"lineInfo" : {
-				"type" : "String",
+				"info" : "String",
 				"lValue" : {
 					"range" : [4, 15]
 				},
@@ -51,7 +51,7 @@
 					}
 					]
 				},
-				"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
+				"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
 				"method" : "replace",
 				"params" : ["regExpMetaCharacters", "replacement"]	
 			}
@@ -64,7 +64,7 @@
 			"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);",
 			"currentLine" : "return escaped;",
 			"lineInfo" : {
-				"type" : "String",
+				"info" : "String",
 				"lValue" : null,
 				"rValue" : {
 					"callee" : {
@@ -79,7 +79,7 @@
 		"61" : {
 			"currentLine" : "var htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;",
 			"lineInfo" : {
-				"type" : "RegExp",
+				"info" : "RegExp",
 				"lValue" : {
 					"range" : [45, 50]
 				},
@@ -112,7 +112,7 @@
 			"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}",
 			"currentLine" : "var escaped = string.replace(htmlMetaCharacters, fromEntityMap);",
 			"lineInfo" : {
-				"type" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
+				"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
 				"assignedTo" : "escaped",
 				"lValue" : {
 					"range" : [4, 11] 
@@ -180,7 +180,7 @@
 					}
 					]
 				},
-				"type" : "String.prototype.split([separator[, limit]])",
+				"info" : "String.prototype.split([separator[, limit]])",
 				"method" : "split",
 				"params" : ["spaceRe", 1]	
 			}
@@ -196,7 +196,7 @@
 					"range" : [0, 12]
 				},
 				"rValue" : null,
-				"type" : "foo"
+				"info" : "foo"
 			}
 		},
 		"136" : {
@@ -210,7 +210,7 @@
 					"range" : [0, 12]
 				},
 				"rValue" : null,
-				"type" : "foo"
+				"info" : "foo"
 			}
 		},
 		"137" : {
@@ -224,7 +224,7 @@
 					"range" : [0, 14]
 				},
 				"rValue" : null,
-				"type" : "foo"
+				"info" : "foo"
 			}
 		}
 	},
