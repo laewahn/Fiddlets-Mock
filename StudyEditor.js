@@ -5,8 +5,11 @@ define(function (require, exports, module) {
     "use strict";
 
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+
     var VariableTrace = require("./VariableTraceProxy");
     var Esprima = require("./EsprimaProxy");
+    var LineInfo = require("./LineInfoProxy");
+
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
     
     var TraceSelector = require("./TraceSelector");
@@ -44,6 +47,7 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype.contextCode = undefined;
     StudyEditor.prototype.currentLineCode = undefined;
+    StudyEditor.prototype.currentLineHandle = undefined;
     StudyEditor.prototype.traceSelectorsByLine = undefined;
 
     StudyEditor.prototype.$widgetContainer = undefined;
@@ -64,20 +68,20 @@ define(function (require, exports, module) {
         });
         
         this._getContext();
-        this._getCurrentLine();
         
         this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
 
+        this.currentLineHandle = this.contextEditor.getLineHandle(this.contextEditor.lastLine());
+
         this._createTraceSelectors();
         this._updateUnknownValuesInContextCode();
-        this._updateCurrentLine();
-        this._updateVisualization();
-        this._updateLineInfo();
-        this._traceAll();
+        this._initializeVisualization();
+        
+        this._traceAndUpdate();
 
         this.contextEditor.on("change", function() {
             this._updateUnknownValuesInContextCode();
-            this._traceAll();
+            this._traceAndUpdate();
         }.bind(this));
     };
 
@@ -85,11 +89,6 @@ define(function (require, exports, module) {
         // Call the context domain
         // well, fake it by loading from the config...
         this.contextCode = this.config.context || "";
-    };
-
-    StudyEditor.prototype._getCurrentLine = function() {
-        // Will call this on the line info domain
-        this.lineInfo = this.config.lineInfo;
     };
 
     StudyEditor.prototype._createTraceSelectors = function() {
@@ -133,28 +132,7 @@ define(function (require, exports, module) {
         this.contextCode = updatedContextCode.join("\n");
     };
 
-    StudyEditor.prototype._updateCurrentLine = function() {
-        var currentLineNr = this.contextEditor.lastLine();
-
-        if(this.config.lineInfo.lValue !== null) {
-            var lValueRange = this.config.lineInfo.lValue.range;
-            this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
-                                        { line: currentLineNr, ch: lValueRange[1] }, 
-                                        { className: "fd-current-line-assigned-to-highlight" }
-                                        );
-    
-        }
-        
-        if(this.config.lineInfo.rValue !== null) {
-            var calleeRange = this.config.lineInfo.rValue.callee.range;
-            this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
-                                        { line: currentLineNr, ch: calleeRange[1] }, 
-                                        { className: "fd-current-line-object-highlight" }
-                                        );
-        }
-    };
-
-    StudyEditor.prototype._updateVisualization = function() {
+    StudyEditor.prototype._initializeVisualization = function() {
         if (this.currentVisualization !== undefined) {
             this.currentVisualization.remove();
             this.currentVisualization = undefined;
@@ -180,24 +158,43 @@ define(function (require, exports, module) {
         this.currentVisualization = visualization;
     };
 
-    StudyEditor.prototype._updateLineInfo = function() {
-        var lineInfo = this.config.lineInfo;
-        this.currentVisualization.lineInfo = lineInfo;
-    };
-
-    StudyEditor.prototype._traceAll = function() {
+    StudyEditor.prototype._traceAndUpdate = function() {
         var traceContext = VariableTrace.getTraceForCode(this.contextCode);
         var traceCode = VariableTrace.getTraceForCode(this.contextEditor.getValue());
-        var getAST = Esprima.parse(this.currentLineCode);
+        
+        var getAST = Esprima.parse(this.currentLineHandle.text);
+        var getLineInfo = LineInfo.infoForLine(this.currentLineHandle.text);
 
-        $.when(traceContext, traceCode, getAST)
-        .done(function(contextTrace, fullTrace, ast) {
+        $.when(traceContext, traceCode, getAST, getLineInfo)
+        .done(function(contextTrace, fullTrace, ast, lineInfo) {
+            this.lineInfo = lineInfo;
+            this._updateMarkersInCurrentLine();
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
-            console.log(ast);
         }.bind(this))
         .fail(function(error) {
             console.error(error);
         });
+    };
+
+    StudyEditor.prototype._updateMarkersInCurrentLine = function() {
+        var currentLineNr = this.contextEditor.lastLine();
+
+        if(this.lineInfo.lValue !== null) {
+            var lValueRange = this.lineInfo.lValue.range;
+            this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
+                                        { line: currentLineNr, ch: lValueRange[1] }, 
+                                        { className: "fd-current-line-assigned-to-highlight" }
+                                        );
+    
+        }
+        
+        if(this.lineInfo.rValue !== null) {
+            var calleeRange = this.lineInfo.rValue.callee.range;
+            this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
+                                        { line: currentLineNr, ch: calleeRange[1] }, 
+                                        { className: "fd-current-line-object-highlight" }
+                                        );
+        }
     };
 
     module.exports = StudyEditor;

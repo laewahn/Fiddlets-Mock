@@ -26,8 +26,8 @@ define(function(require, exports, module) {
 
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
         this.string = contextTrace[lineInfo.rValue.callee.name];
-        var splitRegExp = contextTrace[lineInfo.rValue.params[0].name];
-        var limit = lineInfo.rValue.params[1].value;
+        var splitRegExp = contextTrace[lineInfo.rValue.params.values[0].name || lineInfo.rValue.params.values[0].value];
+        var limit = lineInfo.rValue.params.values[1].name || lineInfo.rValue.params.values[1].value;
 
         var explaination =  "Splits  " + JSON.stringify(this.string) + " at " + splitRegExp.toString() + " and limits the result to " + limit + " elements.";
         this.$explainationView.text(explaination);
