@@ -178,9 +178,11 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype._updateMarkersInCurrentLine = function() {
         var currentLineNr = this.contextEditor.lastLine();
+        console.log(this.lineInfo);
 
         if(this.lineInfo.lValue !== null) {
-            var lValueRange = this.lineInfo.lValue.range;
+            var assignedToObject = this.lineInfo.lValue;
+            var lValueRange = assignedToObject.range;
             this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
                                         { line: currentLineNr, ch: lValueRange[1] }, 
                                         { className: "fd-current-line-assigned-to-highlight" }
@@ -189,7 +191,15 @@ define(function (require, exports, module) {
         }
         
         if(this.lineInfo.rValue !== null) {
-            var calleeRange = this.lineInfo.rValue.callee.range;
+            var theObject;
+
+            if(this.lineInfo.type.indexOf("Function call") !== -1) {
+                theObject = this.lineInfo.rValue.callee;    
+            } else {
+                theObject = this.lineInfo.rValue;
+            }
+            
+            var calleeRange = theObject.range;
             this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
                                         { line: currentLineNr, ch: calleeRange[1] }, 
                                         { className: "fd-current-line-object-highlight" }
