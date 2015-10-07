@@ -178,7 +178,6 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype._updateMarkersInCurrentLine = function() {
         var currentLineNr = this.contextEditor.lastLine();
-        console.log(this.lineInfo);
 
         if(this.lineInfo.lValue !== null) {
             var assignedToObject = this.lineInfo.lValue;
