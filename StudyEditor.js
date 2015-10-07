@@ -5,7 +5,7 @@ define(function (require, exports, module) {
     "use strict";
 
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
-    var VariableTraceProxy = require("./VariableTraceProxy");
+    var VariableTrace = require("./VariableTraceProxy");
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
     
     var TraceSelector = require("./TraceSelector");
@@ -194,8 +194,8 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._traceAll = function() {
-        var traceContext = VariableTraceProxy.getTraceForCode(this.contextCode);
-        var traceCode = VariableTraceProxy.getTraceForCode(this.contextEditor.getValue());
+        var traceContext = VariableTrace.getTraceForCode(this.contextCode);
+        var traceCode = VariableTrace.getTraceForCode(this.contextEditor.getValue());
 
         $.when(traceContext, traceCode)
         .done(function(contextTrace, fullTrace) {
