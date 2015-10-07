@@ -6,6 +6,7 @@ define(function (require, exports, module) {
 
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     var VariableTrace = require("./VariableTraceProxy");
+    var Esprima = require("./EsprimaProxy");
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
     
     var TraceSelector = require("./TraceSelector");
@@ -196,10 +197,12 @@ define(function (require, exports, module) {
     StudyEditor.prototype._traceAll = function() {
         var traceContext = VariableTrace.getTraceForCode(this.contextCode);
         var traceCode = VariableTrace.getTraceForCode(this.contextEditor.getValue());
+        var getAST = Esprima.parse(this.currentLineCode);
 
-        $.when(traceContext, traceCode)
-        .done(function(contextTrace, fullTrace) {
+        $.when(traceContext, traceCode, getAST)
+        .done(function(contextTrace, fullTrace, ast) {
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
+            console.log(JSON.stringify(ast, null, 2));
         }.bind(this))
         .fail(function(error) {
             console.error(error);
