@@ -33,8 +33,8 @@ define(function(require, exports, module) {
         var object = contextTrace[calleeName];
 
         this.string = object;
-        this.regexp = contextTrace[params[0].name];
-        this.replacement = contextTrace[params[1].name];
+        this.regexp = contextTrace[params[0].name] || params[0].value;
+        this.replacement = contextTrace[params[1].name] || params[1].value;
 
         var replacement = (this.replacement instanceof Function) ? " the return value of the function" : this.replacement;
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
