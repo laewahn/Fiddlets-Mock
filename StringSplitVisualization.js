@@ -30,6 +30,7 @@ define(function(require, exports, module) {
         $container.append(this.$container);
     };
     
+    // NOTE: This should not be a global variable, but it might go away with a more advanced limit selector.
     var marker;
     
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
