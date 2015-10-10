@@ -134,6 +134,7 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype._initializeVisualization = function() {
         if (this.currentVisualization !== undefined) {
+            this.currentVisualization.changedCurrentLineCallback = undefined;
             this.currentVisualization.remove();
             this.currentVisualization = undefined;
         }
@@ -153,7 +154,10 @@ define(function (require, exports, module) {
                 visualization = new DefaultVisualization();
         }
 
-        
+        visualization.currentLineHandle = this.currentLineHandle;
+        visualization.changedCurrentLineCallback = function() {
+            this._traceAndUpdate();
+        }.bind(this);
         visualization.addToContainer(this.$visualization);
         this.currentVisualization = visualization;
     };

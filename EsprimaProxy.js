@@ -22,4 +22,18 @@ define(function(require, exports, module) {
 		return deferred.promise();
 	};
 
+	exports.generate = function(ast) {
+		var deferred = $.Deferred();
+
+		EsprimaDomain.exec("generate", ast)
+		.done(function(code) {
+			deferred.resolve(code);
+		})
+		.fail(function(error) {
+			deferred.reject(error);
+		});
+
+		return deferred.promise();	
+	}
+
 });
