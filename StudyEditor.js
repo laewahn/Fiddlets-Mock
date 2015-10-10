@@ -67,18 +67,17 @@ define(function (require, exports, module) {
             lineNumbers: true
         });
         
-        this._getContext();
+        this._getContext().done(function() {
+            this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
+            this.currentLineHandle = this.contextEditor.getLineHandle(this.contextEditor.lastLine());
+    
+            this._createTraceSelectors();
+            this._updateUnknownValuesInContextCode();
+            this._initializeVisualization();
+            
+            this._traceAndUpdate();
+        }.bind(this));
         
-        this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
-
-        this.currentLineHandle = this.contextEditor.getLineHandle(this.contextEditor.lastLine());
-
-        this._createTraceSelectors();
-        this._updateUnknownValuesInContextCode();
-        this._initializeVisualization();
-        
-        this._traceAndUpdate();
-
         this.contextEditor.on("change", function() {
             this._updateUnknownValuesInContextCode();
             this._traceAndUpdate();
@@ -86,9 +85,13 @@ define(function (require, exports, module) {
     };
 
     StudyEditor.prototype._getContext = function() {
+        var deferred = $.Deferred();
         // Call the context domain
         // well, fake it by loading from the config...
         this.contextCode = this.config.context || "";
+        deferred.resolve();
+
+        return deferred.promise();
     };
 
     StudyEditor.prototype._createTraceSelectors = function() {
