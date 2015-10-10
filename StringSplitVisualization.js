@@ -6,13 +6,13 @@ define(function(require, exports, module) {
 
     var stringSplitVisualizationContainer = require("text!string-split-visualization-template.html");
 
-    var Esprima = require("./EsprimaProxy");
-
-    function StringSplitVisualization() {
+    function StringSplitVisualization(editor) {
         this.$container = $(stringSplitVisualizationContainer);
         this.$explainationView = this.$container.find("#explanation-view");
         this.$inputView = this.$container.find("#input-view");
         this.$resultView = this.$container.find("#results-view");
+
+        this.editor = editor;
     }
 
     StringSplitVisualization.prototype.$container = undefined;
@@ -24,11 +24,14 @@ define(function(require, exports, module) {
     StringSplitVisualization.prototype.currentLineHandle = undefined;
     StringSplitVisualization.prototype.argsAST = undefined;
     StringSplitVisualization.prototype.changedCurrentLineCallback = undefined;
+    StringSplitVisualization.prototype.editor = undefined;
 
     StringSplitVisualization.prototype.addToContainer = function($container) {
         $container.append(this.$container);
     };
-
+    
+    var marker;
+    
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
         this.$inputView.empty();
         this.string = contextTrace[lineInfo.rValue.callee.name];
@@ -43,17 +46,19 @@ define(function(require, exports, module) {
         var limitArgAST = lineInfo.ast.body[0].expression.right.arguments[1];
         
         var currentLineHandle = this.currentLineHandle;
-        var changedCurrentLineCallback = this.changedCurrentLineCallback;
+        var contextEditor = this.editor;
 
         var splitHTMLElements = splitted.map(function(e, idx) {
-            var styledElement = "<span>" + JSON.stringify(e) + "</span>";
-            
             var $element = $("<div></div>");
             $element.data("idx", idx);
             $element.text(JSON.stringify(e));
-            $element.mouseenter(function() {
+
+            function updateAndHighlightParameter() {
+                if ((idx + 1) === limit) {
+                    return;
+                }
+
                 limitArgAST.value = idx + 1;
-                console.log(limitArgAST);
                 var changeRange = {
                     start: {
                         line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
@@ -62,15 +67,18 @@ define(function(require, exports, module) {
                         line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
                     }
                 };
-                Esprima.generate(lineInfo.ast)
-                .done(function(code) {
-                    currentLineHandle.text = code;
-                    changedCurrentLineCallback(changeRange);
-                }).fail(function(error) {
-                    console.error(error);
-                });
-            });
+                contextEditor.replaceRange(JSON.stringify(limitArgAST.value), changeRange.start, changeRange.end);
+                marker = contextEditor.markText(changeRange.start, changeRange.end, { className: "fd-current-line-param-highlight"});
+            }
 
+            function removeParameterHighlight() {
+                if (marker !== undefined) {
+                    marker.clear();
+                }
+            }
+
+            $element.hover(updateAndHighlightParameter, removeParameterHighlight);
+            
             if (idx < limit) {
                 $element.css({
                     "background-color" : "#00ff00"

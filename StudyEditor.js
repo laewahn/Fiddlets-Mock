@@ -145,22 +145,16 @@ define(function (require, exports, module) {
 
         switch(info) {
             case "String.prototype.split([separator[, limit]])" :
-                visualization =  new StringSplitVisualization();
+                visualization =  new StringSplitVisualization(this.contextEditor);
                 break;
             case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
-                visualization = new StringReplaceVisualization();
+                visualization = new StringReplaceVisualization(this.contextEditor);
                 break;
             default:
-                visualization = new DefaultVisualization();
+                visualization = new DefaultVisualization(this.contextEditor);
         }
 
         visualization.currentLineHandle = this.currentLineHandle;
-        visualization.changedCurrentLineCallback = function(range) {
-            console.log(range);
-            this.contextEditor.markText(range.start, range.end,
-                                        { className: "fd-current-line-param-highlight"});
-            this._traceAndUpdate();
-        }.bind(this);
         visualization.addToContainer(this.$visualization);
         this.currentVisualization = visualization;
     };
