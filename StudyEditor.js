@@ -155,7 +155,10 @@ define(function (require, exports, module) {
         }
 
         visualization.currentLineHandle = this.currentLineHandle;
-        visualization.changedCurrentLineCallback = function() {
+        visualization.changedCurrentLineCallback = function(range) {
+            console.log(range);
+            this.contextEditor.markText(range.start, range.end,
+                                        { className: "fd-current-line-param-highlight"});
             this._traceAndUpdate();
         }.bind(this);
         visualization.addToContainer(this.$visualization);

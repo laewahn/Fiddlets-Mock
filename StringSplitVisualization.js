@@ -48,15 +48,24 @@ define(function(require, exports, module) {
         var splitHTMLElements = splitted.map(function(e, idx) {
             var styledElement = "<span>" + JSON.stringify(e) + "</span>";
             
-            var $element = $("<span></span>");
+            var $element = $("<div></div>");
             $element.data("idx", idx);
             $element.text(JSON.stringify(e));
             $element.mouseenter(function() {
                 limitArgAST.value = idx + 1;
+                console.log(limitArgAST);
+                var changeRange = {
+                    start: {
+                        line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
+                    },
+                    end: {
+                        line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
+                    }
+                };
                 Esprima.generate(lineInfo.ast)
                 .done(function(code) {
                     currentLineHandle.text = code;
-                    changedCurrentLineCallback();
+                    changedCurrentLineCallback(changeRange);
                 }).fail(function(error) {
                     console.error(error);
                 });

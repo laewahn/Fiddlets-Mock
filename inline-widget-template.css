@@ -62,3 +62,7 @@ select {
 .fd-current-line-assigned-to-highlight {
 	background-color: #9AF6FF;
 }
+
+.fd-current-line-param-highlight {
+	border: dotted;
+}
