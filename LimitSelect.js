@@ -110,9 +110,15 @@ define(function(require, exports, module) {
                 e.preventDefault();
                 var rowHeight = $(this).height();
 
+                $container.parent().mousemove(function(e) {
+                    $container.off("mousemove");
+                });
+
                 $container.mousemove(function(e) {
-                    var parentOffset = $(this).offset();
-                    var posY = e.pageY - parentOffset.top;
+                    e.stopPropagation();
+
+                    var offset = $(this).offset();
+                    var posY = e.pageY - offset.top;
                     
                     var newLimit = Math.ceil(posY/rowHeight);
 
