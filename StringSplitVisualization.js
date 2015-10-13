@@ -1,5 +1,5 @@
 /*jslint vars: true, plusplus: true, devel: true, nomen: true, indent: 4, maxerr: 50, regexp: true, bitwise: true */
-/*global define, $ */
+/*global define, $, brackets */
 
 define(function(require, exports, module) {
 	"use strict";
@@ -8,6 +8,7 @@ define(function(require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "string-split-visualization-template.css");
     
+    var LimitSelect = require("./LimitSelect");
 
     function StringSplitVisualization(editor) {
         this.$container = $(stringSplitVisualizationContainer);
@@ -15,6 +16,7 @@ define(function(require, exports, module) {
         this.$inputView = this.$container.find("#input-view");
         this.$resultView = this.$container.find("#results-view");
 
+        this.limitSelect = new LimitSelect(this.$inputView);
         this.editor = editor;
     }
 
@@ -28,6 +30,7 @@ define(function(require, exports, module) {
     StringSplitVisualization.prototype.argsAST = undefined;
     StringSplitVisualization.prototype.changedCurrentLineCallback = undefined;
     StringSplitVisualization.prototype.editor = undefined;
+    StringSplitVisualization.prototype.limitSelect = undefined;
 
     StringSplitVisualization.prototype.addToContainer = function($container) {
         $container.append(this.$container);
