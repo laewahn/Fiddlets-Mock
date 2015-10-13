@@ -40,7 +40,7 @@ define(function(require, exports, module) {
     var marker;
     
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
-        this.$inputView.empty();
+        
         this.string = contextTrace[lineInfo.rValue.callee.name];
 
         var splitRegExp = contextTrace[lineInfo.rValue.params.values[0].name] || lineInfo.rValue.params.values[0].value;
@@ -52,74 +52,76 @@ define(function(require, exports, module) {
         var splitted = this.string.split(splitRegExp);
         var limitArgAST = lineInfo.ast.body[0].expression.right.arguments[1];
         
-        var currentLineHandle = this.currentLineHandle;
-        var contextEditor = this.editor;
+        this.limitSelect.setArray(splitted);
+        this.limitSelect.setLimit(limit);
+        // var currentLineHandle = this.currentLineHandle;
+        // var contextEditor = this.editor;
 
-        var splitHTMLElements = splitted.map(function(e, idx) {
-            var $element = $("<div></div>");
+        // var splitHTMLElements = splitted.map(function(e, idx) {
+        //     var $element = $("<div></div>");
 
-            var $selector = $("<div></div>").addClass("fd-sel");
-            var $data = $("<div></div>").addClass("fd-data");
+        //     var $selector = $("<div></div>").addClass("fd-sel");
+        //     var $data = $("<div></div>").addClass("fd-data");
 
-            $element.append($selector);
-            $element.append($data);
+        //     $element.append($selector);
+        //     $element.append($data);
 
-            if (idx + 1 === limit) {
-                $selector.text(">");
-                $selector.addClass("fd-dragable");
-            } else {
-                $selector.removeClass("fd-dragable");
-                if (idx + 1 < limit) {
-                   $selector.text("|");
-                } else {
-                    $selector.html("&nbsp;");
-                }
-            }
+        //     if (idx + 1 === limit) {
+        //         $selector.text(">");
+        //         $selector.addClass("fd-dragable");
+        //     } else {
+        //         $selector.removeClass("fd-dragable");
+        //         if (idx + 1 < limit) {
+        //            $selector.text("|");
+        //         } else {
+        //             $selector.html("&nbsp;");
+        //         }
+        //     }
 
-            $element.data("idx", idx);
-            $data.text(JSON.stringify(e));
+        //     $element.data("idx", idx);
+        //     $data.text(JSON.stringify(e));
 
-            var parameterRange = {
-                start: {
-                    line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
-                },
-                end: {
-                    line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
-                }
-            };
-            function hightlightParameter() {
-                marker = contextEditor.markText(parameterRange.start, parameterRange.end, { className: "fd-current-line-param-highlight"});
-            }
+        //     var parameterRange = {
+        //         start: {
+        //             line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
+        //         },
+        //         end: {
+        //             line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
+        //         }
+        //     };
+        //     function hightlightParameter() {
+        //         marker = contextEditor.markText(parameterRange.start, parameterRange.end, { className: "fd-current-line-param-highlight"});
+        //     }
 
-            function updateAndHighlightParameter() {
-                if ((idx + 1) === limit) {
-                    return;
-                }
+        //     function updateAndHighlightParameter() {
+        //         if ((idx + 1) === limit) {
+        //             return;
+        //         }
 
-                limitArgAST.value = idx + 1;
+        //         limitArgAST.value = idx + 1;
                 
-                contextEditor.replaceRange(JSON.stringify(limitArgAST.value), parameterRange.start, parameterRange.end);
-                hightlightParameter();
-            }
+        //         contextEditor.replaceRange(JSON.stringify(limitArgAST.value), parameterRange.start, parameterRange.end);
+        //         hightlightParameter();
+        //     }
 
-            function removeParameterHighlight() {
-                if (marker !== undefined) {
-                    marker.clear();
-                }
-            }
+        //     function removeParameterHighlight() {
+        //         if (marker !== undefined) {
+        //             marker.clear();
+        //         }
+        //     }
 
-            $selector.hover(updateAndHighlightParameter, removeParameterHighlight);
+        //     $selector.hover(updateAndHighlightParameter, removeParameterHighlight);
             
-            if (idx < limit) {
-                $element.css({
-                    "background-color" : "#00ff00"
-                });
-            }
+        //     if (idx < limit) {
+        //         $element.css({
+        //             "background-color" : "#00ff00"
+        //         });
+        //     }
 
-            return $element;
-        });
+        //     return $element;
+        // });
 
-        this.$inputView.append(splitHTMLElements);
+        // this.$inputView.append(splitHTMLElements);
         
         var result = fullTrace[lineInfo.lValue.name];
         this.$resultView.html(JSON.stringify(result));

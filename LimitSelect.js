@@ -29,9 +29,8 @@ define(function(require, exports, module) {
                 $row.append($selector);
                 $row.append($content);
 
-                $content.text(e);
-                $selector.html("&nbsp;");
-
+                $content.text(JSON.stringify(e));
+                
                 this.$container.append($row);
                 this.rows.push($row);
             }, this);
@@ -71,16 +70,16 @@ define(function(require, exports, module) {
                     $content.addClass("fd-limit-array-row-highlight");
 
                     if (idx === 0) {
-                        $selector.attr("src", "selector-arrow-start.png");  
+                        $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-start.png"));  
                     }
 
                     if (idx + 1 === this.limit) {
                         $selector.addClass("fd-limit-array-row-current");
-                        $selector.attr("src", (this.limit === 1) ? "selector-arrow-only.png" : "selector-arrow.png");
+                        $selector.attr("src", ExtensionUtils.getModuleUrl(module, (this.limit === 1) ? "selector-arrow-only.png" : "selector-arrow.png"));
                     }
 
                     if (idx > 0 && idx < this.limit - 1) {
-                        $selector.attr("src", "selector-arrow-between.png");
+                        $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-between.png"));
                     }
                 } else {
                     if (idx === 0 && this.limit === 0) {
@@ -88,7 +87,7 @@ define(function(require, exports, module) {
                     }
 
                     $content.removeClass("fd-limit-array-row-highlight");
-                    $selector.removeAttr("src");
+                    $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-none.png"));
                 }
             }, this);
 
