@@ -54,8 +54,22 @@ define(function(require, exports, module) {
         
         this.limitSelect.setArray(splitted);
         this.limitSelect.setLimit(limit);
-        // var currentLineHandle = this.currentLineHandle;
-        // var contextEditor = this.editor;
+
+        var currentLineHandle = this.currentLineHandle;
+        var contextEditor = this.editor;
+
+        this.limitSelect.limitChangedCallback = function(newLimit) {
+            var parameterStart = {
+                line: currentLineHandle.lineNo(), 
+                ch: limitArgAST.loc.start.column
+            };
+            var parameterEnd = {
+                line: currentLineHandle.lineNo(), 
+                ch: limitArgAST.loc.end.column
+            };
+
+            contextEditor.replaceRange(JSON.stringify(newLimit), parameterStart, parameterEnd);
+        };
 
         // var splitHTMLElements = splitted.map(function(e, idx) {
         //     var $element = $("<div></div>");

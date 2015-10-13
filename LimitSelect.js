@@ -17,6 +17,8 @@ define(function(require, exports, module) {
         LimitSelect.prototype.rows = undefined;
         LimitSelect.prototype.limit = undefined;
 
+        LimitSelect.prototype.limitChangedCallback = undefined;
+
         LimitSelect.prototype.setArray = function(arr) {
             this.$container.empty();
             this.rows = [];
@@ -49,6 +51,10 @@ define(function(require, exports, module) {
 
                 this._updateHighlights();
                 this._updateSelector();
+
+                if (this.limitChangedCallback !== undefined) {
+                    this.limitChangedCallback(this.limit);
+                }
             }
         };
 
