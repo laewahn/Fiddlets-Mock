@@ -17,6 +17,28 @@ define(function(require, exports, module) {
         this.$resultView = this.$container.find("#results-view");
 
         this.limitSelect = new LimitSelect(this.$inputView);
+
+        this.limitSelect.limitChange(function(newLimit) {
+            this.editor.replaceRange(JSON.stringify(newLimit), 
+                                     this.parameterPosition.start,
+                                     this.parameterPosition.end
+            );
+        }.bind(this));
+
+        this.limitSelect.selectorHover(
+            function() {
+                this.parameterMarker = this.editor.markText(this.parameterPosition.start,
+                                                            this.parameterPosition.end, 
+                                                            { className: "fd-current-line-param-highlight"}
+                );
+            }.bind(this),
+            function() {
+                if (this.parameterMarker !== undefined) {
+                    this.parameterMarker.clear();
+                }
+            }.bind(this)
+        );
+
         this.editor = editor;
     }
 
@@ -28,16 +50,14 @@ define(function(require, exports, module) {
     StringSplitVisualization.prototype.string = undefined;
     StringSplitVisualization.prototype.currentLineHandle = undefined;
     StringSplitVisualization.prototype.argsAST = undefined;
-    StringSplitVisualization.prototype.changedCurrentLineCallback = undefined;
     StringSplitVisualization.prototype.editor = undefined;
     StringSplitVisualization.prototype.limitSelect = undefined;
+    StringSplitVisualization.prototype.parameterMarker = undefined;
+    StringSplitVisualization.prototype.parameterPosition = undefined;
 
     StringSplitVisualization.prototype.addToContainer = function($container) {
         $container.append(this.$container);
     };
-    
-    // NOTE: This should not be a global variable, but it might go away with a more advanced limit selector.
-    var marker;
     
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
         
@@ -51,91 +71,20 @@ define(function(require, exports, module) {
         
         var splitted = this.string.split(splitRegExp);
         var limitArgAST = lineInfo.ast.body[0].expression.right.arguments[1];
-        
-        this.limitSelect.setArray(splitted);
-        this.limitSelect.setLimit(limit);
 
-        var currentLineHandle = this.currentLineHandle;
-        var contextEditor = this.editor;
-
-        this.limitSelect.limitChangedCallback = function(newLimit) {
-            var parameterStart = {
-                line: currentLineHandle.lineNo(), 
-                ch: limitArgAST.loc.start.column
-            };
-            var parameterEnd = {
-                line: currentLineHandle.lineNo(), 
-                ch: limitArgAST.loc.end.column
-            };
-
-            contextEditor.replaceRange(JSON.stringify(newLimit), parameterStart, parameterEnd);
+        var parameterStart = {
+            line: this.currentLineHandle.lineNo(), 
+            ch: limitArgAST.loc.start.column
+        };
+        var parameterEnd = {
+            line: this.currentLineHandle.lineNo(), 
+            ch: limitArgAST.loc.end.column
         };
 
-        // var splitHTMLElements = splitted.map(function(e, idx) {
-        //     var $element = $("<div></div>");
+        this.parameterPosition = {start: parameterStart, end: parameterEnd};
 
-        //     var $selector = $("<div></div>").addClass("fd-sel");
-        //     var $data = $("<div></div>").addClass("fd-data");
-
-        //     $element.append($selector);
-        //     $element.append($data);
-
-        //     if (idx + 1 === limit) {
-        //         $selector.text(">");
-        //         $selector.addClass("fd-dragable");
-        //     } else {
-        //         $selector.removeClass("fd-dragable");
-        //         if (idx + 1 < limit) {
-        //            $selector.text("|");
-        //         } else {
-        //             $selector.html("&nbsp;");
-        //         }
-        //     }
-
-        //     $element.data("idx", idx);
-        //     $data.text(JSON.stringify(e));
-
-        //     var parameterRange = {
-        //         start: {
-        //             line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
-        //         },
-        //         end: {
-        //             line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
-        //         }
-        //     };
-        //     function hightlightParameter() {
-        //         marker = contextEditor.markText(parameterRange.start, parameterRange.end, { className: "fd-current-line-param-highlight"});
-        //     }
-
-        //     function updateAndHighlightParameter() {
-        //         if ((idx + 1) === limit) {
-        //             return;
-        //         }
-
-        //         limitArgAST.value = idx + 1;
-                
-        //         contextEditor.replaceRange(JSON.stringify(limitArgAST.value), parameterRange.start, parameterRange.end);
-        //         hightlightParameter();
-        //     }
-
-        //     function removeParameterHighlight() {
-        //         if (marker !== undefined) {
-        //             marker.clear();
-        //         }
-        //     }
-
-        //     $selector.hover(updateAndHighlightParameter, removeParameterHighlight);
-            
-        //     if (idx < limit) {
-        //         $element.css({
-        //             "background-color" : "#00ff00"
-        //         });
-        //     }
-
-        //     return $element;
-        // });
-
-        // this.$inputView.append(splitHTMLElements);
+        this.limitSelect.setArray(splitted);
+        this.limitSelect.setLimit(limit);
         
         var result = fullTrace[lineInfo.lValue.name];
         this.$resultView.html(JSON.stringify(result));

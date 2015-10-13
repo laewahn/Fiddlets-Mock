@@ -137,7 +137,6 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype._initializeVisualization = function() {
         if (this.currentVisualization !== undefined) {
-            this.currentVisualization.changedCurrentLineCallback = undefined;
             this.currentVisualization.remove();
             this.currentVisualization = undefined;
         }

@@ -18,6 +18,8 @@ define(function(require, exports, module) {
         LimitSelect.prototype.limit = undefined;
 
         LimitSelect.prototype.limitChangedCallback = undefined;
+        LimitSelect.prototype.selectorHoverInCallback = undefined;
+        LimitSelect.prototype.selectorHoverOutCallback = undefined;
 
         LimitSelect.prototype.setArray = function(arr) {
             this.$container.empty();
@@ -32,7 +34,11 @@ define(function(require, exports, module) {
                 $row.append($content);
 
                 $content.text(JSON.stringify(e));
-                
+                $selector.hover(
+                    this.selectorHoverInCallback,
+                    this.selectorHoverOutCallback
+                );
+
                 this.$container.append($row);
                 this.rows.push($row);
             }, this);
@@ -57,6 +63,15 @@ define(function(require, exports, module) {
                 }
             }
         };
+
+        LimitSelect.prototype.limitChange = function(callback) {
+            this.limitChangedCallback = callback;
+        }
+
+        LimitSelect.prototype.selectorHover = function(hoverIn, hoverOut) {
+            this.selectorHoverInCallback = hoverIn;
+            this.selectorHoverOutCallback = hoverOut;
+        }
 
         LimitSelect.prototype._updateSelector = function() {
             this.$container.find(".fd-limit-array-selector").each(function() {
