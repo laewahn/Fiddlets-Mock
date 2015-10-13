@@ -5,6 +5,9 @@ define(function(require, exports, module) {
 	"use strict";
 
     var stringSplitVisualizationContainer = require("text!string-split-visualization-template.html");
+    var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+    ExtensionUtils.loadStyleSheet(module, "string-split-visualization-template.css");
+    
 
     function StringSplitVisualization(editor) {
         this.$container = $(stringSplitVisualizationContainer);
@@ -51,8 +54,39 @@ define(function(require, exports, module) {
 
         var splitHTMLElements = splitted.map(function(e, idx) {
             var $element = $("<div></div>");
+
+            var $selector = $("<div></div>").addClass("fd-sel");
+            var $data = $("<div></div>").addClass("fd-data");
+
+            $element.append($selector);
+            $element.append($data);
+
+            if (idx + 1 === limit) {
+                $selector.text(">");
+                $selector.addClass("fd-dragable");
+            } else {
+                $selector.removeClass("fd-dragable");
+                if (idx + 1 < limit) {
+                   $selector.text("|");
+                } else {
+                    $selector.html("&nbsp;");
+                }
+            }
+
             $element.data("idx", idx);
-            $element.text(JSON.stringify(e));
+            $data.text(JSON.stringify(e));
+
+            var parameterRange = {
+                start: {
+                    line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
+                },
+                end: {
+                    line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
+                }
+            };
+            function hightlightParameter() {
+                marker = contextEditor.markText(parameterRange.start, parameterRange.end, { className: "fd-current-line-param-highlight"});
+            }
 
             function updateAndHighlightParameter() {
                 if ((idx + 1) === limit) {
@@ -60,16 +94,9 @@ define(function(require, exports, module) {
                 }
 
                 limitArgAST.value = idx + 1;
-                var changeRange = {
-                    start: {
-                        line: currentLineHandle.lineNo(), ch: limitArgAST.loc.start.column
-                    },
-                    end: {
-                        line: currentLineHandle.lineNo(), ch: limitArgAST.loc.end.column
-                    }
-                };
-                contextEditor.replaceRange(JSON.stringify(limitArgAST.value), changeRange.start, changeRange.end);
-                marker = contextEditor.markText(changeRange.start, changeRange.end, { className: "fd-current-line-param-highlight"});
+                
+                contextEditor.replaceRange(JSON.stringify(limitArgAST.value), parameterRange.start, parameterRange.end);
+                hightlightParameter();
             }
 
             function removeParameterHighlight() {
@@ -78,7 +105,7 @@ define(function(require, exports, module) {
                 }
             }
 
-            $element.hover(updateAndHighlightParameter, removeParameterHighlight);
+            $selector.hover(updateAndHighlightParameter, removeParameterHighlight);
             
             if (idx < limit) {
                 $element.css({

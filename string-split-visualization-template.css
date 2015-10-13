@@ -1,0 +1,17 @@
+.fd-current-line-param-highlight {
+	border: dotted;
+}
+
+.fd-sel {
+	background-color: #00ff00;
+	width: 1em;
+	float: left;
+}
+
+.fd-data {
+	background-color: #FF0000;
+}
+
+.fd-dragable {
+	cursor: s-resize;
+}
