@@ -77,12 +77,19 @@ define(function (require, exports, module) {
             this._initializeVisualization();
             
             this._traceAndUpdate();
+            this._updateHeight();
         }.bind(this));
         
         this.contextEditor.on("change", function() {
             this._updateUnknownValuesInContextCode();
             this._traceAndUpdate();
+            this._updateHeight();
         }.bind(this));
+    };
+
+    StudyEditor.prototype._updateHeight = function() {
+            var newHeight = this.$widgetContainer.height() + this.$widgetContainer.position().top + 40;
+            this.hostEditor.setInlineWidgetHeight(this, newHeight);
     };
 
     StudyEditor.prototype._getContext = function() {
