@@ -1,0 +1,26 @@
+#before-view {
+	display: table;
+	border-top: solid;
+	border-right: solid;
+	border-width: 1px;
+}
+
+.fd-map-row {
+	display: table-row;
+}
+
+.fd-map-element-before {
+	display: table-cell;
+	border-bottom: solid;
+	border-left: solid;
+	border-width: 1px;
+	max-width: 300px;
+}
+
+.fd-map-element-after {
+	display: table-cell;
+	border-bottom: solid;
+	border-left: solid;
+	border-width: 1px;	
+	max-width: 300px;
+}

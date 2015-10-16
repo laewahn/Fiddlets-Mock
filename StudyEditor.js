@@ -185,6 +185,7 @@ define(function (require, exports, module) {
             this.lineInfo = lineInfo;
             this._updateMarkersInCurrentLine();
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
+            this._updateHeight();
         }.bind(this))
         .fail(function(error) {
             console.error(error);
