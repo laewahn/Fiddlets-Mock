@@ -16,7 +16,7 @@ define(function(require, exports, module) {
         this.$inputView = this.$container.find("#input-view");
         this.$resultView = this.$container.find("#results-view");
 
-        this.limitSelect = new LimitSelect(this.$inputView);
+        this.limitSelect = new LimitSelect(this.$inputView, "fd-current-line-assigned-to-highlight");
 
         this.limitSelect.limitChange(function(newLimit) {
             this.editor.replaceRange(JSON.stringify(newLimit), 

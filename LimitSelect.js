@@ -7,10 +7,12 @@ define(function(require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "limit-select.css");
     
-    function LimitSelect($container) {
+    function LimitSelect($container, highlightClass) {
             this.$container = $container;
             this.$container.text("Foo Bar!");
             this.limit = 0;
+
+            this.highlightClass = highlightClass || "fd-limit-array-row-highlight";
         }
 
         LimitSelect.prototype.$container = undefined;
@@ -88,7 +90,7 @@ define(function(require, exports, module) {
                 $selector.removeClass("fd-limit-array-row-between");
 
                 if (idx < this.limit) {
-                    $content.addClass("fd-limit-array-row-highlight");
+                    $content.addClass(this.highlightClass);
 
                     if (idx === 0) {
                         $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-start.png"));  
@@ -107,7 +109,7 @@ define(function(require, exports, module) {
                         $selector.addClass("fd-limit-array-row-current");
                     }
 
-                    $content.removeClass("fd-limit-array-row-highlight");
+                    $content.removeClass(this.highlightClass);
                     $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-none.png"));
                 }
             }, this);
