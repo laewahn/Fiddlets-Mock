@@ -22,7 +22,7 @@ define(function (require, exports, module) {
     var FileViewController = brackets.getModule("project/FileViewController");
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var FileUtils = brackets.getModule("file/FileUtils");
-    
+    var MainViewManager = brackets.getModule("view/MainViewManager");
     var EditorManager = brackets.getModule("editor/EditorManager");
     
     var config;
@@ -59,7 +59,12 @@ define(function (require, exports, module) {
     }
 
     function registerLineConfigurationForLineHandles(lineConfigs) {
+        lineConfigWithHandles = [];
+
         var editor = EditorManager.getCurrentFullEditor();
+        if (editor === null) {
+            return;
+        }
 
         Object.keys(lineConfigs).forEach(function(line) {
             var lineHandle = editor._codeMirror.getLineHandle(line - 1);
@@ -71,12 +76,14 @@ define(function (require, exports, module) {
     }
 
     function isTaskDirectory(projectRootDirectory) {
-        var projectMatcher = /^Task\s[1-4]/g;
+        var projectMatcher = /^Task\s[1-5]/g;
 
         return projectMatcher.test(FileUtils.getBaseName(projectRootDirectory.fullPath));
     }
 
     function prepareTask(projectRootDirectory) {
+        MainViewManager.off("currentFileChange");
+
         var taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
         console.log("FiddletsStudy", "Preparing task " + taskName);
 
@@ -88,8 +95,7 @@ define(function (require, exports, module) {
 
         FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/" + filename);
         
-        EditorManager.on("activeEditorChange", function() {
-            console.log("FiddletsStudy", "Finished opening file?");
+        MainViewManager.on("currentFileChange", function() {
             registerLineConfigurationForLineHandles(config[currentTask].lines);
         });
     }
@@ -122,7 +128,7 @@ define(function (require, exports, module) {
         console.log("Tasks name is: " + currentTask);
         
         var configForLine = getLineConfigForLine(position.line);
-        if(configForLine === undefined) return "No information available for this line.";
+        if(configForLine === null) return "No information available for this line.";
 
         var inlineEditor = new StudyEditor(configForLine);
         
