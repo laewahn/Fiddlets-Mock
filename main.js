@@ -22,7 +22,9 @@ define(function (require, exports, module) {
     var FileViewController = brackets.getModule("project/FileViewController");
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var FileUtils = brackets.getModule("file/FileUtils");
-
+    
+    var EditorManager = brackets.getModule("editor/EditorManager");
+    
     var config;
     var lineConfigWithHandles = [];
 
@@ -57,8 +59,14 @@ define(function (require, exports, module) {
     }
 
     function registerLineConfigurationForLineHandles(lineConfigs) {
-        Object.keys(config).forEach(function(line) {
-            console.log("Restering line " + line);
+        var editor = EditorManager.getCurrentFullEditor();
+
+        Object.keys(lineConfigs).forEach(function(line) {
+            var lineHandle = editor._codeMirror.getLineHandle(line - 1);
+            lineConfigWithHandles.push({
+                handle: lineHandle,
+                config: lineConfigs[line]
+            });
         });
     }
 
@@ -74,12 +82,16 @@ define(function (require, exports, module) {
 
         config = JSON.parse(require("text!tasksConfig.json"));
 
-        registerLineConfigurationForLineHandles();
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
         var filename = config[currentTask].file;
         console.log("FiddletsStudy", "Opening file " + filename);
 
         FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/" + filename);
+        
+        EditorManager.on("activeEditorChange", function() {
+            console.log("FiddletsStudy", "Finished opening file?");
+            registerLineConfigurationForLineHandles(config[currentTask].lines);
+        });
     }
 
     function getParticipantID() {
@@ -103,14 +115,13 @@ define(function (require, exports, module) {
     
     var StudyEditor = require("StudyEditor");
 
-    var EditorManager = brackets.getModule("editor/EditorManager");
     EditorManager.registerInlineEditProvider(editorProvider, 2);
 
     function editorProvider(hostEditor, position) {
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
         console.log("Tasks name is: " + currentTask);
         
-        var configForLine = config[currentTask].lines[position.line + 1];
+        var configForLine = getLineConfigForLine(position.line);
         if(configForLine === undefined) return "No information available for this line.";
 
         var inlineEditor = new StudyEditor(configForLine);
@@ -119,6 +130,20 @@ define(function (require, exports, module) {
         inlineEditor.currentLineCode = hostEditor.document.getLine(position.line).trim();
 
         return new $.Deferred().resolve(inlineEditor);
+    }
+
+    function getLineConfigForLine(line) {
+        var i;
+        for(i = 0; i < lineConfigWithHandles.length; i++) {
+            var handle = lineConfigWithHandles[i].handle;
+            var config = lineConfigWithHandles[i].config;
+            
+            if (handle.lineNo() === line) {
+                return config;
+            }
+        }
+
+        return null;
     }
 
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
