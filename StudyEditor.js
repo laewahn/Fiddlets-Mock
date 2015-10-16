@@ -65,7 +65,8 @@ define(function (require, exports, module) {
     
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
-            lineNumbers: true
+            lineNumbers: true,
+            lineWrapping: true
         });
         
         this._getContext().done(function() {
@@ -159,6 +160,9 @@ define(function (require, exports, module) {
                 break;
             case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
                 visualization = new StringReplaceVisualization(this.contextEditor);
+                break;
+            case "Array.prototype.map(callback[, thisArg])" : 
+                visualization = new MapVisualization(this.contextEditor);
                 break;
             default:
                 visualization = new DefaultVisualization(this.contextEditor);
