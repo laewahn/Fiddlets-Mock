@@ -67,7 +67,11 @@ define(function (require, exports, module) {
         var taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
         console.log("FiddletsStudy", "Preparing task " + taskName);
 
-        FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/mustache.js");
+        var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
+        var filename = config[currentTask].file;
+        console.log("FiddletsStudy", "Opening file " + filename);
+
+        FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/" + filename);
     }
 
     function getParticipantID() {
@@ -96,8 +100,8 @@ define(function (require, exports, module) {
 
     function editorProvider(hostEditor, position) {
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
-
         console.log("Tasks name is: " + currentTask);
+        
         var configForLine = config[currentTask][position.line + 1];
         if(configForLine === undefined) return "No information available for this line.";
 
