@@ -159,7 +159,6 @@ define(function (require, exports, module) {
             this.currentVisualization = undefined;
         }
         
-        this.$errorView.text("");
         var info = this.config.info;
         var visualization;
 
@@ -191,6 +190,7 @@ define(function (require, exports, module) {
 
         $.when(traceContext, traceCode, getAST, getLineInfo)
         .done(function(contextTrace, fullTrace, ast, lineInfo) {
+            this.$errorView.text("");
             this.lineInfo = lineInfo;
             this._updateMarkersInCurrentLine();
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
