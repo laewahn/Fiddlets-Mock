@@ -16,6 +16,7 @@ define(function (require, exports, module) {
     var DefaultVisualization = require("./DefaultVisualization");
     var StringReplaceVisualization = require("./StringReplaceVisualization");
     var StringSplitVisualization = require("./StringSplitVisualization");
+    var MapVisualization = require("./MapVisualization");
 
     function StudyEditor(config) {
         InlineWidget.call(this);
