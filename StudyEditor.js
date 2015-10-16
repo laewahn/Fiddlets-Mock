@@ -128,7 +128,7 @@ define(function (require, exports, module) {
 
     StudyEditor.prototype._updateUnknownValuesInContextCode = function() {
         this.contextCode = this.contextEditor.getRange({line: this.contextEditor.firstLine(), ch: 0},
-                                                       {line: this.contextEditor.lastLine() - 1, ch: 0});
+                                                       {line: this.contextEditor.lastLine(), ch: 0});
 
         var updatedContextCode = this.contextCode.split("\n").map(function(line, idx) {
             var traceSelector = this.traceSelectorsByLine[idx];
