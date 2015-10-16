@@ -24,6 +24,7 @@ define(function (require, exports, module) {
     var FileUtils = brackets.getModule("file/FileUtils");
 
     var config;
+    var lineConfigWithHandles = [];
 
     AppInit.appReady(function () {
     	CommandManager.register("Start Fiddlets Study Watcher", "Fiddlets.Study.startStudyWatcher", startStudyWatcher);
@@ -37,8 +38,6 @@ define(function (require, exports, module) {
     });
 
     function startStudyWatcher() {
-        config = JSON.parse(require("text!tasksConfig.json"));
-        
         var toolbar = new StudyToolbar();
         $(".content").prepend(toolbar.$container);
 
@@ -57,6 +56,12 @@ define(function (require, exports, module) {
         console.log("FiddletsStudy", "Watcher started");
     }
 
+    function registerLineConfigurationForLineHandles(lineConfigs) {
+        Object.keys(config).forEach(function(line) {
+            console.log("Restering line " + line);
+        });
+    }
+
     function isTaskDirectory(projectRootDirectory) {
         var projectMatcher = /^Task\s[1-4]/g;
 
@@ -67,6 +72,9 @@ define(function (require, exports, module) {
         var taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
         console.log("FiddletsStudy", "Preparing task " + taskName);
 
+        config = JSON.parse(require("text!tasksConfig.json"));
+
+        registerLineConfigurationForLineHandles();
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
         var filename = config[currentTask].file;
         console.log("FiddletsStudy", "Opening file " + filename);
@@ -102,7 +110,7 @@ define(function (require, exports, module) {
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
         console.log("Tasks name is: " + currentTask);
         
-        var configForLine = config[currentTask][position.line + 1];
+        var configForLine = config[currentTask].lines[position.line + 1];
         if(configForLine === undefined) return "No information available for this line.";
 
         var inlineEditor = new StudyEditor(configForLine);

@@ -1,96 +1,104 @@
 {
 	"Task 1" : {
 		"file" : "mustache.js",
-		"38" : {
-			"info" : "RegExp"
-		},
-		"39" : {
-			"info" : "String"
-		},
-		"40" : {
-			"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
-			"unknownVariables" : {
-				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+		"lines" : {
+			"38" : {
+				"info" : "RegExp"
 			},
-			"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';"
-		},
-		"42" : {
-			"info" : "Return statement",
-			"unknownVariables" : {
-				"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+			"39" : {
+				"info" : "String"
 			},
-			"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);"
+			"40" : {
+				"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
+				"unknownVariables" : {
+					"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+				},
+				"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';"
+			},
+			"42" : {
+				"info" : "Return statement",
+				"unknownVariables" : {
+					"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+				},
+				"context" : "var string = <#undefined:string#>;\nvar regExpMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nvar replacement = '\\\\$&';\nvar escaped = string.replace(regExpMetaCharacters, replacement);"
+			}
 		}		
 	},
 
 	"Task 2" : {
 		"file" : "mustache.js",
-		"61" : {
-			"info" : "RegExp"
-		},
-		"64" : {
-			"info" : "Initialization",
-			"unknownVariables" : {
-				"s" : ["!","\"","#","&","'",",","-",".","/","0","1","2","3","4","6","8","9",";","<",">","?","@","A","B","C","D","E","F","G","H","I","J","M","N","O","P","S","T","U","W","X","\\","_","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","y","z","{","}"]
+		"lines" :{
+			"61" : {
+				"info" : "RegExp"
 			},
-			"context" : "var entityMap = {\n\t'&': '&amp;',\n\t'<': '&lt;',\n\t'>': '&gt;',\n\t'\"': '&quot;',\n\t\"'\": '&#39;',\n\t'/': '&#x2F;'\n};"
-		},
-		"67" : {
-			"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
-			"unknownVariables" : {
-				"string" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+			"64" : {
+				"info" : "Initialization",
+				"unknownVariables" : {
+					"s" : ["!","\"","#","&","'",",","-",".","/","0","1","2","3","4","6","8","9",";","<",">","?","@","A","B","C","D","E","F","G","H","I","J","M","N","O","P","S","T","U","W","X","\\","_","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","y","z","{","}"]
+				},
+				"context" : "var entityMap = {\n\t'&': '&amp;',\n\t'<': '&lt;',\n\t'>': '&gt;',\n\t'\"': '&quot;',\n\t\"'\": '&#39;',\n\t'/': '&#x2F;'\n};"
 			},
-			"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}"
-		},
-		"69" : {
-			"info" : "Return statement",
-			"unknownVariables" : {
-				"string" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+			"67" : {
+				"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
+				"unknownVariables" : {
+					"string" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+				},
+				"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}"
 			},
-			"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}\nvar escaped = string.replace(htmlMetaCharacters, fromEntityMap);"
-		}
+			"69" : {
+				"info" : "Return statement",
+				"unknownVariables" : {
+					"string" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+				},
+				"context" : "var string = <#undefined:string#>;\nvar htmlMetaCharacters = /* Replace this: */ /\\S/g /* with your regexp */;\nfunction fromEntityMap (s) {\n\tvar entityMap = {\n\t\t'&': '&amp;',\n\t\t'<': '&lt;',\n\t\t'>': '&gt;',\n\t\t'\"': '&quot;',\n\t\t\"'\": '&#39;',\n\t\t'/': '&#x2F;'\n\t};\n\treturn entityMap[s];\n}\nvar escaped = string.replace(htmlMetaCharacters, fromEntityMap);"
+			}
+		}	
 	},
 
 	"Task 3" : {
 		"file" : "mustache.js",
-		"130" : {
-			"info" : "String.prototype.split([separator[, limit]])",
-			"unknownVariables" : {
-				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+		"lines" : {
+			"130" : {
+				"info" : "String.prototype.split([separator[, limit]])",
+				"unknownVariables" : {
+					"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+				},
+				"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar spaceRe = /\\s+/;"
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar spaceRe = /\\s+/;"
-		},
-		"135" : {
-			"info" : "RegExp",
-			"unknownVariables" : {
-				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+			"135" : {
+				"info" : "RegExp",
+				"unknownVariables" : {
+					"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+				},
+				"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
-		},
-		"136" : {
-			"info" : "RegExp",
-			"unknownVariables" : {
-				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+			"136" : {
+				"info" : "RegExp",
+				"unknownVariables" : {
+					"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+				},
+				"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
 			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
-		},
-		"137" : {
-			"info" : "RegExp",
-			"unknownVariables" : {
-				"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
-			},
-			"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
+			"137" : {
+				"info" : "RegExp",
+				"unknownVariables" : {
+					"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+				},
+				"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
+			}
 		}
 	},
 
 	"Task 4" : {
 		"file" : "weather.js",
-		"28" : {
-			"info" : "Array.prototype.map(callback[, thisArg])",
-			"unknownVariables" : {
-				"weatherJSON" : [{"city": {"id": 3247449,"name": "Aachen","coord": {"lon": 6.08342,"lat": 50.776642},"country": "DE"},"cod": "200","message": 0.0069,"cnt": 3,"list": [{"dt": 1438862400,"main": {"temp": 32.68,"temp_min": 31.01,"temp_max": 32.68,"pressure": 978.27,"sea_level": 1027.23,"grnd_level": 978.27,"humidity": 36,"temp_kf": 1.67},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 238.509},"sys": {"pod": "d"},"dt_txt": "2015-08-06 12:00:00"},{"dt": 1438873200,"main": {"temp": 32.26,"temp_min": 30.69,"temp_max": 32.26,"pressure": 978.64,"sea_level": 1027.51,"grnd_level": 978.64,"humidity": 31,"temp_kf": 1.58},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 245.5},"sys": {"pod": "d"},"dt_txt": "2015-08-06 15:00:00"},{"dt": 1438884000,"main": {"temp": 29.7,"temp_min": 28.21,"temp_max": 29.7,"pressure": 979.21,"sea_level": 1027.99,"grnd_level": 979.21,"humidity": 33,"temp_kf": 1.48},"weather": [{"id": 801,"main": "Clouds","description": "few clouds","icon": "02d"}],"clouds": {"all": 20},"wind": {"speed": 3.31,"deg": 261.504},"sys": {"pod": "d"},"dt_txt": "2015-08-06 18:00:00"}]}]
-			},
-			"context" : "var weatherJSON = <#undefined:weatherJSON#>;\nvar i;\nvar myWeatherInfo = []\nfor(i = 0; i < weatherJSON.list.length; i++) {\n\tvar info = {};\n\tinfo.mtemp = weatherJSON.list[i].main.temp;\n\tinfo.wdesc = weatherJSON.list[i].weather[0].description;\n\tinfo.atmpress = weatherJSON.list[i].main.pressure;\n\tinfo.dt_txt = weatherJSON.list[i].dt_txt;\n\tinfo.wnd = {\n\t\tv: weatherJSON.list[i].wind.speed,\n\t\tdir: weatherJSON.list[i].wind.deg\n\t};\n\tmyWeatherInfo.push(info);\n}\nfunction buildWeatherInfoCSVLine(weather) {\n\treturn weather;\n}"
+		"lines" : {
+			"28" : {
+				"info" : "Array.prototype.map(callback[, thisArg])",
+				"unknownVariables" : {
+					"weatherJSON" : [{"city": {"id": 3247449,"name": "Aachen","coord": {"lon": 6.08342,"lat": 50.776642},"country": "DE"},"cod": "200","message": 0.0069,"cnt": 3,"list": [{"dt": 1438862400,"main": {"temp": 32.68,"temp_min": 31.01,"temp_max": 32.68,"pressure": 978.27,"sea_level": 1027.23,"grnd_level": 978.27,"humidity": 36,"temp_kf": 1.67},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 238.509},"sys": {"pod": "d"},"dt_txt": "2015-08-06 12:00:00"},{"dt": 1438873200,"main": {"temp": 32.26,"temp_min": 30.69,"temp_max": 32.26,"pressure": 978.64,"sea_level": 1027.51,"grnd_level": 978.64,"humidity": 31,"temp_kf": 1.58},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 245.5},"sys": {"pod": "d"},"dt_txt": "2015-08-06 15:00:00"},{"dt": 1438884000,"main": {"temp": 29.7,"temp_min": 28.21,"temp_max": 29.7,"pressure": 979.21,"sea_level": 1027.99,"grnd_level": 979.21,"humidity": 33,"temp_kf": 1.48},"weather": [{"id": 801,"main": "Clouds","description": "few clouds","icon": "02d"}],"clouds": {"all": 20},"wind": {"speed": 3.31,"deg": 261.504},"sys": {"pod": "d"},"dt_txt": "2015-08-06 18:00:00"}]}]
+				},
+				"context" : "var weatherJSON = <#undefined:weatherJSON#>;\nvar i;\nvar myWeatherInfo = []\nfor(i = 0; i < weatherJSON.list.length; i++) {\n\tvar info = {};\n\tinfo.mtemp = weatherJSON.list[i].main.temp;\n\tinfo.wdesc = weatherJSON.list[i].weather[0].description;\n\tinfo.atmpress = weatherJSON.list[i].main.pressure;\n\tinfo.dt_txt = weatherJSON.list[i].dt_txt;\n\tinfo.wnd = {\n\t\tv: weatherJSON.list[i].wind.speed,\n\t\tdir: weatherJSON.list[i].wind.deg\n\t};\n\tmyWeatherInfo.push(info);\n}\nfunction buildWeatherInfoCSVLine(weather) {\n\treturn weather;\n}"
+			}
 		}
 	}
 }
