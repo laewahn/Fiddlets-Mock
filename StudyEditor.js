@@ -49,6 +49,7 @@ define(function (require, exports, module) {
     StudyEditor.prototype.contextCode = undefined;
     StudyEditor.prototype.currentLineCode = undefined;
     StudyEditor.prototype.currentLineHandle = undefined;
+    StudyEditor.prototype.currentLineMarkers = [];
     StudyEditor.prototype.traceSelectorsByLine = undefined;
 
     StudyEditor.prototype.$widgetContainer = undefined;
@@ -71,7 +72,8 @@ define(function (require, exports, module) {
         
         this._getContext().done(function() {
             this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
-            this.currentLineHandle = this.contextEditor.getLineHandle(this.contextEditor.lastLine());
+            this._updateCurrentLineHandle();
+            this.currentLineHandle.on("delete", this._updateCurrentLineHandle.bind(this));
     
             this._createTraceSelectors();
             this._updateUnknownValuesInContextCode();
@@ -82,10 +84,17 @@ define(function (require, exports, module) {
         }.bind(this));
         
         this.contextEditor.on("change", function() {
+            this._updateCurrentLineHandle();
             this._updateUnknownValuesInContextCode();
             this._traceAndUpdate();
             this._updateHeight();
         }.bind(this));
+    };
+
+    StudyEditor.prototype._updateCurrentLineHandle = function() {
+        if (this.currentLineHandle === undefined || this.contextEditor.lastLine() !== this.currentLineHandle.lineNo()) {
+            this.currentLineHandle = this.contextEditor.getLineHandle(this.contextEditor.lastLine());
+        }
     };
 
     StudyEditor.prototype._updateHeight = function() {
@@ -189,19 +198,24 @@ define(function (require, exports, module) {
         }.bind(this))
         .fail(function(error) {
             console.error(error);
-        });
+            this.$errorView.text(error);
+            this._clearMarkersInCurrentLine();
+        }.bind(this));
     };
 
     StudyEditor.prototype._updateMarkersInCurrentLine = function() {
         var currentLineNr = this.contextEditor.lastLine();
 
+        this._clearMarkersInCurrentLine();
+
         if(this.lineInfo.lValue !== null) {
             var assignedToObject = this.lineInfo.lValue;
             var lValueRange = assignedToObject.range;
-            this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
-                                        { line: currentLineNr, ch: lValueRange[1] }, 
-                                        { className: "fd-current-line-assigned-to-highlight" }
-                                        );
+            var assignedToMarker = this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
+                                                               { line: currentLineNr, ch: lValueRange[1] }, 
+                                                               { className: "fd-current-line-assigned-to-highlight" }
+            );
+            this.currentLineMarkers.push(assignedToMarker);
     
         }
         
@@ -215,11 +229,20 @@ define(function (require, exports, module) {
             }
             
             var calleeRange = theObject.range;
-            this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
-                                        { line: currentLineNr, ch: calleeRange[1] }, 
-                                        { className: "fd-current-line-object-highlight" }
-                                        );
+            var objectMarker = this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
+                                                           { line: currentLineNr, ch: calleeRange[1] }, 
+                                                           { className: "fd-current-line-object-highlight" }
+            );
+            this.currentLineMarkers.push(objectMarker);
         }
+    };
+
+    StudyEditor.prototype._clearMarkersInCurrentLine = function() {
+        this.currentLineMarkers.forEach(function(marker) {
+            marker.clear();
+        });
+
+        this.currentLineMarkers = [];
     };
 
     module.exports = StudyEditor;
