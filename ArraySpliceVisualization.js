@@ -9,17 +9,26 @@ define(function(require, exports, module) {
     ExtensionUtils.loadStyleSheet(module, "array-splice-visualization-template.css");
 
     var ArrayViz = require("./ArrayViz");
+    var LimitSelect = require("./LimitSelect");
 
-    function ArraySpliceVisualization() {
+    function ArraySpliceVisualization(editor) {
         this.$container = $(arraySpliceVisualizationContainer);
+        this.editor = editor;
 
         this.$removed = this.$container.find("#fd-array-splice-removed");
         this.$input = this.$container.find("#fd-array-splice-input");
         this.$updated = this.$container.find("#fd-array-splice-updated");
 
         this.removedViz = new ArrayViz(this.$removed, [], "fd-current-line-assigned-to-highlight");
-        this.inputViz = new ArrayViz(this.$input, [], "fd-current-line-object-highlight");
+        this.inputViz = new LimitSelect(this.$input, "fd-current-line-object-highlight");
         this.updatedViz = new ArrayViz(this.$updated, [], "fd-current-line-object-highlight");
+
+        this.inputViz.limitChange(function(newLimit) {
+            this.editor.replaceRange(JSON.stringify(newLimit),
+                this.removedLengthPosition.start,
+                this.removedLengthPosition.end
+            );
+        }.bind(this));
     }
 
     ArraySpliceVisualization.prototype.$container = undefined;
@@ -27,9 +36,15 @@ define(function(require, exports, module) {
     ArraySpliceVisualization.prototype.$input = undefined;
     ArraySpliceVisualization.prototype.$updated = undefined;
 
+    ArraySpliceVisualization.prototype.editor = undefined;
+    ArraySpliceVisualization.prototype.currentLineHandle = undefined;
+
     ArraySpliceVisualization.prototype.removedViz = undefined;
     ArraySpliceVisualization.prototype.inputViz = undefined;
     ArraySpliceVisualization.prototype.updatedViz = undefined;
+
+    ArraySpliceVisualization.prototype.removedStartPosition = undefined;
+    ArraySpliceVisualization.prototype.removedLengthPosition = undefined;
 
     ArraySpliceVisualization.prototype.addToContainer = function($container) {
         $container.append(this.$container);
@@ -45,7 +60,7 @@ define(function(require, exports, module) {
         console.log("FullTrace: ", fullTrace);
         
         this.removedViz.resetHighlights();
-        this.inputViz.resetHighlights();
+        // this.inputViz.resetHighlights();
         this.updatedViz.resetHighlights();
 
         if (lineInfo.type.indexOf("Declaration") !== -1) {
@@ -56,9 +71,18 @@ define(function(require, exports, module) {
         var inputArray = contextTrace[lineInfo.rValue.callee.name];
         this.inputViz.setArray(inputArray);
 
-        var removedPosition = lineInfo.rValue.params.values[0].value;
+        var removedLengthAST = lineInfo.ast.body[0].declarations[0].init.arguments[1];
         var removedLength = lineInfo.rValue.params.values[1].value;
-        this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
+        this.removedLengthPosition = {start: {
+            line: this.currentLineHandle.lineNo(),
+            ch: removedLengthAST.loc.start.column
+        }, end: {
+            line: this.currentLineHandle.lineNo(),
+            ch: removedLengthAST.loc.end.column
+        }};
+        this.inputViz.setLimit(removedLength);
+        // this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
+        var removedPosition = lineInfo.rValue.params.values[0].value;
 
         var updatedArray = fullTrace[lineInfo.rValue.callee.name];
         this.updatedViz.setArray(updatedArray);
