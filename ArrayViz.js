@@ -11,31 +11,69 @@ define(function(require, exports, module) {
         this.$container = $container;
         this.array = array || [];
         this.highlightClass = highlightClass;
+
+        this.highlights = [{
+            "class" : highlightClass,
+            "range" : [0, this.array.length]
+        }];
+
         this._update();
     }
 
     ArrayViz.prototype.$container = undefined;
     ArrayViz.prototype.array = undefined;
     ArrayViz.prototype.highlightClass = undefined;
+    ArrayViz.prototype.highlights = undefined;
     
+    ArrayViz.prototype.setHighlightForRange = function(highlightClass, range) {
+        this.highlights.push({
+            "class" : highlightClass,
+            "range" : range
+        });
+
+        this._update();
+    };
+
     ArrayViz.prototype.setArray = function(array) {
         this.array = array;
+        this.highlights[0].range = [0, array.length];
         this._update();
     };
     
     ArrayViz.prototype._update = function() {
         this.$container.empty();
+
         var idx;
         for(idx = 0; idx < this.array.length; idx++) {
             var $row = $("<div></div>").addClass("fd-array-viz-row");
             
             var $element = $("<div><pre></pre></div>").addClass("fd-array-viz");
-            $element.addClass(this.highlightClass);
-            $element.find("pre").text(this.array[idx]);
+            
+            var classForElement = classForIdx(idx, this.highlights);
+
+            if (classForElement !== null) {
+                $element.addClass(classForElement);
+            }
+
+            $element.find("pre").text(JSON.stringify(this.array[idx]));
             $row.append($element);
             this.$container.append($row);
         }
     };
+
+    function classForIdx(idx, highlights) {
+        var i;
+        var returnHighlight = null;
+        var highlight;
+            for(i = 0; i < highlights.length; i++) {
+                 highlight = highlights[i];
+                if (highlight.range[0] <= idx && idx < highlight.range[1]) {
+                    returnHighlight = highlight.class;
+                }
+            }
+
+        return returnHighlight;
+    }
 
     module.exports = ArrayViz;
 });

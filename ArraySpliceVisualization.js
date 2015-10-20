@@ -42,9 +42,17 @@ define(function(require, exports, module) {
 
         var inputArray = contextTrace[lineInfo.rValue.callee.name];
         var inputViz = new ArrayViz(this.$input, inputArray, "fd-current-line-object-highlight");
+        
+        var removedPosition = lineInfo.rValue.params.values[0].value;
+        var removedLength = lineInfo.rValue.params.values[1].value;
+        inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
 
         var updatedArray = fullTrace[lineInfo.rValue.callee.name];
-        var updatedViz = new ArrayViz(this.$updated, updatedArray);
+        var updatedViz = new ArrayViz(this.$updated, updatedArray, "fd-current-line-object-highlight");
+
+        var addedPosition = lineInfo.rValue.params.values[0].value;
+        var addedLength = lineInfo.rValue.params.values.length - 2;
+        updatedViz.setHighlightForRange("fd-array-splice-added", [addedPosition, addedPosition + addedLength]);
     };
 
     ArraySpliceVisualization.prototype.remove = function() {
