@@ -52,6 +52,10 @@ define(function(require, exports, module) {
                 this.limit = this.rows.length;
             }
 
+            if (this.rows.length !== 0) {
+                this.$container.height(this.rows[0].height() * this.rows.length);
+            }
+            
             this._updateHighlights();
             this._updateSelector();
         };
@@ -59,6 +63,10 @@ define(function(require, exports, module) {
         RangeSelect.prototype.setStart = function(start) {
             if(start !== this.start) {
                 this.start = start;
+
+                if (this.start + this.limit > this.rows.length) {
+                    this.limit = this.rows.length - 1;
+                }
 
                 this._updateHighlights();
                 this._updateSelector();
@@ -106,6 +114,7 @@ define(function(require, exports, module) {
                     $content.addClass(this.highlightClass);
 
                     if (idx === this.start) {
+                        $selector.addClass("fd-range-array-row-start");
                         $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-start.png"));  
                     }
 
@@ -133,7 +142,6 @@ define(function(require, exports, module) {
         RangeSelect.prototype._registerEvents = function() {
             if (this.$currentSelectorElement !== undefined) {
                 this.$currentSelectorElement.off("mousedown");
-                // this.$container.off("mousemove");
             }
 
             var $currentSelector = $(".fd-range-array-row-current");
@@ -144,10 +152,6 @@ define(function(require, exports, module) {
             $currentSelector.mousedown(function(e) {
                 e.preventDefault();
                 var rowHeight = $(this).height();
-
-                $container.parent().mousemove(function() {
-                    $container.off("mousemove");
-                });
 
                 $container.mousemove(function(e) {
                     e.stopPropagation();
@@ -167,16 +171,38 @@ define(function(require, exports, module) {
                         newLimit = that.rows.length;
                     }
 
+                    if (newLimit === 0) {
+                        unregisterAllEvents();
+                    }
+
                     that.setLimit(newLimit);
                 });
 
-                $container.parent().mouseup(function() {
+                function unregisterAllEvents() {
                     $container.off("mousemove");
-                    $(this).off("mouseup");
-                });
+                    $container.off("mouseup");
+                    $container.off("mouseleave");
+                }
+
+                $container.mouseup(unregisterAllEvents);
+                $container.mouseleave(unregisterAllEvents);
             });
 
             this.$currentSelectorElement = $currentSelector;
+
+            // var $currentStartElement = $("fd-range-array-row-start");
+            // $currentStartElement.mousedown(function(e) {
+            //     e.preventDefault();
+            //     var rowHeight = $(this).height();
+
+            //     $container.parent().mousemove(function() {
+            //         $container.off("mousemove");
+            //     });
+
+            //     $container.mousemove(function(e) {
+
+            //     });
+            // });
         };
 
     module.exports = RangeSelect;
