@@ -1,0 +1,24 @@
+#array-viz-container {
+	border: solid;
+	border-width: 1px;
+	display: table;
+	/*min-width: 152px;*/
+}
+.fd-array-viz-row {
+	display: table-row;
+}
+
+.fd-array-viz {
+	display: table-cell;
+	border: solid;
+	border-width: 1px;
+	min-width: 100px;
+}
+
+.fd-array-viz pre {
+	margin: 0px;
+}
+
+.fd-array-viz-highlight {
+	background-color: #22ff22
+}

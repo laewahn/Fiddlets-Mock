@@ -17,6 +17,7 @@ define(function (require, exports, module) {
     var StringReplaceVisualization = require("./StringReplaceVisualization");
     var StringSplitVisualization = require("./StringSplitVisualization");
     var MapVisualization = require("./MapVisualization");
+    var ArraySpliceVisualization = require("./ArraySpliceVisualization");
 
     function StudyEditor(config) {
         InlineWidget.call(this);
@@ -171,6 +172,9 @@ define(function (require, exports, module) {
                 break;
             case "Array.prototype.map(callback[, thisArg])" : 
                 visualization = new MapVisualization(this.contextEditor);
+                break;
+            case "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])" :
+                visualization = new ArraySpliceVisualization(this.contextEditor);
                 break;
             default:
                 visualization = new DefaultVisualization(this.contextEditor);
