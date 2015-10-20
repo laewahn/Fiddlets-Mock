@@ -64,13 +64,12 @@ define(function(require, exports, module) {
             if(start !== this.start) {
                 this.start = start;
 
-                if (this.start + this.limit > this.rows.length) {
-                    this.limit = this.rows.length - 1;
+                if (this.start + this.limit >= this.rows.length) {
+                    this.limit = this.rows.length - this.start;
                 }
 
                 this._updateHighlights();
                 this._updateSelector();
-                this._registerEvents();
             }
         };
 
@@ -114,7 +113,9 @@ define(function(require, exports, module) {
                     $content.addClass(this.highlightClass);
 
                     if (idx === this.start) {
-                        $selector.addClass("fd-range-array-row-start");
+                        if (this.limit > 1) {
+                            $selector.addClass("fd-range-array-row-start");
+                        }
                         $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-start.png"));  
                     }
 
@@ -157,8 +158,6 @@ define(function(require, exports, module) {
                     e.stopPropagation();
 
                     var offset = $(this).offset();
-                    console.log(e.pageY + " - " + offset.top + " (" + rowHeight + ")");
-
                     var posY = e.pageY - offset.top - that.start * rowHeight;
                     
                     var newLimit = Math.ceil(posY/rowHeight);
@@ -190,19 +189,37 @@ define(function(require, exports, module) {
 
             this.$currentSelectorElement = $currentSelector;
 
-            // var $currentStartElement = $("fd-range-array-row-start");
-            // $currentStartElement.mousedown(function(e) {
-            //     e.preventDefault();
-            //     var rowHeight = $(this).height();
+            var $currentStartElement = $(".fd-range-array-row-start");
 
-            //     $container.parent().mousemove(function() {
-            //         $container.off("mousemove");
-            //     });
+            $currentStartElement.mousedown(function(e) {
+                e.preventDefault();
+                var rowHeight = $(this).height();
 
-            //     $container.mousemove(function(e) {
+                $container.mousemove(function(e) {
+                    e.stopPropagation();
 
-            //     });
-            // });
+                    var offset = $(this).offset();
+                    var posY = e.pageY - offset.top - that.start * rowHeight;
+                    var normalizedY = posY/rowHeight;
+                    var startOffset = normalizedY > 0 ?  Math.floor(normalizedY) : Math.floor(normalizedY);
+                    var newStart = that.start + startOffset;
+
+                    console.log(newStart);
+
+                    if (startOffset !== 0 && newStart + that.limit <= that.rows.length) {
+                        that.setStart(that.start + startOffset);
+                    }                    
+                });
+
+                function unregisterAllEvents() {
+                    $container.off("mousemove");
+                    $container.off("mouseup");
+                    $container.off("mouseleave");
+                }
+
+                $container.mouseup(unregisterAllEvents);
+                $container.mouseleave(unregisterAllEvents);
+            });
         };
 
     module.exports = RangeSelect;

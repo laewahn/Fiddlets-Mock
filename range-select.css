@@ -39,3 +39,7 @@
 .fd-range-array-row-current {
 	cursor: s-resize;
 }
+
+.fd-range-array-row-start {
+	cursor: n-resize;
+}
