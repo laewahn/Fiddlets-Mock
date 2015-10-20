@@ -204,6 +204,7 @@ define(function (require, exports, module) {
             console.error(error);
             this.$errorView.text(error);
             this._clearMarkersInCurrentLine();
+            this._updateHeight();
         }.bind(this));
     };
 

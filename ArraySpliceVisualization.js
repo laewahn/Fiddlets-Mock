@@ -10,18 +10,26 @@ define(function(require, exports, module) {
 
     var ArrayViz = require("./ArrayViz");
 
-    function ArraySpliceVisualization(editor) {
+    function ArraySpliceVisualization() {
         this.$container = $(arraySpliceVisualizationContainer);
 
         this.$removed = this.$container.find("#fd-array-splice-removed");
         this.$input = this.$container.find("#fd-array-splice-input");
         this.$updated = this.$container.find("#fd-array-splice-updated");
+
+        this.removedViz = new ArrayViz(this.$removed, [], "fd-current-line-assigned-to-highlight");
+        this.inputViz = new ArrayViz(this.$input, [], "fd-current-line-object-highlight");
+        this.updatedViz = new ArrayViz(this.$updated, [], "fd-current-line-object-highlight");
     }
 
     ArraySpliceVisualization.prototype.$container = undefined;
     ArraySpliceVisualization.prototype.$removed = undefined;
     ArraySpliceVisualization.prototype.$input = undefined;
     ArraySpliceVisualization.prototype.$updated = undefined;
+
+    ArraySpliceVisualization.prototype.removedViz = undefined;
+    ArraySpliceVisualization.prototype.inputViz = undefined;
+    ArraySpliceVisualization.prototype.updatedViz = undefined;
 
     ArraySpliceVisualization.prototype.addToContainer = function($container) {
         $container.append(this.$container);
@@ -35,24 +43,29 @@ define(function(require, exports, module) {
         console.log("LineInfo: ", lineInfo);
         console.log("ContextTrace: ", contextTrace);
         console.log("FullTrace: ", fullTrace);
+        
+        this.removedViz.resetHighlights();
+        this.inputViz.resetHighlights();
+        this.updatedViz.resetHighlights();
+
         if (lineInfo.type.indexOf("Declaration") !== -1) {
             var removedArray = fullTrace[lineInfo.lValue.name];
-            var removedViz = new ArrayViz(this.$removed, removedArray, "fd-current-line-assigned-to-highlight");
+            this.removedViz.setArray(removedArray);
         }
 
         var inputArray = contextTrace[lineInfo.rValue.callee.name];
-        var inputViz = new ArrayViz(this.$input, inputArray, "fd-current-line-object-highlight");
-        
+        this.inputViz.setArray(inputArray);
+
         var removedPosition = lineInfo.rValue.params.values[0].value;
         var removedLength = lineInfo.rValue.params.values[1].value;
-        inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
+        this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
 
         var updatedArray = fullTrace[lineInfo.rValue.callee.name];
-        var updatedViz = new ArrayViz(this.$updated, updatedArray, "fd-current-line-object-highlight");
+        this.updatedViz.setArray(updatedArray);
 
         var addedPosition = lineInfo.rValue.params.values[0].value;
         var addedLength = lineInfo.rValue.params.values.length - 2;
-        updatedViz.setHighlightForRange("fd-array-splice-added", [addedPosition, addedPosition + addedLength]);
+        this.updatedViz.setHighlightForRange("fd-array-splice-added", [addedPosition, addedPosition + addedLength]);
     };
 
     ArraySpliceVisualization.prototype.remove = function() {

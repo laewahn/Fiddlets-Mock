@@ -39,6 +39,10 @@ define(function(require, exports, module) {
         this.highlights[0].range = [0, array.length];
         this._update();
     };
+
+    ArrayViz.prototype.resetHighlights = function() {
+        this.highlights = [this.highlights[0]];        
+    }
     
     ArrayViz.prototype._update = function() {
         this.$container.empty();
