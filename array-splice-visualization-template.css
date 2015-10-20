@@ -5,6 +5,7 @@
 .fd-array-splice-floating-element {
 	float: left;
 	margin-left: 10px;
+	display: table;
 }
 
 .fd-array-splice-added {
@@ -12,7 +13,7 @@
 }
 
 #fd-array-splice-removed {
-	
+	width: 200px;
 }
 
 #fd-array-splice-input {

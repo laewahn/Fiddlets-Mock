@@ -29,6 +29,13 @@ define(function(require, exports, module) {
                 this.removedLengthPosition.end
             );
         }.bind(this));
+
+        this.inputViz.startChange(function(newStart) {
+            this.editor.replaceRange(JSON.stringify(newStart),
+                this.removedStartPosition.start,
+                this.removedStartPosition.end
+            );
+        }.bind(this));
     }
 
     ArraySpliceVisualization.prototype.$container = undefined;
@@ -72,7 +79,6 @@ define(function(require, exports, module) {
         this.inputViz.setArray(inputArray);
 
         var removedLengthAST = lineInfo.ast.body[0].declarations[0].init.arguments[1];
-        var removedLength = lineInfo.rValue.params.values[1].value;
         this.removedLengthPosition = {start: {
             line: this.currentLineHandle.lineNo(),
             ch: removedLengthAST.loc.start.column
@@ -80,8 +86,22 @@ define(function(require, exports, module) {
             line: this.currentLineHandle.lineNo(),
             ch: removedLengthAST.loc.end.column
         }};
+
+        var removedLength = lineInfo.rValue.params.values[1].value;
         this.inputViz.setLimit(removedLength);
         // this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
+
+        var removedStartPositionAST = lineInfo.ast.body[0].declarations[0].init.arguments[0];
+        this.removedStartPosition = {
+            start: {
+                line: this.currentLineHandle.lineNo(),
+                ch: removedStartPositionAST.loc.start.column
+            },
+            end: {
+                line: this.currentLineHandle.lineNo(),
+                ch: removedStartPositionAST.loc.end.column
+            }
+        };
         var removedPosition = lineInfo.rValue.params.values[0].value;
         this.inputViz.setStart(removedPosition);
         

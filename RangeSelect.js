@@ -23,6 +23,7 @@ define(function(require, exports, module) {
         RangeSelect.prototype.$currentSelectorElement = undefined;
 
         RangeSelect.prototype.limitChangedCallback = undefined;
+        RangeSelect.prototype.startChangedCallback = undefined;
         RangeSelect.prototype.selectorHoverInCallback = undefined;
         RangeSelect.prototype.selectorHoverOutCallback = undefined;
 
@@ -70,6 +71,10 @@ define(function(require, exports, module) {
 
                 this._updateHighlights();
                 this._updateSelector();
+
+                if (this.startChangedCallback !== undefined) {
+                    this.startChangedCallback(this.start);
+                }
             }
         };
 
@@ -88,6 +93,10 @@ define(function(require, exports, module) {
 
         RangeSelect.prototype.limitChange = function(callback) {
             this.limitChangedCallback = callback;
+        };
+
+        RangeSelect.prototype.startChange = function(callback) {
+            this.startChangedCallback = callback;
         };
 
         RangeSelect.prototype.selectorHover = function(hoverIn, hoverOut) {
