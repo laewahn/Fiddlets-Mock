@@ -1,0 +1,41 @@
+#range-select-container {
+	border: solid;
+	/*border-top-style: none;*/
+	border-width: 1px;
+	/*width: 250px;*/
+	display: inline-block;
+	min-width: 150px;
+	background-color: #D8D8D8;
+}
+
+.fd-range-array-row {
+	height: 17px;
+}
+
+.fd-range-array-content {
+	/*border-top-style: solid;*/
+	margin-left: 1em;
+	/*float: right;*/
+	border: solid;
+	border-width: 1px;
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.fd-range-array-selector {
+	width: 1em;
+	float: left;
+	height: 17px;
+}
+
+.fd-range-array-content {
+	background-color: #ffffff;
+}
+
+.fd-range-array-row-highlight {
+	background-color: #00ff00;
+}
+
+.fd-range-array-row-current {
+	cursor: s-resize;
+}

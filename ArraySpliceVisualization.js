@@ -9,7 +9,7 @@ define(function(require, exports, module) {
     ExtensionUtils.loadStyleSheet(module, "array-splice-visualization-template.css");
 
     var ArrayViz = require("./ArrayViz");
-    var LimitSelect = require("./LimitSelect");
+    var RangeSelect = require("./RangeSelect");
 
     function ArraySpliceVisualization(editor) {
         this.$container = $(arraySpliceVisualizationContainer);
@@ -20,7 +20,7 @@ define(function(require, exports, module) {
         this.$updated = this.$container.find("#fd-array-splice-updated");
 
         this.removedViz = new ArrayViz(this.$removed, [], "fd-current-line-assigned-to-highlight");
-        this.inputViz = new LimitSelect(this.$input, "fd-current-line-object-highlight");
+        this.inputViz = new RangeSelect(this.$input, "fd-current-line-object-highlight");
         this.updatedViz = new ArrayViz(this.$updated, [], "fd-current-line-object-highlight");
 
         this.inputViz.limitChange(function(newLimit) {
@@ -55,9 +55,9 @@ define(function(require, exports, module) {
     };
     
     ArraySpliceVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
-        console.log("LineInfo: ", lineInfo);
-        console.log("ContextTrace: ", contextTrace);
-        console.log("FullTrace: ", fullTrace);
+        // console.log("LineInfo: ", lineInfo);
+        // console.log("ContextTrace: ", contextTrace);
+        // console.log("FullTrace: ", fullTrace);
         
         this.removedViz.resetHighlights();
         // this.inputViz.resetHighlights();
@@ -83,7 +83,8 @@ define(function(require, exports, module) {
         this.inputViz.setLimit(removedLength);
         // this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
         var removedPosition = lineInfo.rValue.params.values[0].value;
-
+        this.inputViz.setStart(removedPosition);
+        
         var updatedArray = fullTrace[lineInfo.rValue.callee.name];
         this.updatedViz.setArray(updatedArray);
 
