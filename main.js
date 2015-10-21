@@ -13,49 +13,129 @@ define(function (require, exports, module) {
     "use strict";
     
     var AppInit = brackets.getModule("utils/AppInit");
-	var Menus = brackets.getModule("command/Menus");
-	var CommandManager  = brackets.getModule("command/CommandManager");
-
+	
 	var Dialogs = brackets.getModule("widgets/Dialogs");
   	var DefaultDialogs = brackets.getModule("widgets/DefaultDialogs");
     
     var FileViewController = brackets.getModule("project/FileViewController");
     var ProjectManager = brackets.getModule("project/ProjectManager");
     var FileUtils = brackets.getModule("file/FileUtils");
+    var FileSystem = brackets.getModule("filesystem/FileSystem");
     var MainViewManager = brackets.getModule("view/MainViewManager");
     var EditorManager = brackets.getModule("editor/EditorManager");
     
+    var StudyEditor = require("StudyEditor");
+
     var config;
     var lineConfigWithHandles = [];
+    var toolbar;
+    var studyEditorOpen = false;
+    var studyLog = {};
+    var taskName;
 
     AppInit.appReady(function () {
-    	CommandManager.register("Start Fiddlets Study Watcher", "Fiddlets.Study.startStudyWatcher", startStudyWatcher);
-
-    	var debugMenu = Menus.getMenu("debug-menu");
-    	debugMenu.addMenuDivider();
-    	debugMenu.addMenuItem("Fiddlets.Study.startStudyWatcher");
     	console.log("FiddletsStudy", "App ready...");
-
-        startStudyWatcher();
-    });
-
-    function startStudyWatcher() {
-        var toolbar = new StudyToolbar();
+        
+        toolbar = new StudyToolbar();
         $(".content").prepend(toolbar.$container);
-
-        function checkRootDirectoryAndPrepareIfTask(event, projectRootDirectory) {
-            if(isTaskDirectory(projectRootDirectory)) {
-                prepareTask(projectRootDirectory);
-                toolbar.setStartStopEnabled(true);
-            } else {
-                toolbar.setStartStopEnabled(false);
-            }
-        }
 
         ProjectManager.on("projectOpen", checkRootDirectoryAndPrepareIfTask);
         checkRootDirectoryAndPrepareIfTask(null, ProjectManager.getProjectRoot());
 
         console.log("FiddletsStudy", "Watcher started");
+
+        EditorManager.registerInlineEditProvider(editorProvider, 2);
+    });
+
+    function checkRootDirectoryAndPrepareIfTask(event, projectRootDirectory) {
+
+        toolbar.reset();
+
+        function isTaskDirectory(projectRootDirectory) {
+            var projectMatcher = /^Task\s[1-5]/g;
+            return projectMatcher.test(FileUtils.getBaseName(projectRootDirectory.fullPath));
+        }
+
+        var isTask = isTaskDirectory(projectRootDirectory);
+        toolbar.setStartStopEnabled(isTask);
+        
+        toolbar.startCallback = function() {
+            var filename = config[taskName].file;
+            openTaskFile(filename, projectRootDirectory);
+
+            console.log("Task started: " + taskName);
+            studyLog.started = new Date();
+        };
+
+        toolbar.handInCallback = function(toolbar) {
+            var handInDialog = Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, 
+                                             "Confirmation",
+                                             "Click OK to hand in",
+                                             [{
+                                                id: "continue",
+                                                text: "Ok",
+                                                className: Dialogs.DIALOG_BTN_OK
+                                             },{
+                                                id: "cancel",
+                                                text: "Cancel",
+                                                className: Dialogs.DIALOG_BTN_OK
+                                             }],
+                                             true
+            );
+
+            handInDialog.done(function(buttonId) {
+                console.log(buttonId);
+                if (buttonId === "continue") {
+                    console.log("Handed in: " + taskName);
+                    studyLog.handedIn = new Date();
+                    console.log(studyLog);
+                    toolbar.handedIn();
+                    writeStudyLogToFile(taskName, projectRootDirectory);
+                }
+            });
+        };
+        
+        if(isTask) {
+            config = JSON.parse(require("text!tasksConfig.json"));
+            prepareTask(projectRootDirectory);
+        }
+    }
+
+    function writeStudyLogToFile(name, root) {
+        var newFile = FileSystem.getFileForPath(root.fullPath + "/" + name + ".log");
+        FileUtils.writeText(newFile, JSON.stringify(studyLog, null, 2))
+            .done(function() {
+                Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO,
+                    "Success",
+                    "Results were written to disk",
+                    [{
+                        id: "continue",
+                        text: "Ok",
+                        className: Dialogs.DIALOG_BTN_OK
+                    }],
+                    true
+                );
+            });
+    }
+
+    function prepareTask(projectRootDirectory) {
+        MainViewManager.off("currentFileChange");
+
+        taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
+        console.log("FiddletsStudy", "Preparing task " + taskName);
+        
+        studyLog = {
+            "fiddletsOpened" : []
+        };
+
+        MainViewManager.on("currentFileChange", function() {
+            registerLineConfigurationForLineHandles(config[taskName].lines);
+        });
+    }
+
+    function openTaskFile(filename, projectRootDirectory) {
+        console.log("FiddletsStudy", "Opening file " + filename);
+        FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/" + filename);
     }
 
     function registerLineConfigurationForLineHandles(lineConfigs) {
@@ -75,57 +155,15 @@ define(function (require, exports, module) {
         });
     }
 
-    function isTaskDirectory(projectRootDirectory) {
-        var projectMatcher = /^Task\s[1-5]/g;
-
-        return projectMatcher.test(FileUtils.getBaseName(projectRootDirectory.fullPath));
-    }
-
-    function prepareTask(projectRootDirectory) {
-        MainViewManager.off("currentFileChange");
-
-        var taskName = FileUtils.getBaseName(projectRootDirectory.fullPath);
-        console.log("FiddletsStudy", "Preparing task " + taskName);
-
-        config = JSON.parse(require("text!tasksConfig.json"));
-
-        var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
-        var filename = config[currentTask].file;
-        console.log("FiddletsStudy", "Opening file " + filename);
-
-        FileViewController.openFileAndAddToWorkingSet(projectRootDirectory.fullPath + "/" + filename);
-        
-        MainViewManager.on("currentFileChange", function() {
-            registerLineConfigurationForLineHandles(config[currentTask].lines);
-        });
-    }
-
-    function getParticipantID() {
-        var $dialogContent = $(require("text!./dialog-participantId.html"));
-
-        var dialog = Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO, 
-                                             "Enter participant ID",
-                                             $dialogContent.html(),
-                                             [{
-                                                id: "continue",
-                                                text: "Continue",
-                                                className: Dialogs.DIALOG_BTN_OK
-                                             }],
-                                             true
-        );
-
-        dialog.done(function() {
-            console.log("Dialog promise done!");
-        });
-    }
-    
-    var StudyEditor = require("StudyEditor");
-
-    EditorManager.registerInlineEditProvider(editorProvider, 2);
-
     function editorProvider(hostEditor, position) {
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
-        console.log("Tasks name is: " + currentTask);
+        var fiddletsTracker = {
+            opened: new Date()
+        };
+
+        studyLog.fiddletsOpened.push(fiddletsTracker);
+        console.log(studyLog);
+        console.log("Tasks name is: " + currentTask + " fiddlets opened: " + studyLog.fiddletsOpened.length);
         
         var configForLine = getLineConfigForLine(position.line);
         if(configForLine === null) return "No information available for this line.";
@@ -134,6 +172,13 @@ define(function (require, exports, module) {
         
         inlineEditor.load(hostEditor);        
         inlineEditor.currentLineCode = hostEditor.document.getLine(position.line).trim();
+        inlineEditor.onClosed = function() {
+            console.log("Fiddlets closed.");
+            studyEditorOpen = false;
+            fiddletsTracker.closed = new Date();
+        };
+
+        studyEditorOpen = true;
 
         return new $.Deferred().resolve(inlineEditor);
     }
@@ -155,36 +200,28 @@ define(function (require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
     ExtensionUtils.loadStyleSheet(module, "toolbar.css");
 
-    function StudyLog() {
-        this.taskRunning = false;
-    }
-
-    StudyLog.prototype.constructor = StudyLog;
-
-    StudyLog.prototype.taskRunning = undefined;
-    
-    StudyLog.prototype.startTask = function() {
-        this.taskRunning = true;
-    }
-
-    StudyLog.prototype.finishTask = function() {
-        this.taskRunning = false;
-    }
-
-    function StudyToolbar(studyLog) {
-        this.studyLog = studyLog;
+    function StudyToolbar() {
 
         this.$container = $(require("text!toolbar.html"));
         this.$startStopTaskButton = this.$container.find("#task-start-stop-button");
+        var that = this;
 
         function updateStartStopButton(button) {
-            button.html("Hand in task.");
+            if (that.started === false) {
+                that.startCallback();
+                that.started = true;
+                button.html("Hand in task");
+            } else {
+                that.handInCallback(that);
+            }
         }
 
         this.$startStopTaskButton.on("click", function() {
             console.log("Study toolbar button", "was clicked.");
             updateStartStopButton($(this));
         });
+
+        this.reset();
         this.setStartStopEnabled(false);
     }
 
@@ -193,10 +230,20 @@ define(function (require, exports, module) {
     StudyToolbar.prototype.$container = undefined;
     StudyToolbar.prototype.$startStopTaskButton = undefined;
 
-    StudyToolbar.prototype.studyLog = undefined;
+    StudyToolbar.prototype.started = false;
+    StudyToolbar.prototype.startCallback = undefined;
+    StudyToolbar.prototype.handInCallback = undefined;
+
+    StudyToolbar.prototype.reset = function() {
+        this.$startStopTaskButton.html("Start Task");
+    };
+
+    StudyToolbar.prototype.handedIn = function() {
+        this.started = false;
+        this.setStartStopEnabled(false);
+    };
 
     StudyToolbar.prototype.setStartStopEnabled = function (isEnabled) {
         this.$startStopTaskButton.prop("disabled", !isEnabled);
-    } 
-
+    };
 });
