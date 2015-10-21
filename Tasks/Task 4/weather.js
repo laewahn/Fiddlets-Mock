@@ -31,5 +31,8 @@ function buildWeatherInfoCSVLine(weather) {
     return weather;
 }
 
-console.log("Todays weather:");
-console.log(weatherInfoCSV.join(""));
+fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
+    if(err) {
+        console.error(err);
+    }
+});

@@ -58,7 +58,7 @@
   }
 
   function escapeHtml (string) {
-    var htmlMetaCharacters = /* Replace this: */ /\S/g /* with your regexp */;
+    var htmlMetaCharacters = /<|>/;
     
     function fromEntityMap (s) {
       return entityMap[s];
