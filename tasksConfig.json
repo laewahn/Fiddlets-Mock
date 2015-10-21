@@ -112,7 +112,7 @@
 				},
 				"context" : "var weatherJSON = <#undefined:weatherJSON#>;\nvar i;\nvar myWeatherInfo = []\nfor(i = 0; i < weatherJSON.list.length; i++) {\n\tvar info = {};\n\tinfo.mtemp = weatherJSON.list[i].main.temp;\n\tinfo.wdesc = weatherJSON.list[i].weather[0].description;\n\tinfo.atmpress = weatherJSON.list[i].main.pressure;\n\tinfo.dt_txt = weatherJSON.list[i].dt_txt;\n\tinfo.wnd = {\n\t\tv: weatherJSON.list[i].wind.speed,\n\t\tdir: weatherJSON.list[i].wind.deg\n\t};\n\tmyWeatherInfo.push(info);\n}\nfunction buildWeatherInfoCSVLine(weather) {\n\treturn weather;\n}"
 			},
-			"37" : {
+			"36" : {
 				"info" : "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])",
 				"unknownVariables" : {
 					"weatherInfoCSV" : [["12:00:00,32.68ºC,sky is clear\n","15:00:00,32.26ºC,sky is clear\n","18:00:00,29.7ºC,few clouds\n"]]

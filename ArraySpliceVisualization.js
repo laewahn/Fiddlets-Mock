@@ -90,46 +90,47 @@ define(function(require, exports, module) {
         this.inputViz.resetHighlights();
         this.updatedViz.resetHighlights();
 
-        if (lineInfo.type.indexOf("Declaration") !== -1) {
-            var removedArray = fullTrace[lineInfo.lValue.name];
+        if (lineInfo.info.declaration !== undefined || lineInfo.info.assignment !== undefined) {
+            var removedArray = fullTrace[(lineInfo.info.declaration || lineInfo.info.assignment).toName];
             this.removedViz.setArray(removedArray);
         }
 
-        var inputArray = contextTrace[lineInfo.rValue.callee.name];
+        var inputArray = contextTrace[lineInfo.info.functionCall.callee.name];
         this.inputViz.setArray(inputArray);
 
-        var removedLengthAST = lineInfo.ast.body[0].declarations[0].init.arguments[1];
+        var removedLengthRange = lineInfo.info.functionCall.params[1].range;
         this.removedLengthPosition = {start: {
             line: this.currentLineHandle.lineNo(),
-            ch: removedLengthAST.loc.start.column
+            ch: removedLengthRange[0]
         }, end: {
             line: this.currentLineHandle.lineNo(),
-            ch: removedLengthAST.loc.end.column
+            ch: removedLengthRange[1]
         }};
 
-        var removedLength = lineInfo.rValue.params.values[1].value;
+        var removedLength = lineInfo.info.functionCall.params[1].value;
+
         this.inputViz.setLimit(removedLength);
 
-        var removedStartPositionAST = lineInfo.ast.body[0].declarations[0].init.arguments[0];
+        var removedStartRange = lineInfo.info.functionCall.params[0].range;
         this.removedStartPosition = {
             start: {
                 line: this.currentLineHandle.lineNo(),
-                ch: removedStartPositionAST.loc.start.column
+                ch: removedStartRange[0]
             },
             end: {
                 line: this.currentLineHandle.lineNo(),
-                ch: removedStartPositionAST.loc.end.column
+                ch: removedStartRange[1]
             }
         };
-        var removedPosition = lineInfo.rValue.params.values[0].value;
+        var removedPosition = lineInfo.info.functionCall.params[0].value;
         this.inputViz.setStart(removedPosition);
         this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
         
-        var updatedArray = fullTrace[lineInfo.rValue.callee.name];
+        var updatedArray = fullTrace[lineInfo.info.functionCall.callee.name];
         this.updatedViz.setArray(updatedArray);
 
-        var addedPosition = lineInfo.rValue.params.values[0].value;
-        var addedLength = lineInfo.rValue.params.values.length - 2;
+        var addedPosition = removedPosition;
+        var addedLength = lineInfo.info.functionCall.params.length - 2;
         this.updatedViz.setHighlightForRange("fd-array-splice-added", [addedPosition, addedPosition + addedLength]);
     };
 

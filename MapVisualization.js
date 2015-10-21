@@ -27,10 +27,10 @@ define(function(require, exports, module) {
         console.log("Line info", lineInfo);
         console.log("Max width: " + this.$container.width());
         this.$beforeView.empty();
-        var arrayName = lineInfo.rValue.callee.name;
+        var arrayName = lineInfo.info.functionCall.callee.name;
         var arrayBefore = contextTrace[arrayName];
 
-        var assigneeName = lineInfo.lValue.name;
+        var assigneeName = (lineInfo.info.declaration || lineInfo.info.assignment).toName;
         var arrayAfter = fullTrace[assigneeName];
 
         arrayBefore.forEach(function(e, idx) {

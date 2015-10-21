@@ -212,33 +212,30 @@ define(function (require, exports, module) {
         var currentLineNr = this.contextEditor.lastLine();
 
         this._clearMarkersInCurrentLine();
-
-        if(this.lineInfo.lValue !== null) {
-            var assignedToObject = this.lineInfo.lValue;
-            var lValueRange = assignedToObject.range;
-            var assignedToMarker = this.contextEditor.markText({ line: currentLineNr, ch: lValueRange[0] },
-                                                               { line: currentLineNr, ch: lValueRange[1] }, 
+        var assignedTo = this.lineInfo.info.declaration || this.lineInfo.info.assignment;
+        if(assignedTo !== null) {
+            var assignedToMarker = this.contextEditor.markText({ line: currentLineNr, ch: assignedTo.toRange[0] },
+                                                               { line: currentLineNr, ch: assignedTo.toRange[1] }, 
                                                                { className: "fd-current-line-assigned-to-highlight" }
             );
             this.currentLineMarkers.push(assignedToMarker);
     
         }
         
-        if(this.lineInfo.rValue !== null) {
-            var theObject;
+        var theObject = this.lineInfo.info.initialization || this.lineInfo.info.functionCall;
+        if(theObject !== null) {
 
-            if(this.lineInfo.type.indexOf("Function call") !== -1) {
-                theObject = this.lineInfo.rValue.callee;    
+            if(theObject.type === "CallExpression") {
+                this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.callee.range[0] },
+                                                                         { line: currentLineNr, ch: theObject.callee.range[1] }, 
+                                                                         { className: "fd-current-line-object-highlight" })
+                );
             } else {
-                theObject = this.lineInfo.rValue;
+                this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.range[0] },
+                                                                         { line: currentLineNr, ch: theObject.range[1] }, 
+                                                                         { className: "fd-current-line-object-highlight" })
+                );
             }
-            
-            var calleeRange = theObject.range;
-            var objectMarker = this.contextEditor.markText({ line: currentLineNr, ch: calleeRange[0] },
-                                                           { line: currentLineNr, ch: calleeRange[1] }, 
-                                                           { className: "fd-current-line-object-highlight" }
-            );
-            this.currentLineMarkers.push(objectMarker);
         }
     };
 

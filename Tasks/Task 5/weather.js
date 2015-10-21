@@ -33,9 +33,12 @@ function buildWeatherInfoCSVLine(weather) {
 }
 
 var csvHeader = "time,temperature,description\n";
+var weatherNow = weatherInfoCSV.splice(1,2,csvHeader);
 
-var weatherNow = weatherInfoCSV.splice(0,1,csvHeader);
+fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
+    if(err) {
+        console.error(err);
+    }
+});
 
 console.log("Weather now: " + weatherNow);
-console.log("Todays weather csv: ");
-console.log(weatherInfoCSV.join(""));
