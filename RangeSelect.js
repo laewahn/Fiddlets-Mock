@@ -23,9 +23,12 @@ define(function(require, exports, module) {
         RangeSelect.prototype.$currentSelectorElement = undefined;
 
         RangeSelect.prototype.limitChangedCallback = undefined;
-        RangeSelect.prototype.startChangedCallback = undefined;
         RangeSelect.prototype.selectorHoverInCallback = undefined;
         RangeSelect.prototype.selectorHoverOutCallback = undefined;
+
+        RangeSelect.prototype.startChangedCallback = undefined;
+        RangeSelect.prototype.startHoverInCallback = undefined;
+        RangeSelect.prototype.startHoverOutCallback = undefined;
 
         RangeSelect.prototype.setArray = function(arr) {
             this.$container.empty();
@@ -40,11 +43,7 @@ define(function(require, exports, module) {
                 $row.append($content);
 
                 $content.text(JSON.stringify(e));
-                $selector.hover(
-                    this.selectorHoverInCallback,
-                    this.selectorHoverOutCallback
-                );
-
+                
                 this.$container.append($row);
                 this.rows.push($row);
             }, this);
@@ -104,6 +103,11 @@ define(function(require, exports, module) {
             this.selectorHoverOutCallback = hoverOut;
         };
 
+        RangeSelect.prototype.startHover = function(hoverIn, hoverOut) {
+            this.startHoverInCallback = hoverIn;
+            this.startHoverOutCallback = hoverOut;
+        };
+
         RangeSelect.prototype._updateSelector = function() {
             this.$container.find(".fd-range-array-selector").each(function() {
                 $(this).html("&nbsp;");
@@ -160,6 +164,12 @@ define(function(require, exports, module) {
             var that = this;
 
             $currentSelector.mousedown(function(e) {
+                $currentSelector.off("mouseleave", that.selectorHoverOutCallback);
+                $currentSelector.off("mouseenter", that.selectorHoverInCallback);
+
+                $currentStartElement.off("mouseleave", that.selectorHoverOutCallback);
+                $currentStartElement.off("mouseenter", that.selectorHoverInCallback);
+                
                 e.preventDefault();
                 var rowHeight = $(this).height();
 
@@ -183,13 +193,15 @@ define(function(require, exports, module) {
                         unregisterAllEvents();
                     }
 
-                    that.setLimit(newLimit);
+                    if (newLimit !== that.limit) {
+                        that.setLimit(newLimit);
+                    }
                 });
 
                 function unregisterAllEvents() {
                     $container.off("mousemove");
                     $container.off("mouseup");
-                    $container.off("mouseleave");
+                    $container.off("mouseleave", unregisterAllEvents);
                 }
 
                 $container.mouseup(unregisterAllEvents);
@@ -201,6 +213,13 @@ define(function(require, exports, module) {
             var $currentStartElement = $(".fd-range-array-row-start");
 
             $currentStartElement.mousedown(function(e) {
+                
+                $currentSelector.off("mouseleave", that.selectorHoverOutCallback);
+                $currentSelector.off("mouseenter", that.selectorHoverInCallback);
+                
+                $currentStartElement.off("mouseleave", that.selectorHoverOutCallback);
+                $currentStartElement.off("mouseenter", that.selectorHoverInCallback);
+
                 e.preventDefault();
                 var rowHeight = $(this).height();
 
@@ -213,8 +232,6 @@ define(function(require, exports, module) {
                     var startOffset = normalizedY > 0 ?  Math.floor(normalizedY) : Math.floor(normalizedY);
                     var newStart = that.start + startOffset;
 
-                    console.log(newStart);
-
                     if (startOffset !== 0 && newStart + that.limit <= that.rows.length) {
                         that.setStart(that.start + startOffset);
                     }                    
@@ -223,12 +240,23 @@ define(function(require, exports, module) {
                 function unregisterAllEvents() {
                     $container.off("mousemove");
                     $container.off("mouseup");
-                    $container.off("mouseleave");
+                    $container.off("mouseleave", unregisterAllEvents);
                 }
 
                 $container.mouseup(unregisterAllEvents);
                 $container.mouseleave(unregisterAllEvents);
             });
+
+            $currentSelector.hover(
+                this.selectorHoverInCallback,
+                this.selectorHoverOutCallback
+            );
+
+            $currentStartElement.hover(
+                this.startHoverInCallback,
+                this.startHoverOutCallback
+            );
+
         };
 
     module.exports = RangeSelect;

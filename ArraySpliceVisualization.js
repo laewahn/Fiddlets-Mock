@@ -20,7 +20,7 @@ define(function(require, exports, module) {
         this.$updated = this.$container.find("#fd-array-splice-updated");
 
         this.removedViz = new ArrayViz(this.$removed, [], "fd-current-line-assigned-to-highlight");
-        this.inputViz = new RangeSelect(this.$input, "fd-current-line-object-highlight");
+        this.inputViz = new RangeSelect(this.$input, "fd-current-line-assigned-to-highlight");
         this.updatedViz = new ArrayViz(this.$updated, [], "fd-current-line-object-highlight");
 
         this.inputViz.limitChange(function(newLimit) {
@@ -30,11 +30,33 @@ define(function(require, exports, module) {
             );
         }.bind(this));
 
+        this.inputViz.selectorHover(function() {
+            this.lengthMarker = this.editor.markText(this.removedLengthPosition.start,
+                                                     this.removedLengthPosition.end,
+                                                     { className: "fd-current-line-param-highlight"});
+        }.bind(this),
+        function() {
+            if (this.lengthMarker !== undefined) {
+                this.lengthMarker.clear();
+            }
+        }.bind(this));
+
         this.inputViz.startChange(function(newStart) {
             this.editor.replaceRange(JSON.stringify(newStart),
                 this.removedStartPosition.start,
                 this.removedStartPosition.end
             );
+        }.bind(this));
+
+        this.inputViz.startHover(function() {
+            this.startMarker = this.editor.markText(this.removedStartPosition.start,
+                                                    this.removedStartPosition.end,
+                                                    { className: "fd-current-line-param-highlight"});
+        }.bind(this),
+        function() {
+            if (this.startMarker !== undefined) {
+                this.startMarker.clear()
+            }
         }.bind(this));
     }
 
@@ -46,6 +68,8 @@ define(function(require, exports, module) {
     ArraySpliceVisualization.prototype.editor = undefined;
     ArraySpliceVisualization.prototype.currentLineHandle = undefined;
 
+    ArraySpliceVisualization.prototype.lengthMarker = undefined;
+    ArraySpliceVisualization.prototype.startMarker = undefined;
     ArraySpliceVisualization.prototype.removedViz = undefined;
     ArraySpliceVisualization.prototype.inputViz = undefined;
     ArraySpliceVisualization.prototype.updatedViz = undefined;
