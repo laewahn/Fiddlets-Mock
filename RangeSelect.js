@@ -35,7 +35,6 @@ define(function(require, exports, module) {
         RangeSelect.prototype.startHoverOutCallback = undefined;
 
         RangeSelect.prototype.setArray = function(arr) {
-            console.log("set array: " + arr);
             this.highlights[0].range = [0, arr.length];
             this.$container.empty();
             this.rows = [];
@@ -146,7 +145,6 @@ define(function(require, exports, module) {
                 });
 
                 var classForElement = classForIdx(idx, this.highlights);
-                console.log("Adding class " + classForElement + " to idx " + idx);
                 if (classForElement !== null) {
                     $content.addClass(classForElement);
                 }

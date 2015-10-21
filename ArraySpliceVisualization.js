@@ -86,10 +86,6 @@ define(function(require, exports, module) {
     };
     
     ArraySpliceVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
-        // console.log("LineInfo: ", lineInfo);
-        // console.log("ContextTrace: ", contextTrace);
-        // console.log("FullTrace: ", fullTrace);
-        
         this.removedViz.resetHighlights();
         this.inputViz.resetHighlights();
         this.updatedViz.resetHighlights();
