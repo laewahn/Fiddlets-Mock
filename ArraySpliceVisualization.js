@@ -20,7 +20,7 @@ define(function(require, exports, module) {
         this.$updated = this.$container.find("#fd-array-splice-updated");
 
         this.removedViz = new ArrayViz(this.$removed, [], "fd-current-line-assigned-to-highlight");
-        this.inputViz = new RangeSelect(this.$input, "fd-current-line-assigned-to-highlight");
+        this.inputViz = new RangeSelect(this.$input, "fd-current-line-object-highlight");
         this.updatedViz = new ArrayViz(this.$updated, [], "fd-current-line-object-highlight");
 
         this.inputViz.limitChange(function(newLimit) {
@@ -91,7 +91,7 @@ define(function(require, exports, module) {
         // console.log("FullTrace: ", fullTrace);
         
         this.removedViz.resetHighlights();
-        // this.inputViz.resetHighlights();
+        this.inputViz.resetHighlights();
         this.updatedViz.resetHighlights();
 
         if (lineInfo.type.indexOf("Declaration") !== -1) {
@@ -113,7 +113,6 @@ define(function(require, exports, module) {
 
         var removedLength = lineInfo.rValue.params.values[1].value;
         this.inputViz.setLimit(removedLength);
-        // this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
 
         var removedStartPositionAST = lineInfo.ast.body[0].declarations[0].init.arguments[0];
         this.removedStartPosition = {
@@ -128,6 +127,7 @@ define(function(require, exports, module) {
         };
         var removedPosition = lineInfo.rValue.params.values[0].value;
         this.inputViz.setStart(removedPosition);
+        this.inputViz.setHighlightForRange("fd-current-line-assigned-to-highlight", [removedPosition, removedPosition + removedLength]);
         
         var updatedArray = fullTrace[lineInfo.rValue.callee.name];
         this.updatedViz.setArray(updatedArray);

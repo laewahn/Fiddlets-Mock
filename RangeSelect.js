@@ -13,10 +13,14 @@ define(function(require, exports, module) {
             this.limit = 0;
             this.start = 0;
 
-            this.highlightClass = highlightClass || "fd-range-array-row-highlight";
+            this.highlights = [{
+                "class" : highlightClass,
+                "range" : []
+            }];
         }
 
         RangeSelect.prototype.$container = undefined;
+        RangeSelect.prototype.highlights = undefined;
         RangeSelect.prototype.rows = undefined;
         RangeSelect.prototype.limit = undefined;
         RangeSelect.prototype.start = undefined;
@@ -31,6 +35,8 @@ define(function(require, exports, module) {
         RangeSelect.prototype.startHoverOutCallback = undefined;
 
         RangeSelect.prototype.setArray = function(arr) {
+            console.log("set array: " + arr);
+            this.highlights[0].range = [0, arr.length];
             this.$container.empty();
             this.rows = [];
 
@@ -57,7 +63,21 @@ define(function(require, exports, module) {
             }
             
             this._updateHighlights();
+            this._registerEvents();
             this._updateSelector();
+        };
+
+        RangeSelect.prototype.setHighlightForRange = function(highlightClass, range) {
+            this.highlights.push({
+                "class" : highlightClass,
+                "range" : range
+            });
+
+            this._updateHighlights();
+        };
+
+        RangeSelect.prototype.resetHighlights = function() {
+            this.highlights = [this.highlights[0]];        
         };
 
         RangeSelect.prototype.setStart = function(start) {
@@ -69,6 +89,7 @@ define(function(require, exports, module) {
                 }
 
                 this._updateHighlights();
+                this._registerEvents();
                 this._updateSelector();
 
                 if (this.startChangedCallback !== undefined) {
@@ -82,6 +103,7 @@ define(function(require, exports, module) {
                 this.limit = limit;
 
                 this._updateHighlights();
+                this._registerEvents();
                 this._updateSelector();
 
                 if (this.limitChangedCallback !== undefined) {
@@ -119,11 +141,20 @@ define(function(require, exports, module) {
                 var $content = $row.find(".fd-range-array-content");
                 var $selector = $row.find(".fd-range-array-selector");
 
+                Object.keys(this.highlights).forEach(function(highlightClass) {
+                    $content.removeClass(highlightClass);
+                });
+
+                var classForElement = classForIdx(idx, this.highlights);
+                console.log("Adding class " + classForElement + " to idx " + idx);
+                if (classForElement !== null) {
+                    $content.addClass(classForElement);
+                }
+
                 $selector.removeClass("fd-range-array-row-current");
                 $selector.removeClass("fd-range-array-row-between");
 
                 if (this.start <= idx && idx < this.limit + this.start) {
-                    $content.addClass(this.highlightClass);
 
                     if (idx === this.start) {
                         if (this.limit > 1) {
@@ -145,13 +176,24 @@ define(function(require, exports, module) {
                         $selector.addClass("fd-range-array-row-current");
                     }
 
-                    $content.removeClass(this.highlightClass);
                     $selector.attr("src", ExtensionUtils.getModuleUrl(module, "selector-arrow-none.png"));
                 }
             }, this);
-
-            this._registerEvents();
         };
+
+        function classForIdx(idx, highlights) {
+        var i;
+        var returnHighlight = null;
+        var highlight;
+            for(i = 0; i < highlights.length; i++) {
+                 highlight = highlights[i];
+                if (highlight.range[0] <= idx && idx < highlight.range[1]) {
+                    returnHighlight = highlight.class;
+                }
+            }
+
+        return returnHighlight;
+    }
 
         RangeSelect.prototype._registerEvents = function() {
             if (this.$currentSelectorElement !== undefined) {

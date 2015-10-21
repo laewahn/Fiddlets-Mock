@@ -10,7 +10,6 @@ define(function(require, exports, module) {
     function ArrayViz($container, array, highlightClass) {
         this.$container = $container;
         this.array = array || [];
-        this.highlightClass = highlightClass;
 
         this.highlights = [{
             "class" : highlightClass,
@@ -22,7 +21,6 @@ define(function(require, exports, module) {
 
     ArrayViz.prototype.$container = undefined;
     ArrayViz.prototype.array = undefined;
-    ArrayViz.prototype.highlightClass = undefined;
     ArrayViz.prototype.highlights = undefined;
     
     ArrayViz.prototype.setHighlightForRange = function(highlightClass, range) {
@@ -42,7 +40,7 @@ define(function(require, exports, module) {
 
     ArrayViz.prototype.resetHighlights = function() {
         this.highlights = [this.highlights[0]];        
-    }
+    };
     
     ArrayViz.prototype._update = function() {
         this.$container.empty();
