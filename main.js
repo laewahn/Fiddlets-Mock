@@ -107,7 +107,7 @@ define(function (require, exports, module) {
             .done(function() {
                 Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO,
                     "Success",
-                    "Results were written to disk",
+                    "Task was successfully handed in.",
                     [{
                         id: "continue",
                         text: "Ok",

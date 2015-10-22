@@ -33,7 +33,7 @@ function buildWeatherInfoCSVLine(weather) {
 }
 
 var csvHeader = "time,temperature,description\n";
-var weatherNow = weatherInfoCSV.splice(1,2,csvHeader);
+var weatherNow = weatherInfoCSV.splice();
 
 fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
     if(err) {
