@@ -28,8 +28,8 @@ define(function(require, exports, module) {
 
     StringReplaceVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
 
-        var params = lineInfo.rValue.params.values;
-        var calleeName = lineInfo.rValue.callee.name;
+        var params = lineInfo.info.functionCall.params;
+        var calleeName = lineInfo.info.functionCall.callee.name;
         var object = contextTrace[calleeName];
 
         this.string = object;

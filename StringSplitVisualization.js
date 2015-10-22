@@ -61,32 +61,37 @@ define(function(require, exports, module) {
     
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
         
-        this.string = contextTrace[lineInfo.rValue.callee.name];
+        this.string = contextTrace[lineInfo.info.functionCall.callee.name];
 
-        var splitRegExp = contextTrace[lineInfo.rValue.params.values[0].name] || lineInfo.rValue.params.values[0].value;
-        var limit = (lineInfo.rValue.params.values[1]) ? lineInfo.rValue.params.values[1].name || lineInfo.rValue.params.values[1].value : undefined;
+        var splitRegExp = contextTrace[lineInfo.info.functionCall.params[0].name] || lineInfo.info.functionCall.params[0].value;
+        var limit = (lineInfo.info.functionCall.params[1]) ? (lineInfo.info.functionCall.params[1].name || lineInfo.info.functionCall.params[1].value) : undefined;
 
         var explaination =  "Splits  " + JSON.stringify(this.string) + " at " + splitRegExp.toString() + " and limits the result to " + limit + " elements.";
         this.$explainationView.text(explaination);
         
         var splitted = this.string.split(splitRegExp);
-        var limitArgAST = lineInfo.ast.body[0].expression.right.arguments[1];
 
-        var parameterStart = {
-            line: this.currentLineHandle.lineNo(), 
-            ch: limitArgAST.loc.start.column
-        };
-        var parameterEnd = {
-            line: this.currentLineHandle.lineNo(), 
-            ch: limitArgAST.loc.end.column
-        };
-
-        this.parameterPosition = {start: parameterStart, end: parameterEnd};
+        if (limit !== undefined) {
+            var limitArgRange = lineInfo.info.functionCall.params[1].range;
+            var parameterStart = {
+                line: this.currentLineHandle.lineNo(), 
+                ch: limitArgRange[0]
+            };
+            var parameterEnd = {
+                line: this.currentLineHandle.lineNo(), 
+                ch: limitArgRange[1]
+            };
+    
+            this.parameterPosition = {start: parameterStart, end: parameterEnd};
+        } else {
+            limit = splitted.length;
+        }
+        
 
         this.limitSelect.setArray(splitted);
         this.limitSelect.setLimit(limit);
         
-        var result = fullTrace[lineInfo.lValue.name];
+        var result = fullTrace[(lineInfo.info.assignment || lineInfo.info.initialisation).toName];
         this.$resultView.html(JSON.stringify(result));
     };
 
