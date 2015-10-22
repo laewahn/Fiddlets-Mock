@@ -103,6 +103,7 @@ define(function (require, exports, module) {
 
     function writeStudyLogToFile(name, root) {
         var newFile = FileSystem.getFileForPath(root.fullPath + "/" + name + ".log");
+        console.log(JSON.stringify(studyLog, null, 2));
         FileUtils.writeText(newFile, JSON.stringify(studyLog, null, 2))
             .done(function() {
                 Dialogs.showModalDialog(DefaultDialogs.DIALOG_ID_INFO,
