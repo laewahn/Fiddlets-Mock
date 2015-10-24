@@ -156,6 +156,8 @@ define(function (require, exports, module) {
         });
     }
 
+
+    var LineInfo = require("./LineInfoProxy");
     function editorProvider(hostEditor, position) {
         var currentTask = FileUtils.getBaseName(ProjectManager.getProjectRoot().fullPath);
         var fiddletsTracker = {
@@ -166,22 +168,38 @@ define(function (require, exports, module) {
         console.log(studyLog);
         console.log("Tasks name is: " + currentTask + " fiddlets opened: " + studyLog.fiddletsOpened.length);
         
+        var currentLine = hostEditor.document.getLine(position.line).trim();
+        var getLineInfo = LineInfo.infoForLine(currentLine);
         var configForLine = getLineConfigForLine(position.line);
         if(configForLine === null) return "No information available for this line.";
-
-        var inlineEditor = new StudyEditor(configForLine);
         
-        inlineEditor.load(hostEditor);        
-        inlineEditor.currentLineCode = hostEditor.document.getLine(position.line).trim();
-        inlineEditor.onClosed = function() {
-            console.log("Fiddlets closed.");
-            studyEditorOpen = false;
-            fiddletsTracker.closed = new Date();
-        };
+        var deferred = new $.Deferred();
+        $.when(getLineInfo)
+        .done(function(lineInfo) {
+            console.log(lineInfo);
 
-        studyEditorOpen = true;
+            configForLine.lineInfo = lineInfo;
 
-        return new $.Deferred().resolve(inlineEditor);
+            var inlineEditor = new StudyEditor(configForLine);
+            
+            inlineEditor.load(hostEditor);  
+            inlineEditor.line = position.line;
+    
+            inlineEditor.currentLineCode = currentLine;
+            inlineEditor.onClosed = function() {
+                console.log("Fiddlets closed.");
+                studyEditorOpen = false;
+                fiddletsTracker.closed = new Date();
+            };
+
+            studyEditorOpen = true;
+            deferred.resolve(inlineEditor);
+        })
+        .fail(function(error) {
+            console.error(error);
+        });
+
+        return deferred;
     }
 
     function getLineConfigForLine(line) {

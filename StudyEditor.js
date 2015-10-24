@@ -161,25 +161,49 @@ define(function (require, exports, module) {
             this.currentVisualization = undefined;
         }
         
-        var info = this.config.info;
+        var info = this.config.lineInfo.info;
         var visualization;
 
-        switch(info) {
-            case "String.prototype.split([separator[, limit]])" :
-                visualization =  new StringSplitVisualization(this.contextEditor);
-                break;
-            case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
-                visualization = new StringReplaceVisualization(this.contextEditor);
-                break;
-            case "Array.prototype.map(callback[, thisArg])" : 
-                visualization = new MapVisualization(this.contextEditor);
-                break;
-            case "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])" :
-                visualization = new ArraySpliceVisualization(this.contextEditor);
-                break;
-            default:
-                visualization = new DefaultVisualization(this.contextEditor);
+        if (info.functionCall) {
+            switch(info.functionCall.method.name) {
+                case "split" :
+                    visualization =  new StringSplitVisualization(this.contextEditor);
+                    break;
+                case "replace" :
+                    visualization = new StringReplaceVisualization(this.contextEditor);
+                    break;
+                case "map" : 
+                    visualization = new MapVisualization(this.contextEditor);
+                    break;
+                case "splice" :
+                    visualization = new ArraySpliceVisualization(this.contextEditor);
+                    break;
+                default:
+                    visualization = new DefaultVisualization(this.contextEditor);
+            }            
+        } else if (info.assignment || info.declaration) {
+            visualization = new DefaultVisualization(this.contextEditor);
         }
+
+        // info = this.config.info;
+        
+
+        // switch(info) {
+        //     case "String.prototype.split([separator[, limit]])" :
+        //         visualization =  new StringSplitVisualization(this.contextEditor);
+        //         break;
+        //     case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
+        //         visualization = new StringReplaceVisualization(this.contextEditor);
+        //         break;
+        //     case "Array.prototype.map(callback[, thisArg])" : 
+        //         visualization = new MapVisualization(this.contextEditor);
+        //         break;
+        //     case "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])" :
+        //         visualization = new ArraySpliceVisualization(this.contextEditor);
+        //         break;
+        //     default:
+        //         visualization = new DefaultVisualization(this.contextEditor);
+        // }
 
         visualization.currentLineHandle = this.currentLineHandle;
         visualization.addToContainer(this.$visualization);
