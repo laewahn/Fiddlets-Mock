@@ -63,7 +63,7 @@ describe('Mustache.parse', function () {
     })(template, expectations[template]);
   }
 
-  var specialTags = '‹›';
+  var specialTags = '‹ ›';
   var specialTemplate = '‹special›'; 
   it('knows how to parse ' + specialTemplate + ' when ' + specialTags + ' are passed in as tags', function() {
     assert.deepEqual(Mustache.parse(specialTemplate, specialTags), [ [ 'name', 'special', 0, 9] ]);

@@ -129,7 +129,7 @@
       if (typeof tagsToCompile === 'string')
         tagsToCompile = tagsToCompile.split(spaceRe, 1);
 
-      if (!isArray(tagsToCompile))
+      if (tagsToCompile.length !== 2)
         throw new Error('Invalid tags: ' + tagsToCompile);
 
       openingTagRe = new RegExp(escapeRegExp(tagsToCompile[0]) + '\\s*');

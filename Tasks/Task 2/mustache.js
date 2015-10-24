@@ -57,14 +57,15 @@
     return !testRegExp(nonSpaceRe, string);
   }
 
-  function escapeHtml (string) {
+  function escapeHtml (html) {
     var htmlMetaCharacters = /<|>/;
     
     function fromEntityMap (s) {
       return entityMap[s];
     }
-
-    var escaped = string.replace(htmlMetaCharacters, fromEntityMap);
+    
+    var htmlAsString = String(html);
+    var escaped = htmlAsString.replace(htmlMetaCharacters, fromEntityMap);
 
     return escaped;
   }
