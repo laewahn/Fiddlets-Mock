@@ -5,6 +5,7 @@ define(function(require, exports, module){
 	"use strict";
 
 	var GUTTER_WIDTH;
+    var BORDER_SIZE = 2;
 
 	function TraceSelector(editor, lineHandle, substitutions, tag) {
         this.editor = editor;
@@ -92,8 +93,8 @@ define(function(require, exports, module){
     TraceSelector.prototype.updatePosition = function() {
         var charPositions = this.editor.charCoords({line: this.lineHandle.lineNo(), ch: this.lineHandle.text.length}, "local");                
         this.$element.css({
-            top: charPositions.top,
-            left: charPositions.left + GUTTER_WIDTH
+            top: charPositions.top + BORDER_SIZE,
+            left: charPositions.left + GUTTER_WIDTH + 30 + BORDER_SIZE
         });
     };
 

@@ -68,7 +68,8 @@ define(function (require, exports, module) {
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
             lineNumbers: true,
-            lineWrapping: true
+            lineWrapping: true,
+            autofocus: true
         });
         
         this._getContext().done(function() {
@@ -213,7 +214,7 @@ define(function (require, exports, module) {
 
         this._clearMarkersInCurrentLine();
         var assignedTo = this.lineInfo.info.declaration || this.lineInfo.info.assignment;
-        if(assignedTo !== null) {
+        if(assignedTo !== null && assignedTo !== undefined) {
             var assignedToMarker = this.contextEditor.markText({ line: currentLineNr, ch: assignedTo.toRange[0] },
                                                                { line: currentLineNr, ch: assignedTo.toRange[1] }, 
                                                                { className: "fd-current-line-assigned-to-highlight" }
@@ -223,7 +224,7 @@ define(function (require, exports, module) {
         }
         
         var theObject = this.lineInfo.info.initialization || this.lineInfo.info.functionCall;
-        if(theObject !== null) {
+        if(theObject !== null && theObject !== undefined) {
 
             if(theObject.type === "CallExpression") {
                 this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.callee.range[0] },
