@@ -28,7 +28,8 @@ for(i = 0; i < weatherJSON.list.length; i++) {
 var weatherInfoCSV = myWeatherInfo.map(buildWeatherInfoCSVLine);
 
 function buildWeatherInfoCSVLine(weather) {
-	var localeTimeString = new Date(weather.dt_txt).toLocaleTimeString();
+	var date = new Date(weather.dt_txt);
+	var localeTimeString = date.toLocaleTimeString();
     return localeTimeString + "," + weather.mtemp + "ºC," + weather.wdesc + "\n";
 }
 
