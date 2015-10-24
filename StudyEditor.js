@@ -73,7 +73,8 @@ define(function (require, exports, module) {
         });
         
         this._getContext().done(function() {
-            this.contextEditor.setValue([this.contextCode, this.currentLineCode].join("\n\n"));
+            var contextValues = this.contextCode ? [this.contextCode, this.currentLineCode] : [this.currentLineCode];
+            this.contextEditor.setValue(contextValues.join("\n\n"));
             this._updateCurrentLineHandle();
             this.currentLineHandle.on("delete", this._updateCurrentLineHandle.bind(this));
     
@@ -164,7 +165,7 @@ define(function (require, exports, module) {
         var info = this.config.lineInfo.info;
         var visualization;
 
-        if (info.functionCall) {
+        if (info.functionCall.method) {
             switch(info.functionCall.method.name) {
                 case "split" :
                     visualization =  new StringSplitVisualization(this.contextEditor);
@@ -184,26 +185,6 @@ define(function (require, exports, module) {
         } else if (info.assignment || info.declaration) {
             visualization = new DefaultVisualization(this.contextEditor);
         }
-
-        // info = this.config.info;
-        
-
-        // switch(info) {
-        //     case "String.prototype.split([separator[, limit]])" :
-        //         visualization =  new StringSplitVisualization(this.contextEditor);
-        //         break;
-        //     case "String.prototype.replace(regexp|substr, newSubStr|function[, flags])" :
-        //         visualization = new StringReplaceVisualization(this.contextEditor);
-        //         break;
-        //     case "Array.prototype.map(callback[, thisArg])" : 
-        //         visualization = new MapVisualization(this.contextEditor);
-        //         break;
-        //     case "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])" :
-        //         visualization = new ArraySpliceVisualization(this.contextEditor);
-        //         break;
-        //     default:
-        //         visualization = new DefaultVisualization(this.contextEditor);
-        // }
 
         visualization.currentLineHandle = this.currentLineHandle;
         visualization.addToContainer(this.$visualization);

@@ -169,10 +169,11 @@ define(function (require, exports, module) {
         console.log("Tasks name is: " + currentTask + " fiddlets opened: " + studyLog.fiddletsOpened.length);
         
         var currentLine = hostEditor.document.getLine(position.line).trim();
+        console.log("CurrentLine: ", currentLine);
         var getLineInfo = LineInfo.infoForLine(currentLine);
         var configForLine = getLineConfigForLine(position.line);
         if(configForLine === null) return "No information available for this line.";
-        
+
         var deferred = new $.Deferred();
         $.when(getLineInfo)
         .done(function(lineInfo) {
