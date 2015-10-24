@@ -131,10 +131,15 @@
 
       if (tagsToCompile.length !== 2)
         throw new Error('Invalid tags: ' + tagsToCompile);
+      
+      var escapedFirstTagRegexp = escapeRegExp(tagsToCompile[0]);
+      openingTagRe = new RegExp(escapedFirstTagRegexp + '\\s*');
 
-      openingTagRe = new RegExp(escapeRegExp(tagsToCompile[0]) + '\\s*');
-      closingTagRe = new RegExp('\\s*' + escapeRegExp(tagsToCompile[1]));
-      closingCurlyRe = new RegExp('\\s*' + escapeRegExp('}' + tagsToCompile[1]));
+      var escapedSecondTagRegexp = escapeRegExp(tagsToCompile[1]);
+      closingTagRe = new RegExp('\\s*' + escapedSecondTagRegexp);
+
+      var escapedClosingCurly = escapeRegExp('}');
+      closingCurlyRe = new RegExp('\\s*' + escapedClosingCurly + escapedSecondTagRegexp);
     }
 
     compileTags(tags || mustache.tags);
