@@ -115,8 +115,9 @@ define(function (require, exports, module) {
         this.contextEditor.eachLine(function(lineHandle) {
 
             var lineText = lineHandle.text;
-            var tagRe = /<#undefined:(\w*)#>/g;
+            var tagRe = /<#undefined:(\w*):([0-9]*)#>/g;
             var tagMatch = tagRe.exec(lineText);
+            console.log(tagMatch);
 
             var tag = "<#undefined#>";
             if (tagMatch !== null && tagMatch[1] !== null) {

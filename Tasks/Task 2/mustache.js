@@ -61,7 +61,8 @@
     var htmlMetaCharacters = /<|>/;
     
     function fromEntityMap (s) {
-      return entityMap[s];
+      var replacement = entityMap[s];
+      return replacement;
     }
     
     var htmlAsString = new String(html);

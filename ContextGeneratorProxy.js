@@ -8,15 +8,24 @@ define(function(require, exports, module) {
 	var NodeDomain = brackets.getModule("utils/NodeDomain");
 	var ContextCollectorDomain = new NodeDomain("ContextCollectorDomain", ExtensionUtils.getModulePath(module, "node_modules/ContextCollector/ContextCollectorDomain"));
 	
-	exports.generateContextForLine = function(line) {
+	exports.generateContextForLine = function(line, source) {
 		console.log("Line: ", line);
-		return staticContext();
+		return dynamicContext(line + 1, source);
+
+		// return staticContext();
 	};
 
-	function dynamicContext() {
+	function dynamicContext(line, source) {
 		var deferred = $.Deferred();
 
-
+		ContextCollectorDomain.exec("contextForLine", line, source)
+		.done(function(context) {
+			console.log(context);
+			deferred.resolve(context);
+		})
+		.fail(function(error) {
+			deferred.reject(error);
+		});
 
 		return deferred;
 	}
