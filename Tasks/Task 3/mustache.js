@@ -73,7 +73,6 @@
   }
 
   var whiteRe = /\s*/;
-  var spaceRe = /\s+/;
   var equalsRe = /\s*=/;
   var curlyRe = /\s*\}/;
   var tagRe = /#|\^|\/|>|\{|&|=|!/;
@@ -126,8 +125,11 @@
 
     var openingTagRe, closingTagRe, closingCurlyRe;
     function compileTags (tagsToCompile) {
-      if (typeof tagsToCompile === 'string')
-        tagsToCompile = tagsToCompile.split(spaceRe, 1);
+      var spaceRe = /\s+/;
+      if (typeof tagsToCompile === 'string') {
+          tagsToCompile = tagsToCompile.split(spaceRe, 1);
+      }
+        
 
       if (tagsToCompile.length !== 2)
         throw new Error('Invalid tags: ' + tagsToCompile);

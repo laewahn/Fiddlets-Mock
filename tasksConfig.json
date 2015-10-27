@@ -39,6 +39,11 @@
 				"context" : "var entityMap = {\n\t'&': '&amp;',\n\t'<': '&lt;',\n\t'>': '&gt;',\n\t'\"': '&quot;',\n\t\"'\": '&#39;',\n\t'/': '&#x2F;'\n};"
 			},
 			"68" : {
+				"unknownVariables" : {
+					"html" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
+				}
+			},
+			"69" : {
 				"info" : "String.prototype.replace(regexp|substr, newSubStr|function[, flags])",
 				"unknownVariables" : {
 					"html" : ["#Blue","#Green","&quot; \"'<>/","'","0","00","1","10000","2","200","3","4","40","6000","819606","@florrts","A Book","A Comedy of Errors","And it worked the second time.","Avoids methods","Bear > Shark","Bruno","Chris","Colors","Elise","Fair enough, right?","Flor","Fourth time also fine!.","Goodbye","Hello","In Stock","It worked the first time.","Jamie Walsh","Joe","John Power","Jon","Jonas","Miquel","NaN","Squid","Tater","That is all!","Then, surprisingly, it worked the third time.","USD","Welcome","World","X","\\abc","a","aa","b","bar","blue","c","desc","emptyArray","emptyString","false","foo","foooooooooooooo","grand_parent1","green","hello","in Object.prototype","janl","listitem1","listitem2","name","null","one of its attributes is a list","orange","parent1","parent1-child1","parent1-child2","parent2","parent2-child1","parent2-child2","red","t1","t2","this is an object","true","undefined","world","yo","zero","{{win}}"]
@@ -91,19 +96,33 @@
 
 	"Task 4" : {
 		"file" : "weather.js",
+		"unknownVariables" : {
+			"weatherJSON" : [{"city": {"id": 3247449,"name": "Aachen","coord": {"lon": 6.08342,"lat": 50.776642},"country": "DE"},"cod": "200","message": 0.0069,"cnt": 3,"list": [{"dt": 1438862400,"main": {"temp": 32.68,"temp_min": 31.01,"temp_max": 32.68,"pressure": 978.27,"sea_level": 1027.23,"grnd_level": 978.27,"humidity": 36,"temp_kf": 1.67},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 238.509},"sys": {"pod": "d"},"dt_txt": "2015-08-06 12:00:00"},{"dt": 1438873200,"main": {"temp": 32.26,"temp_min": 30.69,"temp_max": 32.26,"pressure": 978.64,"sea_level": 1027.51,"grnd_level": 978.64,"humidity": 31,"temp_kf": 1.58},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 245.5},"sys": {"pod": "d"},"dt_txt": "2015-08-06 15:00:00"},{"dt": 1438884000,"main": {"temp": 29.7,"temp_min": 28.21,"temp_max": 29.7,"pressure": 979.21,"sea_level": 1027.99,"grnd_level": 979.21,"humidity": 33,"temp_kf": 1.48},"weather": [{"id": 801,"main": "Clouds","description": "few clouds","icon": "02d"}],"clouds": {"all": 20},"wind": {"speed": 3.31,"deg": 261.504},"sys": {"pod": "d"},"dt_txt": "2015-08-06 18:00:00"}]}],
+			"info" : [[{"mtemp":32.68,"wdesc":"sky is clear","atmpress":978.27,"dt_txt":"2015-08-06 12:00:00","wnd":{"v":4.96,"dir":238.509}},{"mtemp":32.26,"wdesc":"sky is clear","atmpress":978.64,"dt_txt":"2015-08-06 15:00:00","wnd":{"v":4.96,"dir":245.5}},{"mtemp":29.7,"wdesc":"few clouds","atmpress":979.21,"dt_txt":"2015-08-06 18:00:00","wnd":{"v":3.31,"dir":261.504}}]],
+			"weather" : [{"mtemp":32.68,"wdesc":"sky is clear","atmpress":978.27,"dt_txt":"2015-08-06 12:00:00","wnd":{"v":4.96,"dir":238.509}},{"mtemp":32.26,"wdesc":"sky is clear","atmpress":978.64,"dt_txt":"2015-08-06 15:00:00","wnd":{"v":4.96,"dir":245.5}},{"mtemp":29.7,"wdesc":"few clouds","atmpress":979.21,"dt_txt":"2015-08-06 18:00:00","wnd":{"v":3.31,"dir":261.504}}]
+		},
 		"lines" : {
-			"28" : {
-				"info" : "Array.prototype.map(callback[, thisArg])",
+			"31" : {
 				"unknownVariables" : {
 					"weatherJSON" : [{"city": {"id": 3247449,"name": "Aachen","coord": {"lon": 6.08342,"lat": 50.776642},"country": "DE"},"cod": "200","message": 0.0069,"cnt": 3,"list": [{"dt": 1438862400,"main": {"temp": 32.68,"temp_min": 31.01,"temp_max": 32.68,"pressure": 978.27,"sea_level": 1027.23,"grnd_level": 978.27,"humidity": 36,"temp_kf": 1.67},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 238.509},"sys": {"pod": "d"},"dt_txt": "2015-08-06 12:00:00"},{"dt": 1438873200,"main": {"temp": 32.26,"temp_min": 30.69,"temp_max": 32.26,"pressure": 978.64,"sea_level": 1027.51,"grnd_level": 978.64,"humidity": 31,"temp_kf": 1.58},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 245.5},"sys": {"pod": "d"},"dt_txt": "2015-08-06 15:00:00"},{"dt": 1438884000,"main": {"temp": 29.7,"temp_min": 28.21,"temp_max": 29.7,"pressure": 979.21,"sea_level": 1027.99,"grnd_level": 979.21,"humidity": 33,"temp_kf": 1.48},"weather": [{"id": 801,"main": "Clouds","description": "few clouds","icon": "02d"}],"clouds": {"all": 20},"wind": {"speed": 3.31,"deg": 261.504},"sys": {"pod": "d"},"dt_txt": "2015-08-06 18:00:00"}]}]
 				},
 				"context" : "var weatherJSON = <#undefined:weatherJSON#>;\nvar i;\nvar myWeatherInfo = []\nfor(i = 0; i < weatherJSON.list.length; i++) {\n\tvar info = {};\n\tinfo.mtemp = weatherJSON.list[i].main.temp;\n\tinfo.wdesc = weatherJSON.list[i].weather[0].description;\n\tinfo.atmpress = weatherJSON.list[i].main.pressure;\n\tinfo.dt_txt = weatherJSON.list[i].dt_txt;\n\tinfo.wnd = {\n\t\tv: weatherJSON.list[i].wind.speed,\n\t\tdir: weatherJSON.list[i].wind.deg\n\t};\n\tmyWeatherInfo.push(info);\n}\nfunction buildWeatherInfoCSVLine(weather) {\n\treturn weather;\n}"
+			},
+			"41" : {
+				"info" : "Array.prototype.map(callback[, thisArg])",
+				"unknownVariables" :{
+					"info" : [[{"mtemp":32.68,"wdesc":"sky is clear","atmpress":978.27,"dt_txt":"2015-08-06 12:00:00","wnd":{"v":4.96,"dir":238.509}},{"mtemp":32.26,"wdesc":"sky is clear","atmpress":978.64,"dt_txt":"2015-08-06 15:00:00","wnd":{"v":4.96,"dir":245.5}},{"mtemp":29.7,"wdesc":"few clouds","atmpress":979.21,"dt_txt":"2015-08-06 18:00:00","wnd":{"v":3.31,"dir":261.504}}]]
+				}
 			}
 		}
 	},
 
 	"Task 5" : {
 		"file" : "weather.js",
+		"unknownVariables" : {
+			"weatherJSON" : [{"city": {"id": 3247449,"name": "Aachen","coord": {"lon": 6.08342,"lat": 50.776642},"country": "DE"},"cod": "200","message": 0.0069,"cnt": 3,"list": [{"dt": 1438862400,"main": {"temp": 32.68,"temp_min": 31.01,"temp_max": 32.68,"pressure": 978.27,"sea_level": 1027.23,"grnd_level": 978.27,"humidity": 36,"temp_kf": 1.67},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 238.509},"sys": {"pod": "d"},"dt_txt": "2015-08-06 12:00:00"},{"dt": 1438873200,"main": {"temp": 32.26,"temp_min": 30.69,"temp_max": 32.26,"pressure": 978.64,"sea_level": 1027.51,"grnd_level": 978.64,"humidity": 31,"temp_kf": 1.58},"weather": [{"id": 800,"main": "Clear","description": "sky is clear","icon": "01d"}],"clouds": {"all": 0},"wind": {"speed": 4.96,"deg": 245.5},"sys": {"pod": "d"},"dt_txt": "2015-08-06 15:00:00"},{"dt": 1438884000,"main": {"temp": 29.7,"temp_min": 28.21,"temp_max": 29.7,"pressure": 979.21,"sea_level": 1027.99,"grnd_level": 979.21,"humidity": 33,"temp_kf": 1.48},"weather": [{"id": 801,"main": "Clouds","description": "few clouds","icon": "02d"}],"clouds": {"all": 20},"wind": {"speed": 3.31,"deg": 261.504},"sys": {"pod": "d"},"dt_txt": "2015-08-06 18:00:00"}]}],
+			"weatherInfoCSV" : [["12:00:00,32.68ºC,sky is clear\n","15:00:00,32.26ºC,sky is clear\n","18:00:00,29.7ºC,few clouds\n"]]
+		},
 		"lines" : {
 			"28" : {
 				"info" : "Array.prototype.map(callback[, thisArg])",

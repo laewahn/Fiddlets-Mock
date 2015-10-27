@@ -77,6 +77,7 @@ define(function (require, exports, module) {
         ContextCollector.context = this.config.context || "";
 
         var getContext = ContextCollector.generateContextForLine(this.line, this.source);
+        
         getContext.done(function(contextCode) {
             this.contextCode = contextCode;
             var contextValues = this.contextCode ? [this.contextCode, this.currentLineCode] : [this.currentLineCode];
@@ -84,20 +85,27 @@ define(function (require, exports, module) {
             this._updateCurrentLineHandle();
             this.currentLineHandle.on("delete", this._updateCurrentLineHandle.bind(this));
     
+            
+            // setTimeout(function() {
             this._createTraceSelectors();
             this._updateUnknownValuesInContextCode();
             this._initializeVisualization();
+            // }.bind(this), 0);
             
-            this._traceAndUpdate();
+            
+            this._traceAndUpdate();    
             this._updateHeight();
-        }.bind(this));
-        
-        this.contextEditor.on("change", function() {
-            this._updateCurrentLineHandle();
-            this._updateUnknownValuesInContextCode();
-            this._traceAndUpdate();
-            this._updateHeight();
-        }.bind(this));
+                
+            this.contextEditor.on("change", function() {
+                    this._updateCurrentLineHandle();
+                    this._updateUnknownValuesInContextCode();
+                    this._traceAndUpdate();
+                    this._updateHeight();
+            }.bind(this));
+        }.bind(this))
+        .fail(function(error) {
+            console.error(error);
+        });
     };
 
     StudyEditor.prototype._updateCurrentLineHandle = function() {
@@ -122,15 +130,26 @@ define(function (require, exports, module) {
             var tag = "<#undefined#>";
             if (tagMatch !== null && tagMatch[1] !== null) {
                 
-                // Create a new selector element
-                var substitutions = this.config.unknownVariables[tagMatch[1]].map(function(v) {
-                    return JSON.stringify(v);
-                });
 
-                lineHandle.text = lineText.replace(tagRe, tag);
-                var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
-                this.$contextEditor.prepend($selector.$element);
-                this.traceSelectorsByLine[lineHandle.lineNo()] = $selector;
+                if (this.config.unknownVariables[tagMatch[1]] === undefined) {
+                    lineHandle.text = lineText.replace(tagRe, tag);
+                    var tagBegin = lineHandle.text.indexOf(tag);
+                    this.contextEditor.replaceRange("undefined", 
+                                          {line: lineHandle.lineNo(), ch: tagBegin}, 
+                                          {line: lineHandle.lineNo(), ch: tagBegin + tag.length});
+
+                } else {
+                    // Create a new selector element
+                    var substitutions = this.config.unknownVariables[tagMatch[1]].map(function(v) {
+                        return JSON.stringify(v);
+                    });
+    
+                    lineHandle.text = lineText.replace(tagRe, tag);
+                    var $selector = new TraceSelector(this.contextEditor, lineHandle, substitutions, tag);
+                    this.$contextEditor.prepend($selector.$element);
+                    this.traceSelectorsByLine[lineHandle.lineNo()] = $selector;    
+                }
+                
             }
         }.bind(this));
     };

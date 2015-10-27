@@ -8,31 +8,43 @@ function readWeatherInfoFromFile(filepath) {
     return sampleWeatherData;
 }
 
-var weatherJSON = JSON.parse(readWeatherInfoFromFile("./info.json"));
+function convertToWeatherInfo(weatherList) {
+	var i;
+	var myWeatherInfo = []
+	for(i = 0; i < weatherList.length; i++) {
+		var info = {};
+		info.mtemp = weatherList[i].main.temp;
+		info.wdesc = weatherList[i].weather[0].description;
+		info.atmpress = weatherList[i].main.pressure;
+		info.dt_txt = weatherList[i].dt_txt;
+		info.wnd = {
+			v: weatherList[i].wind.speed,
+			dir: weatherList[i].wind.deg
+		};
+		myWeatherInfo.push(info);
+	}
 
-var i;
-var myWeatherInfo = []
-for(i = 0; i < weatherJSON.list.length; i++) {
-	var info = {};
-	info.mtemp = weatherJSON.list[i].main.temp;
-	info.wdesc = weatherJSON.list[i].weather[0].description;
-	info.atmpress = weatherJSON.list[i].main.pressure;
-	info.dt_txt = weatherJSON.list[i].dt_txt;
-	info.wnd = {
-		v: weatherJSON.list[i].wind.speed,
-		dir: weatherJSON.list[i].wind.deg
-	};
-	myWeatherInfo.push(info);
+	return myWeatherInfo;
 }
+var weatherData = readWeatherInfoFromFile("./info.json");
+var weatherJSON = JSON.parse(weatherData);
+var weatherList = weatherJSON.list;
+var weatherInfo = convertToWeatherInfo(weatherList);
+exportWeather(weatherInfo);
 
-var weatherInfoCSV = myWeatherInfo.map(buildWeatherInfoCSVLine);
+function exportWeather(info) {
+    function buildWeatherInfoCSVLine(weather) {
+    	return weather;
+	}
 
-function buildWeatherInfoCSVLine(weather) {
-    return weather;
-}
-
-fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
+	var weatherInfoCSV = info.map(buildWeatherInfoCSVLine);	
+	fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
+    
     if(err) {
         console.error(err);
     }
 });
+}
+
+
+

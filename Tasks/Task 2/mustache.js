@@ -65,7 +65,7 @@
       return replacement;
     }
     
-    var htmlAsString = new String(html);
+    var htmlAsString = String(html);
     var escaped = htmlAsString.replace(htmlMetaCharacters, fromEntityMap);
 
     return escaped;

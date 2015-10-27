@@ -172,7 +172,10 @@ define(function (require, exports, module) {
         console.log("CurrentLine: ", currentLine);
         var getLineInfo = LineInfo.infoForLine(currentLine);
         var configForLine = getLineConfigForLine(position.line);
-        if(configForLine === null) return "No information available for this line.";
+        // if(configForLine === null) return "No information available for this line.";
+        if(configForLine === null) configForLine = {};
+        configForLine.unknownVariables = config[currentTask].unknownVariables;
+        console.log("Unkown: ", configForLine.unknownVariables);
 
         var source = hostEditor.document.getText();
         var deferred = new $.Deferred();

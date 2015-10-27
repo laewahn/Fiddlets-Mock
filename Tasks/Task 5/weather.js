@@ -26,6 +26,7 @@ for(i = 0; i < weatherJSON.list.length; i++) {
 }
 
 var weatherInfoCSV = myWeatherInfo.map(buildWeatherInfoCSVLine);
+exportWeatherAndPrintCurrent();
 
 function buildWeatherInfoCSVLine(weather) {
 	var date = new Date(weather.dt_txt);
@@ -33,13 +34,16 @@ function buildWeatherInfoCSVLine(weather) {
     return localeTimeString + "," + weather.mtemp + "ºC," + weather.wdesc + "\n";
 }
 
-var csvHeader = "time,temperature,description\n";
-var weatherNow = weatherInfoCSV.splice();
+function exportWeatherAndPrintCurrent() {
+    var csvHeader = "time,temperature,description\n";
+    var weatherNow = weatherInfoCSV.splice();
 
-fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
-    if(err) {
-        console.error(err);
-    }
-});
+    fs.writeFile("forecast.csv", weatherInfoCSV.join(""), function(err) {
+        if(err) {
+            console.error(err);
+        }
+    });
 
-console.log("Weather now: " + weatherNow);
+    console.log("Weather now: " + weatherNow);
+}
+
