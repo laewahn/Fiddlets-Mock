@@ -9,6 +9,7 @@ define(function (require, exports, module) {
     var VariableTrace = require("./VariableTraceProxy");
     var Esprima = require("./EsprimaProxy");
     var LineInfo = require("./LineInfoProxy");
+    var ContextCollector = require("./ContextGeneratorProxy");
 
     var InlineWidget = brackets.getModule("editor/InlineWidget").InlineWidget;
     
@@ -19,8 +20,9 @@ define(function (require, exports, module) {
     var MapVisualization = require("./MapVisualization");
     var ArraySpliceVisualization = require("./ArraySpliceVisualization");
 
-    function StudyEditor(config) {
+    function StudyEditor(config, source) {
         InlineWidget.call(this);
+        this.source = source;
         this.config = config;
         this.traceSelectorsByLine = {};
 
@@ -71,8 +73,12 @@ define(function (require, exports, module) {
             lineWrapping: true,
             autofocus: true
         });
-        
-        this._getContext().done(function() {
+
+        ContextCollector.context = this.config.context || "";
+
+        var getContext = ContextCollector.generateContextForLine(this.line, this.source);
+        getContext.done(function(contextCode) {
+            this.contextCode = contextCode;
             var contextValues = this.contextCode ? [this.contextCode, this.currentLineCode] : [this.currentLineCode];
             this.contextEditor.setValue(contextValues.join("\n\n"));
             this._updateCurrentLineHandle();
@@ -103,16 +109,6 @@ define(function (require, exports, module) {
     StudyEditor.prototype._updateHeight = function() {
             var newHeight = this.$widgetContainer.height() + this.$widgetContainer.position().top + 40;
             this.hostEditor.setInlineWidgetHeight(this, newHeight);
-    };
-
-    StudyEditor.prototype._getContext = function() {
-        var deferred = $.Deferred();
-        // Call the context domain
-        // well, fake it by loading from the config...
-        this.contextCode = this.config.context || "";
-        deferred.resolve();
-
-        return deferred.promise();
     };
 
     StudyEditor.prototype._createTraceSelectors = function() {

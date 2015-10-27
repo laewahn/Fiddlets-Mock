@@ -174,6 +174,7 @@ define(function (require, exports, module) {
         var configForLine = getLineConfigForLine(position.line);
         if(configForLine === null) return "No information available for this line.";
 
+        var source = hostEditor.document.getText();
         var deferred = new $.Deferred();
         $.when(getLineInfo)
         .done(function(lineInfo) {
@@ -181,7 +182,7 @@ define(function (require, exports, module) {
 
             configForLine.lineInfo = lineInfo;
 
-            var inlineEditor = new StudyEditor(configForLine);
+            var inlineEditor = new StudyEditor(configForLine, source);
             
             inlineEditor.load(hostEditor);  
             inlineEditor.line = position.line;

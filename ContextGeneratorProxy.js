@@ -4,39 +4,26 @@
 define(function(require, exports, module) {
 	"use strict";
 
+	var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
+	var NodeDomain = brackets.getModule("utils/NodeDomain");
+	var ContextCollectorDomain = new NodeDomain("ContextCollectorDomain", ExtensionUtils.getModulePath(module, "node_modules/ContextCollector/ContextCollectorDomain"));
+	
+	exports.generateContextForLine = function(line) {
+		console.log("Line: ", line);
+		return staticContext();
+	};
 
-	exports.generateContextForLine = function(lineNr, source) {
+	function dynamicContext() {
+		var deferred = $.Deferred();
+
+
+
+		return deferred;
+	}
+
+	function staticContext() {
 		var deferred = $.Deferred();
 		return deferred.resolve(exports.context);
-		// return deferred.promise();
-	};
-
-	exports.parse = function(code, options) {
-		var deferred = $.Deferred();
-
-		EsprimaDomain.exec("parse", code, options || {})
-		.done(function(result) {
-			deferred.resolve(result);
-		})
-		.fail(function(error) {
-			deferred.reject(error);
-		});
-
-		return deferred.promise();
-	};
-
-	exports.generate = function(ast) {
-		var deferred = $.Deferred();
-
-		EsprimaDomain.exec("generate", ast)
-		.done(function(code) {
-			deferred.resolve(code);
-		})
-		.fail(function(error) {
-			deferred.reject(error);
-		});
-
-		return deferred.promise();	
 	}
 
 });
