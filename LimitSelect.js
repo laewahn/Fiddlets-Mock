@@ -18,6 +18,7 @@ define(function(require, exports, module) {
         LimitSelect.prototype.$container = undefined;
         LimitSelect.prototype.rows = undefined;
         LimitSelect.prototype.limit = undefined;
+        LimitSelect.prototype.selectorsVisible = false;
 
         LimitSelect.prototype.limitChangedCallback = undefined;
         LimitSelect.prototype.selectorHoverInCallback = undefined;
@@ -32,14 +33,20 @@ define(function(require, exports, module) {
                 var $selector = $("<img></img>").addClass("fd-limit-array-selector");
                 var $content = $("<div></div>").addClass("fd-limit-array-content");
 
-                $row.append($selector);
+                console.log("selectorsVisible: ", this.selectorsVisible);
+
+                if(this.selectorsVisible) {
+                    $row.append($selector);    
+                    $selector.hover(
+                        this.selectorHoverInCallback,
+                        this.selectorHoverOutCallback
+                    );
+                }
+                
                 $row.append($content);
 
                 $content.text(JSON.stringify(e));
-                $selector.hover(
-                    this.selectorHoverInCallback,
-                    this.selectorHoverOutCallback
-                );
+                
 
                 this.$container.append($row);
                 this.rows.push($row);

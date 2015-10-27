@@ -52,7 +52,7 @@ define(function (require, exports, module) {
         toolbar.reset();
 
         function isTaskDirectory(projectRootDirectory) {
-            var projectMatcher = /^Task\s[1-5]/g;
+            var projectMatcher = /^Null_Task|^Task\s[1-5]/g;
             return projectMatcher.test(FileUtils.getBaseName(projectRootDirectory.fullPath));
         }
 

@@ -19,18 +19,23 @@ define(function(require, exports, module) {
         this.limitSelect = new LimitSelect(this.$inputView, "fd-current-line-assigned-to-highlight");
 
         this.limitSelect.limitChange(function(newLimit) {
-            this.editor.replaceRange(JSON.stringify(newLimit), 
+            if (this.parameterPosition !== undefined) {
+                this.editor.replaceRange(JSON.stringify(newLimit), 
                                      this.parameterPosition.start,
                                      this.parameterPosition.end
-            );
+                );
+            }
+            
         }.bind(this));
 
         this.limitSelect.selectorHover(
             function() {
-                this.parameterMarker = this.editor.markText(this.parameterPosition.start,
+                if (this.parameterPosition !== undefined) {
+                    this.parameterMarker = this.editor.markText(this.parameterPosition.start,
                                                             this.parameterPosition.end, 
                                                             { className: "fd-current-line-param-highlight"}
-                );
+                    );
+                }
             }.bind(this),
             function() {
                 if (this.parameterMarker !== undefined) {
@@ -60,13 +65,17 @@ define(function(require, exports, module) {
     };
     
     StringSplitVisualization.prototype.updateVisualization = function(fullTrace, contextTrace, lineInfo) {
-        
+
         this.string = contextTrace[lineInfo.info.functionCall.callee.name];
 
         var splitRegExp = contextTrace[lineInfo.info.functionCall.params[0].name] || lineInfo.info.functionCall.params[0].value;
         var limit = (lineInfo.info.functionCall.params[1]) ? (lineInfo.info.functionCall.params[1].name || lineInfo.info.functionCall.params[1].value) : undefined;
 
         var explaination =  "Splits  " + JSON.stringify(this.string) + " at " + splitRegExp.toString() + " and limits the result to " + limit + " elements.";
+        if (limit) {
+            explaination += " and limits the result to " + limit + " elements.";
+        }
+
         this.$explainationView.text(explaination);
         
         var splitted = this.string.split(splitRegExp);
@@ -83,8 +92,10 @@ define(function(require, exports, module) {
             };
     
             this.parameterPosition = {start: parameterStart, end: parameterEnd};
+            this.limitSelect.selectorsVisible = true;
         } else {
             limit = splitted.length;
+            this.limitSelect.selectorsVisible = false;
         }
         
 

@@ -1,4 +1,20 @@
 {
+	"Null_Task" : {
+		"file" : "example.js",
+		"unknownVariables" : {
+			"name" : ["Alice", "Bob", "Charles"],
+			"names" : [["Alice", "Bob", "Charles"]]
+		},
+		"lines" : {
+			"7" : {
+				"info" : "String.prototype.split([separator[, limit]])"
+			},
+			"8" : {
+				"info" : "Array.prototype.map(callback[, thisArg])"
+			}
+		}
+
+	},
 	"Task 1" : {
 		"file" : "mustache.js",
 		"lines" : {
