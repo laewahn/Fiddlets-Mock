@@ -8,7 +8,7 @@ function readWeatherInfoFromFile(filepath) {
     return sampleWeatherData;
 }
 
-var weatherJSON = JSON.parse(readWeatherInfoFromFile("./info.json"));
+var weatherJSON = JSON.parse(readWeatherInfoFromFile("./info.dat"));
 
 var i;
 var myWeatherInfo = []

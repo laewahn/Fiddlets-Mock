@@ -26,7 +26,7 @@ function convertToWeatherInfo(weatherList) {
 
 	return myWeatherInfo;
 }
-var weatherData = readWeatherInfoFromFile("./info.json");
+var weatherData = readWeatherInfoFromFile("./info.dat");
 var weatherJSON = JSON.parse(weatherData);
 var weatherList = weatherJSON.list;
 var weatherInfo = convertToWeatherInfo(weatherList);
