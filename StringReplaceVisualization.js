@@ -40,8 +40,10 @@ define(function(require, exports, module) {
         this.$replacedView.text("Matches of " + this.regexp.toString() + " will be replaced by " + replacement);
         
         var colors = ["#9AF6FF", "#81D0D7"];
-        var styledString = styleHtmlEscaped(this.string, this.regexp, function(e) {return e;}, colors);
-        var styledResult = styleHtmlEscaped(this.string, this.regexp, this.replacement, colors);
+        var styledString = "Input: " + styleHtmlEscaped(this.string, this.regexp, function(e) {return e;}, ["#9AF6FF", "#81D0D7"]);
+
+
+        var styledResult = "Output: " + styleHtmlEscaped(this.string, this.regexp, this.replacement, ["#C19AFF", "#A166FF"]);
 
         this.$stringView.html(styledString);
         this.$resultsView.html(styledResult);
@@ -78,7 +80,8 @@ define(function(require, exports, module) {
     			var color = colors[matchIdx % colors.length];
 
     			var replacement = (replacer instanceof Function) ? replacer(currentMatch[0]) : currentMatch[0].replace(currentMatch[0], replacer);
-    			result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(replacement) + "</span>";
+                var regexpEscapedReplacement = replacement.replace(/[\\]/g, "\\$&");
+    			result = result + "<span style=\"background-color: " + color + ";\">" + escapeHtml(regexpEscapedReplacement) + "</span>";
     			i += currentMatch[0].length;
     			matches = matches.slice(1);
     			matchIdx++;

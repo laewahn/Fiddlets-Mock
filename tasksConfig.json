@@ -17,6 +17,9 @@
 	},
 	"Task 1" : {
 		"file" : "mustache.js",
+		"unknownVariables" : {
+			"string" : ["{", "}", "{{","}}", "}}}", "<%", "%>", "}%>", "|", "}|"]
+		},
 		"lines" : {
 			"38" : {
 				"info" : "RegExp"
