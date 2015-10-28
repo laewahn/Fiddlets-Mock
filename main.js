@@ -44,7 +44,9 @@ define(function (require, exports, module) {
 
         console.log("FiddletsStudy", "Watcher started");
 
-        EditorManager.registerInlineEditProvider(editorProvider, 2);
+        if (config.fiddlets === true) {
+            EditorManager.registerInlineEditProvider(editorProvider, 2);    
+        }
     });
 
     function checkRootDirectoryAndPrepareIfTask(event, projectRootDirectory) {

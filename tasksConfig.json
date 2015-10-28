@@ -1,4 +1,5 @@
 {
+	"fiddlets" : true,
 	"Null_Task" : {
 		"file" : "example.js",
 		"unknownVariables" : {
