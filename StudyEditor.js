@@ -65,7 +65,7 @@ define(function (require, exports, module) {
         StudyEditor.prototype.parentClass.onAdded.apply(this, arguments);
         this.hostEditor.setInlineWidgetHeight(this, 500);
 
-        this.$typeField.text(this.config.info);
+        // this.$typeField.text(this.config.info);
     
         this.contextEditor = new CodeMirror(this.$contextEditor.get(0), {
             mode: "javascript",
@@ -131,7 +131,6 @@ define(function (require, exports, module) {
             var lineText = lineHandle.text;
             var tagRe = /<#undefined:(\w*):([0-9]*)#>/g;
             var tagMatch = tagRe.exec(lineText);
-            console.log(tagMatch);
 
             var tag = "<#undefined#>";
             if (tagMatch !== null && tagMatch[1] !== null) {
@@ -221,13 +220,38 @@ define(function (require, exports, module) {
         var traceContext = VariableTrace.getTraceForCode(this.contextCode);
         var traceCode = VariableTrace.getTraceForCode(this.contextEditor.getValue());
         
-        var getAST = Esprima.parse(this.currentLineHandle.text);
         var getLineInfo = LineInfo.infoForLine(this.currentLineHandle.text);
 
         $.when(getLineInfo, traceContext, traceCode)
         .done(function(lineInfo, contextTrace, fullTrace) {
             this.$errorView.text("");
             this.lineInfo = lineInfo;
+            
+            var heading;
+            if (this.lineInfo.info.functionCall && this.lineInfo.info.functionCall.method && this.lineInfo.info.functionCall.method.name) {    
+                switch(this.lineInfo.info.functionCall.method.name) {
+                    case "split" :
+                        heading = "String.prototype.split([separator[, limit]])";
+                        break;
+                    case "replace" :
+                        heading = "String.prototype.replace(regexp|substr, newSubStr|function[, flags])";
+                        break;
+                    case "map" :
+                        heading = "Array.prototype.map(callback[, thisArg])";
+                        break;
+                    case "splice" :
+                        heading = "Array.prototype.splice(start, deleteCount[, item1[, item2[, ...]]])";
+                        break;
+                    default:
+                        heading = "Unknown";
+                }
+            } else if (this.lineInfo.info.assignment || this.lineInfo.info.initialisation) {
+                heading = "Assignment";
+            } else {
+                heading = "Unknown";
+            }
+
+            this.$typeField.text(heading);
             this._updateMarkersInCurrentLine();
             // this._initializeVisualization();
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
@@ -255,17 +279,17 @@ define(function (require, exports, module) {
     
         }
         
-        var theObject = this.lineInfo.info.initialization || this.lineInfo.info.functionCall;
+        var theObject = this.lineInfo.info.initialisation || this.lineInfo.info.functionCall;
         if(theObject !== null && theObject !== undefined) {
 
-            if(theObject.type === "CallExpression") {
+            if(theObject.type === "CallExpression" && theObject.callee) {
                 this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.callee.range[0] },
                                                                          { line: currentLineNr, ch: theObject.callee.range[1] }, 
                                                                          { className: "fd-current-line-object-highlight" })
                 );
             } else {
-                this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.range[0] },
-                                                                         { line: currentLineNr, ch: theObject.range[1] }, 
+                this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.fromRange[0] },
+                                                                         { line: currentLineNr, ch: theObject.fromRange[1] }, 
                                                                          { className: "fd-current-line-object-highlight" })
                 );
             }

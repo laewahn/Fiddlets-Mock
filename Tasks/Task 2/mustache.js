@@ -61,14 +61,7 @@
     var htmlMetaCharacters = /<|>/;
     
     function fromEntityMap (s) {
-        var entityMap = {
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;',
-          '/': '&#x2F;'
-        };
+      var entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '/': '&#x2F;' };
       var replacement = entityMap[s];
       return replacement;
     }
