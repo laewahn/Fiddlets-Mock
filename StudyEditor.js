@@ -89,19 +89,25 @@ define(function (require, exports, module) {
             // setTimeout(function() {
             this._createTraceSelectors();
             this._updateUnknownValuesInContextCode();
-            this._initializeVisualization();
+            
             // }.bind(this), 0);
             
-            
-            this._traceAndUpdate();    
-            this._updateHeight();
-                
-            this.contextEditor.on("change", function() {
+            var getLineInfo = LineInfo.infoForLine(this.currentLineHandle.text);
+            getLineInfo.done(function(lineInfo) {
+                this.lineInfo = lineInfo;
+
+                this._initializeVisualization();
+                this._traceAndUpdate();    
+                this._updateHeight();
+                this.contextEditor.on("change", function() {
                     this._updateCurrentLineHandle();
                     this._updateUnknownValuesInContextCode();
                     this._traceAndUpdate();
                     this._updateHeight();
+                }.bind(this));
             }.bind(this));
+                
+            
         }.bind(this))
         .fail(function(error) {
             console.error(error);
@@ -179,9 +185,13 @@ define(function (require, exports, module) {
         }
         
         var info = this.config.lineInfo.info;
+        if (this.lineInfo) {
+            info = this.lineInfo.info;    
+        }
+        
         var visualization;
 
-        if (info.functionCall.method) {
+        if (info.functionCall && info.functionCall.method) {
             switch(info.functionCall.method.name) {
                 case "split" :
                     visualization =  new StringSplitVisualization(this.contextEditor);
@@ -198,7 +208,7 @@ define(function (require, exports, module) {
                 default:
                     visualization = new DefaultVisualization(this.contextEditor);
             }            
-        } else if (info.assignment || info.declaration) {
+        } else /*if (info.assignment || info.declaration) */{
             visualization = new DefaultVisualization(this.contextEditor);
         }
 
@@ -214,17 +224,18 @@ define(function (require, exports, module) {
         var getAST = Esprima.parse(this.currentLineHandle.text);
         var getLineInfo = LineInfo.infoForLine(this.currentLineHandle.text);
 
-        $.when(traceContext, traceCode, getAST, getLineInfo)
-        .done(function(contextTrace, fullTrace, ast, lineInfo) {
+        $.when(getLineInfo, traceContext, traceCode)
+        .done(function(lineInfo, contextTrace, fullTrace) {
             this.$errorView.text("");
             this.lineInfo = lineInfo;
             this._updateMarkersInCurrentLine();
+            // this._initializeVisualization();
             this.currentVisualization.updateVisualization(fullTrace, contextTrace, this.lineInfo);
             this._updateHeight();
         }.bind(this))
         .fail(function(error) {
             console.error(error);
-            this.$errorView.text(error);
+            this.$errorView.text(error.split("\n").slice(0,2).join("\n"));
             this._clearMarkersInCurrentLine();
             this._updateHeight();
         }.bind(this));

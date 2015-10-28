@@ -87,6 +87,9 @@
 
 	"Task 3" : {
 		"file" : "mustache.js",
+		"unknownVariables" : {
+			"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
+		},
 		"lines" : {
 			"130" : {
 				"info" : "String.prototype.split([separator[, limit]])",
@@ -110,7 +113,6 @@
 				"context" : "var tagsToCompile = <#undefined:tagsToCompile#>;\nvar objectToString = Object.prototype.toString;\nvar isArray = Array.isArray || function isArrayPolyfill (object) {\n\treturn objectToString.call(object) === \"[object Array]\";\n};\nvar spaceRe = /\\s+/;\nvar openingTagRe, closingTagRe, closingCurlyRe;\nfunction escapeRegExp (string) {\n\treturn string.replace(/[\\-\\[\\]{}()*+?.,\\\\\\^$|#\\s]/g, '\\\\$&');\n}\nif (typeof tagsToCompile === 'string')\n\ttagsToCompile = tagsToCompile.split(spaceRe, 1);\nif (!isArray(tagsToCompile))\n\tthrow new Error('Invalid tags: ' + tagsToCompile);"
 			},
 			"137" : {
-				"info" : "RegExp",
 				"unknownVariables" : {
 					"tagsToCompile" : ["<% %>","<%","@   @","@ @","[ ]","{{ }}","| |","‹ ›"]
 				},

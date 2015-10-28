@@ -68,10 +68,24 @@ define(function(require, exports, module) {
 
         this.string = contextTrace[lineInfo.info.functionCall.callee.name];
 
-        var splitRegExp = contextTrace[lineInfo.info.functionCall.params[0].name] || lineInfo.info.functionCall.params[0].value;
+        var splitRegExp;
+        if (lineInfo.info.functionCall.params.length !== 0) {
+            splitRegExp = contextTrace[lineInfo.info.functionCall.params[0].name] || lineInfo.info.functionCall.params[0].value;
+        } else {
+            splitRegExp = "";
+        }
+
+        if (lineInfo.info.functionCall.params.length === 1) {
+            // this.parameterPosition = undefined;
+        }
+
         var limit = (lineInfo.info.functionCall.params[1]) ? (lineInfo.info.functionCall.params[1].name || lineInfo.info.functionCall.params[1].value) : undefined;
 
-        var explaination =  "Splits  " + JSON.stringify(this.string) + " at " + splitRegExp.toString() + " and limits the result to " + limit + " elements.";
+        var explaination =  "Splits  " + JSON.stringify(this.string);
+        if (splitRegExp !== "") {
+            explaination += " at " + (typeof splitRegExp === "RegExp") ? splitRegExp.toString() : JSON.stringify(splitRegExp);
+        }
+
         if (limit) {
             explaination += " and limits the result to " + limit + " elements.";
         }

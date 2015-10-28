@@ -124,20 +124,22 @@
     }
 
     var openingTagRe, closingTagRe, closingCurlyRe;
+    
     function compileTags (tagsToCompile) {
-      var spaceRe = /\s+/;
-      if (typeof tagsToCompile === 'string') {
-          tagsToCompile = tagsToCompile.split(spaceRe, 1);
+      function escapeRegExp (string) {
+        return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
       }
+    
+      var spaceRe = /\s+/;
+      var compiledTags = tagsToCompile;
         
-
-      if (tagsToCompile.length !== 2)
-        throw new Error('Invalid tags: ' + tagsToCompile);
+      if (typeof compiledTags === "string") compiledTags = tagsToCompile.split(spaceRe, 1);
+      if (compiledTags.length !== 2) throw new Error('Invalid tags: ' + compiledTags);
       
-      var escapedFirstTagRegexp = escapeRegExp(tagsToCompile[0]);
+      var escapedFirstTagRegexp = escapeRegExp(compiledTags[0]);
       openingTagRe = new RegExp(escapedFirstTagRegexp + '\\s*');
 
-      var escapedSecondTagRegexp = escapeRegExp(tagsToCompile[1]);
+      var escapedSecondTagRegexp = escapeRegExp(compiledTags[1]);
       closingTagRe = new RegExp('\\s*' + escapedSecondTagRegexp);
 
       var escapedClosingCurly = escapeRegExp('}');
