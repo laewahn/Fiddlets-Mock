@@ -9,10 +9,12 @@ define(function(require, exports, module) {
 	function DefaultVisualization() {
 		this.$container = $(defaultVisualizationContainer);
 		this.$valueField = this.$container.find("#fd-default-value");
+		this.$typeField = this.$container.find("#fd-default-type");
 	}
 
 	DefaultVisualization.prototype.$container = undefined;
 	DefaultVisualization.prototype.$valueField = undefined;
+	DefaultVisualization.prototype.$typeField = undefined;
 
 	DefaultVisualization.prototype.addToContainer = function($container) {
 		$container.append(this.$container);
@@ -33,8 +35,18 @@ define(function(require, exports, module) {
 		console.log("Assigned: ", typeof fullTrace[assignTo]);
 
 		var value = fullTrace[assignTo];
-		var valueToDisplay = (value instanceof RegExp) ? value.toString() + " (RegExp)" : JSON.stringify(value);
+		var valueToDisplay = (value instanceof RegExp) ? value.toString() : JSON.stringify(value);
 		this.$valueField.text(assignTo + ": " + valueToDisplay);
+
+		var type;
+		if (value instanceof RegExp) {
+			type = "RegExp";
+		} else if (typeof value === "string") {
+			type = "String";
+		} else {
+			type = "Unknown";
+		}
+		this.$typeField.text("Type: " + type);
 	};
 
 	DefaultVisualization.prototype.remove = function() {
