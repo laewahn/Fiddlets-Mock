@@ -61,6 +61,14 @@
     var htmlMetaCharacters = /<|>/;
     
     function fromEntityMap (s) {
+        var entityMap = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;',
+          '/': '&#x2F;'
+        };
       var replacement = entityMap[s];
       return replacement;
     }
@@ -284,15 +292,6 @@
 
     return nestedTokens;
   }
-
-  var entityMap = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;',
-    '/': '&#x2F;'
-  };
 
   /**
    * A simple string scanner that is used by the template parser to find
