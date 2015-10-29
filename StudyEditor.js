@@ -279,9 +279,8 @@ define(function (require, exports, module) {
     
         }
         
-        var theObject = this.lineInfo.info.initialisation || this.lineInfo.info.functionCall;
+        var theObject = this.lineInfo.info.functionCall || this.lineInfo.info.initialisation;
         if(theObject !== null && theObject !== undefined) {
-
             if(theObject.type === "CallExpression" && theObject.callee) {
                 this.currentLineMarkers.push(this.contextEditor.markText({ line: currentLineNr, ch: theObject.callee.range[0] },
                                                                          { line: currentLineNr, ch: theObject.callee.range[1] }, 
