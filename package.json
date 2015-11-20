@@ -10,6 +10,6 @@
         "brackets": ">=0.41.0"
     },
     "dependencies" :{
-    	"ContextCollector" : "git+ssh://dennis@oliver.informatik.rwth-aachen.de/Public/Research%20Projects/Live%20Coding/Source/Lewandowski_ContextCollector.git"
+    	"ContextCollector" : "git+ssh://git@github.com:laewahn/Fiddlets-Backend.git"
     }
 }
