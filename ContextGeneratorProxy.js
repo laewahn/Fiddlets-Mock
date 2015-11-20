@@ -11,8 +11,6 @@ define(function(require, exports, module) {
 	exports.generateContextForLine = function(line, source) {
 		console.log("Line: ", line);
 		return dynamicContext(line + 1, source);
-
-		// return staticContext();
 	};
 
 	function dynamicContext(line, source) {

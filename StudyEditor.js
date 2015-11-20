@@ -7,7 +7,6 @@ define(function (require, exports, module) {
     var ExtensionUtils = brackets.getModule("utils/ExtensionUtils");
 
     var VariableTrace = require("./VariableTraceProxy");
-    var Esprima = require("./EsprimaProxy");
     var LineInfo = require("./LineInfoProxy");
     var ContextCollector = require("./ContextGeneratorProxy");
 
